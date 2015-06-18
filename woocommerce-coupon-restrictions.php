@@ -43,10 +43,10 @@ class WC_Coupon_Restrictions {
 		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save' ) );
 
 		// Validates coupons before checkout if use is logged in
-		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupon' ), 10, 2 );
+		// add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupon' ), 10, 2 );
 
 		// Validates coupons again during checkout validation
-		// add_action( 'woocommerce_after_checkout_validation', array( $this, 'check_customer_coupons' ), 1 );
+		add_action( 'woocommerce_after_checkout_validation', array( $this, 'check_customer_coupons' ), 1 );
 
 	}
 
@@ -104,14 +104,30 @@ class WC_Coupon_Restrictions {
 	 */
 	public function check_customer_coupons( $posted ) {
 
-		if ( ! empty( $this->applied_coupons ) ) {
-			foreach ( $this->applied_coupons as $code ) {
+		error_log( 'check customer coupons' );
+
+		// @DEBUG:
+		// I must be referencing WC()->WC_Cart incorrectly
+		// WC()->WC_Cart->applied_coupons does not return anything
+
+		if ( ! empty( WC()->WC_Cart->applied_coupons ) ) {
+
+			error_log( 'cart has applied coupons' );
+
+			foreach ( WC()->WC_Cart->applied_coupons as $code ) {
+
+				error_log( $code );
+
 				$coupon = new WC_Coupon( $code );
+
 				if ( $coupon->is_valid() ) {
-					$new_customers = get_post_meta( $coupon->id, 'new_customers_only', true );
+
+					$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
 
 					// Finally! Check if coupon is restricted to new customers.
-					if ( 'yes' === $new_customers ) {
+					if ( 'yes' === $new_customers_restriction ) {
+
+						error_log( 'new customer restriction' );
 
 						// Check if order is for returning customer
 						if ( is_user_logged_in() ) {
@@ -147,14 +163,17 @@ class WC_Coupon_Restrictions {
 	 */
 	function remove_coupon_returning_customer( $coupon, $code ) {
 
+		error_log( 'remove coupon returning customer' );
+		error_log( 'code to remove:' . $code );
+
 		// Add validation message
-		// $coupon->add_coupon_message( 100 );
+		$coupon->add_coupon_message( 100 );
 
 		// Remove the coupon
-		// WC()->WC_Cart->remove_coupon( $code );
+		WC()->WC_Cart->remove_coupon( $code );
 
 		// Flag totals for refresh
-		// WC()->session->set( 'refresh_totals', true );
+		WC()->session->set( 'refresh_totals', true );
 
 	}
 
@@ -189,12 +208,3 @@ class WC_Coupon_Restrictions {
 $WC_Coupon_Restrictions = new WC_Coupon_Restrictions( __FILE__ );
 
 endif;
-
-/*
-
-@TODO:
-
-Load textdomain
-Generate .pot file
-
-*/
