@@ -104,21 +104,17 @@ class WC_Coupon_Restrictions {
 	 */
 	public function check_customer_coupons( $posted ) {
 
-		error_log( 'check customer coupons' );
-
-		// @DEBUG:
-		// I must be referencing WC()->WC_Cart incorrectly
-		// WC()->WC_Cart->applied_coupons does not return anything
-
-		if ( ! empty( WC()->WC_Cart->applied_coupons ) ) {
+		if ( ! empty( WC()->cart->applied_coupons ) ) {
 
 			error_log( 'cart has applied coupons' );
 
-			foreach ( WC()->WC_Cart->applied_coupons as $code ) {
+			foreach ( WC()->cart->applied_coupons as $code ) {
 
 				error_log( $code );
 
 				$coupon = new WC_Coupon( $code );
+
+				error_log( $coupon->is_valid() );
 
 				if ( $coupon->is_valid() ) {
 
@@ -127,20 +123,28 @@ class WC_Coupon_Restrictions {
 					// Finally! Check if coupon is restricted to new customers.
 					if ( 'yes' === $new_customers_restriction ) {
 
-						error_log( 'new customer restriction' );
+						error_log( 'new customer restriction is set' );
 
 						// Check if order is for returning customer
 						if ( is_user_logged_in() ) {
 
+							error_log( 'user is logged in' );
+
 							// If user is logged in, we can check for paying_customer meta.
 							$current_user = wp_get_current_user();
 							$paying_customer = get_user_meta( $current_user->ID, 'paying_customer', true );
+
+							error_log( 'paying customer meta: ' . $paying_customer );
+
 							if ( $paying_customer != '' && absint( $paying_customer ) > 0 ) {
 								// Returning customer
+								error_log( 'logged in paying customer' );
 								$this->remove_coupon_returning_customer( $coupon, $code );
 							}
 
 						} else {
+
+							error_log( 'user is not logged in' );
 
 							// If user is not logged in, we can check against previous orders.
 							$email = strtolower( $posted['billing_email'] );
@@ -161,7 +165,7 @@ class WC_Coupon_Restrictions {
 	 *
 	 * @returns boolean
 	 */
-	function remove_coupon_returning_customer( $coupon, $code ) {
+	public function remove_coupon_returning_customer( $coupon, $code ) {
 
 		error_log( 'remove coupon returning customer' );
 		error_log( 'code to remove:' . $code );
@@ -170,7 +174,7 @@ class WC_Coupon_Restrictions {
 		$coupon->add_coupon_message( 100 );
 
 		// Remove the coupon
-		WC()->WC_Cart->remove_coupon( $code );
+		WC()->cart->remove_coupon( $code );
 
 		// Flag totals for refresh
 		WC()->session->set( 'refresh_totals', true );
@@ -182,7 +186,7 @@ class WC_Coupon_Restrictions {
 	 *
 	 * @returns boolean
 	 */
-	function is_returning_customer( $email ) {
+	public function is_returning_customer( $email ) {
 		$customer_orders = get_posts( array(
 			'post_type'   => 'shop_order',
 		    'meta_key'    => '_billing_email',
