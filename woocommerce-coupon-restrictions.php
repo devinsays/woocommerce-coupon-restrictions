@@ -4,8 +4,8 @@
  * Plugin URI: http://github.com/devinsays/woocommerce-new-customer-coupons
  * Description: Allows coupons to be restricted to new customers only.
  * Version: 1.0.0
- * Author: Devin Price
- * Author URI: http://wptheming.com
+ * Author: DevPress
+ * Author URI: https://devpress.com
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: woocommerce-new-customer-coupons
@@ -108,7 +108,7 @@ class WC_New_Customer_Coupons {
 	public function validate_coupon( $valid, $coupon ) {
 
 		// If coupon already marked invalid, no sense in moving forward.
-		if ( !$valid ) {
+		if ( ! $valid ) {
 			return $valid;
 		}
 
@@ -119,8 +119,7 @@ class WC_New_Customer_Coupons {
 
 		// If current customer is an existing customer, return false
 		$current_user = wp_get_current_user();
-		$paying_customer = get_user_meta( $current_user->ID, 'paying_customer', true );
-		if ( $paying_customer != '' && absint( $paying_customer ) > 0 ) {
+		if ( WC()->customer->is_paying_customer( $current_user->ID ) ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message' ), 10, 2 );
 			return false;
 		}
@@ -135,7 +134,7 @@ class WC_New_Customer_Coupons {
 		if ( 100 == $err_code ) {
 			// Validation message
 			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-new-customer-coupons' );
-			$msg = apply_filters( 'wcncc-coupon-removed-message', $msg, $code, $coupon );
+			$err = apply_filters( 'wcncc-coupon-removed-message', $msg );
 		}
 
 		// Return validation message
@@ -151,15 +150,9 @@ class WC_New_Customer_Coupons {
 
 		if ( ! empty( WC()->cart->applied_coupons ) ) {
 
-			error_log( 'cart has applied coupons' );
-
 			foreach ( WC()->cart->applied_coupons as $code ) {
 
-				error_log( $code );
-
 				$coupon = new WC_Coupon( $code );
-
-				error_log( $coupon->is_valid() );
 
 				if ( $coupon->is_valid() ) {
 
@@ -168,28 +161,19 @@ class WC_New_Customer_Coupons {
 					// Finally! Check if coupon is restricted to new customers.
 					if ( 'yes' === $new_customers_restriction ) {
 
-						error_log( 'new customer restriction is set' );
-
 						// Check if order is for returning customer
 						if ( is_user_logged_in() ) {
-
-							error_log( 'user is logged in' );
 
 							// If user is logged in, we can check for paying_customer meta.
 							$current_user = wp_get_current_user();
 							$paying_customer = get_user_meta( $current_user->ID, 'paying_customer', true );
 
-							error_log( 'paying customer meta: ' . $paying_customer );
-
 							if ( $paying_customer != '' && absint( $paying_customer ) > 0 ) {
 								// Returning customer
-								error_log( 'logged in paying customer' );
 								$this->remove_coupon_returning_customer( $coupon, $code );
 							}
 
 						} else {
-
-							error_log( 'user is not logged in' );
 
 							// If user is not logged in, we can check against previous orders.
 							$email = strtolower( $posted['billing_email'] );

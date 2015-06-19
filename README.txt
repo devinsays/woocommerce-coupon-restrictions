@@ -16,10 +16,25 @@ This extension allows to create coupons that can only be used by new customers. 
 
 If a customer is logged in, the plugin will verify that they haven't purchased anything from the site before allowing the coupon to be applied. For customers that aren't logged in, the coupon verification runs right before checkout once the e-mail address has been entered.
 
-The plugin is fully translatable. Developers can also use filters to modify any notices that are displayed during coupon validation.
+The plugin is fully translatable. Developers can also use filters to modify any notices displayed during coupon validation.
+
+== Additional Notes ==
+
+Customers are considered "new customers" if they have not yet spent money on the site and/or do not have an order that has been marked complete. This can lead to some edge cases where a customer could use the coupon several times before an order is marked complete. Avoid this by setting the "Usage limit per user" to 1.
+
+This extension checks e-mail addresses of existing customers by converting to all lower-case and doing a strict string match. It will only flag e-mail addresses that have an exact match.
+
+== Release Tests ==
+
+* Create coupon with new customer restriction:
+
+1) Test with logged in existing customer
+2) Test with existing customer no account
+3) Test with new customer logged in
+4) Test with new customer logged out
 
 == Changelog ==
 
 = 1.0.0 =
 
-* Public Release
+* Initial release
