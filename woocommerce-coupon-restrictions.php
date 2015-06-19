@@ -1,15 +1,15 @@
 <?php
 /**
- * Plugin Name:       WooCommerce Coupon Restrictions
- * Plugin URI:        http://github.com/devinsays/woocommerce-coupon-restrictions
- * Description:       Adds additional coupon restriction options for WooCommerce.
- * Version:           1.0.0
- * Author:            Devin Price
- * Author URI:        http://wptheming.com
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       wc-coupon-restrictions
- * Domain Path:       /languages
+ * Plugin Name: WooCommerce New Customer Coupons
+ * Plugin URI: http://github.com/devinsays/woocommerce-new-customer-coupons
+ * Description: Allows coupons to be restricted to new customers only.
+ * Version: 1.0.0
+ * Author: Devin Price
+ * Author URI: http://wptheming.com
+ * License: GPL-2.0+
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain: woocommerce-new-customer-coupons
+ * Domain Path: /languages
  *
  */
 
@@ -17,10 +17,9 @@
 
 @TODOS:
 
-- Load textdomain
-- Generate .pot file
-- Change name to "WooCommerce New Customer Coupons"
 - Test against non logged-in user
+- Paying customer function?
+
 */
 
 
@@ -29,15 +28,19 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
+if ( ! class_exists( 'WC_New_Customer_Coupons' ) ) :
 
-class WC_Coupon_Restrictions {
+class WC_New_Customer_Coupons {
 
 	/**
 	* Construct the plugin.
 	*/
 	public function __construct() {
 
+		// Load translations
+		load_plugin_textdomain( 'woocommerce-new-customer-coupons', false, dirname( plugin_basename(__FILE__) ) . '/languages/' );
+
+		// Fire up the plugin!
 		add_action( 'plugins_loaded', array( $this, 'init' ) );
 
 	}
@@ -73,8 +76,8 @@ class WC_Coupon_Restrictions {
 		woocommerce_wp_checkbox(
 			array(
 				'id' => 'new_customers_only',
-				'label' => __( 'New customers only', 'wc-coupon-restrictions' ),
-				'description' => __( 'Verifies that customer e-mail address has not been used previously.', 'wc-coupon-restrictions' )
+				'label' => __( 'New customers only', 'woocommerce-new-customer-coupons' ),
+				'description' => __( 'Verifies that customer e-mail address has not been used previously.', 'woocommerce-new-customer-coupons' )
 			)
 		);
 
@@ -131,7 +134,8 @@ class WC_Coupon_Restrictions {
 		// Alter the validation message if coupon has been removed
 		if ( 100 == $err_code ) {
 			// Validation message
-			$err = __( 'Coupon removed. This coupon is only valid for new customers.', 'wc-coupon-restrictions' );
+			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-new-customer-coupons' );
+			$msg = apply_filters( 'wcncc-coupon-removed-message', $msg, $code, $coupon );
 		}
 
 		// Return validation message
@@ -210,10 +214,10 @@ class WC_Coupon_Restrictions {
 	public function remove_coupon_returning_customer( $coupon, $code ) {
 
 		// Validation message
-		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for new customers.', 'wc-coupon-restrictions' ), $code );
+		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for new customers.', 'woocommerce-new-customer-coupons' ), $code );
 
 		// Filter to change validation text
-		$msg = apply_filters( 'wc-coupon-validation-message', 'new-customer', $msg, $code, $coupon );
+		$msg = apply_filters( 'wcncc-coupon-removed-messag-with-code', $msg, $code, $coupon );
 
 		// Throw a notice to stop checkout
 		wc_add_notice( $msg, 'error' );
@@ -257,6 +261,6 @@ class WC_Coupon_Restrictions {
 
 }
 
-$WC_Coupon_Restrictions = new WC_Coupon_Restrictions( __FILE__ );
+$WC_New_Customer_Coupons = new WC_New_Customer_Coupons( __FILE__ );
 
 endif;
