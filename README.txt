@@ -20,7 +20,7 @@ The plugin is fully translatable. Developers can also use filters to modify any 
 
 == Additional Notes ==
 
-Customers are considered "new customers" if they have not yet spent money on the site and/or do not have an order that has been marked complete. This can lead to some edge cases where a customer could use the coupon several times before an order is marked complete. Avoid this by setting the "Usage limit per user" to 1.
+Customers are considered "new customers" if they have not yet spent money on the site and/or do not have an order that has been marked complete or processing. This can lead to some edge cases where a customer could use the coupon several times before an order is marked complete. Avoid this by setting the "Usage limit per user" to 1.
 
 This extension checks e-mail addresses of existing customers by converting to all lower-case and doing a strict string match. It will only flag e-mail addresses that have an exact match.
 

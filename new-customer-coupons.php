@@ -13,16 +13,6 @@
  *
  */
 
-/*
-
-@TODOS:
-
-- Test against non logged-in user
-- Paying customer function?
-
-*/
-
-
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -226,20 +216,20 @@ class WC_New_Customer_Coupons {
 		    'meta_key'    => '_billing_email',
 		    'post_status' => 'publish',
 		    'post_status' => array( 'wc-processing', 'wc-completed' ),
-		    'meta_value'  => $billing_email,
+		    'meta_value'  => $email,
 		    'post_type'   => 'shop_order',
-		    'numberposts' => 2,
+		    'numberposts' => 1,
 		    'cache_results' => false,
 		    'no_found_rows' => true,
 		    'fields' => 'ids'
 		) );
 
 		// If there is at least one other order by billing e-mail
-		if ( 2 == count( $customer_orders ) ) {
+		if ( 1 == count( $customer_orders ) ) {
 			return true;
 		}
 
-		// Otherwise there should only be 1 order
+		// Otherwise there should not be any orders
 		return false;
 	}
 
