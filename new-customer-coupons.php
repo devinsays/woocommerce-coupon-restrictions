@@ -232,6 +232,6 @@ class WC_New_Customer_Coupons {
 
 }
 
-$WC_New_Customer_Coupons = new WC_New_Customer_Coupons( __FILE__ );
+new WC_New_Customer_Coupons();
 
 endif;
