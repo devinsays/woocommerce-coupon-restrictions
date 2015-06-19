@@ -156,10 +156,7 @@ class WC_New_Customer_Coupons {
 
 							// If user is logged in, we can check for paying_customer meta.
 							$current_user = wp_get_current_user();
-							$paying_customer = get_user_meta( $current_user->ID, 'paying_customer', true );
-
-							if ( $paying_customer != '' && absint( $paying_customer ) > 0 ) {
-								// Returning customer
+							if ( WC()->customer->is_paying_customer( $current_user->ID ) ) {
 								$this->remove_coupon_returning_customer( $coupon, $code );
 							}
 
@@ -191,7 +188,7 @@ class WC_New_Customer_Coupons {
 		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for new customers.', 'woocommerce-new-customer-coupons' ), $code );
 
 		// Filter to change validation text
-		$msg = apply_filters( 'wcncc-coupon-removed-messag-with-code', $msg, $code, $coupon );
+		$msg = apply_filters( 'wcncc-coupon-removed-message-with-code', $msg, $code, $coupon );
 
 		// Throw a notice to stop checkout
 		wc_add_notice( $msg, 'error' );
