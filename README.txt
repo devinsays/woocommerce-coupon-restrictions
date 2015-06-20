@@ -12,7 +12,7 @@ WC tested up to: 2.4.0
 
 == Description ==
 
-This extension allows to create coupons that can only be used by new customers. After installing, look for the "New Customers Only" option in the coupon usage restrictions screen.
+This extension allows you to create coupons that can only be used by new customers. After installing, look for the "New Customers Only" option in the coupon usage restrictions screen.
 
 If a customer is logged in, the plugin will verify that they haven't purchased anything from the site before allowing the coupon to be applied. For customers that aren't logged in, the coupon verification runs right before checkout once the e-mail address has been entered.
 
