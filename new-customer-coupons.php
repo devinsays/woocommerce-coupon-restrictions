@@ -214,7 +214,6 @@ class WC_New_Customer_Coupons {
 		    'post_status' => 'publish',
 		    'post_status' => array( 'wc-processing', 'wc-completed' ),
 		    'meta_value'  => $email,
-		    'post_type'   => 'shop_order',
 		    'numberposts' => 1,
 		    'cache_results' => false,
 		    'no_found_rows' => true,
