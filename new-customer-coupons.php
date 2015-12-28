@@ -107,6 +107,12 @@ class WC_New_Customer_Coupons {
 			return $valid;
 		}
 
+		// Check if specific coupon has restriction
+		$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
+		if ( 'yes' !== $new_customers_restriction ) {
+			return $valid;
+		}
+
 		// If current customer is an existing customer, return false
 		$current_user = wp_get_current_user();
 		if ( WC()->customer->is_paying_customer( $current_user->ID ) ) {

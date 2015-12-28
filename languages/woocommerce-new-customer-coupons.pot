@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Devin Price
+# Copyright (C) 2015 DevPress
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
@@ -24,19 +24,19 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: woocommerce-coupon-restrictions.php:79
+#: new-customer-coupons.php:69
 msgid "New customers only"
 msgstr ""
 
-#: woocommerce-coupon-restrictions.php:80
+#: new-customer-coupons.php:70
 msgid "Verifies that customer e-mail address has not been used previously."
 msgstr ""
 
-#: woocommerce-coupon-restrictions.php:137
+#: new-customer-coupons.php:132
 msgid "Coupon removed. This coupon is only valid for new customers."
 msgstr ""
 
-#: woocommerce-coupon-restrictions.php:217
+#: new-customer-coupons.php:194
 msgid "Coupon removed. Code \"%s\" is only valid for new customers."
 msgstr ""
 
@@ -53,9 +53,9 @@ msgid "Allows coupons to be restricted to new customers only."
 msgstr ""
 
 #. Author of the plugin/theme
-msgid "Devin Price"
+msgid "DevPress"
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid "http://wptheming.com"
+msgid "https://devpress.com"
 msgstr ""
