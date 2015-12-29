@@ -6,3 +6,7 @@ Icon
 node_modules
 .sass-cache
 npm-debug.log
+
+# Unit tests
+/tmp
+/tests/bin/tmp
