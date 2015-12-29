@@ -310,4 +310,5 @@ class Coupon extends \WC_Unit_Test_Case {
 		\WC_Helper_Product::delete_product( $product->id );
 	}
 
+
 }

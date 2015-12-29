@@ -106,4 +106,17 @@ class WC_Helper_Customer {
 	public static function set_tax_based_on( $default_shipping_method ) {
 		update_option( 'woocommerce_tax_based_on', $default_shipping_method );
 	}
+
+	/**
+	 * Create a customer
+	 *
+	 * @return $customer id
+	 */
+	public static function create_customer() {
+
+		$customer = wc_create_new_customer( 'customer@example.org', 'admin@example.org', 'password' );
+		return $customer;
+
+	}
+
 }

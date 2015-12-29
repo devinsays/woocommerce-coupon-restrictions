@@ -59,6 +59,7 @@ class WC_Unit_Tests_Bootstrap {
 	 */
 	public function load_wc() {
 		require_once( $this->woocommerce_plugin_dir . '/woocommerce.php' );
+		require_once( $this->plugin_dir . '/new-customer-coupons.php' );
 	}
 
 	/**
