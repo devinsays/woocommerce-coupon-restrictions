@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce New Customer Coupons
  * Plugin URI: http://github.com/devinsays/woocommerce-new-customer-coupons
  * Description: Allows coupons to be restricted to new customers only.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: DevPress
  * Author URI: https://devpress.com
  * License: GPL-2.0+
@@ -107,7 +107,7 @@ class WC_New_Customer_Coupons {
 			return $valid;
 		}
 
-		// Check if specific coupon has restriction
+		// If specific coupon doesn't have restriction, return valid
 		$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
 		if ( 'yes' !== $new_customers_restriction ) {
 			return $valid;
@@ -116,6 +116,8 @@ class WC_New_Customer_Coupons {
 		// If current customer is an existing customer, return false
 		$current_user = wp_get_current_user();
 		if ( WC()->customer->is_paying_customer( $current_user->ID ) ) {
+
+			add_filter( 'woocommerce_coupon_is_valid', array( $this, 'coupon_is_valid' ), 10, 2 );
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message' ), 10, 2 );
 			return false;
 		}
@@ -124,6 +126,20 @@ class WC_New_Customer_Coupons {
 
 	}
 
+	/**
+	 * Invalidates coupon
+	 *
+	 * @return boolean validity
+	 */
+	function invalidate_coupon( $value ) {
+		return false;
+	}
+
+	/**
+	 * Applies correct error message
+	 *
+	 * @return $err error message
+	 */
 	function validation_message( $err, $err_code ) {
 
 		// Alter the validation message if coupon has been removed

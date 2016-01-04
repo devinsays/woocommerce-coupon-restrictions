@@ -80,6 +80,7 @@ class WC_Unit_Tests_Bootstrap {
 		$GLOBALS['wp_roles']->reinit();
 
 		echo "Installing WooCommerce..." . PHP_EOL;
+		echo "Installing WooCommerce New Customer Coupons..." . PHP_EOL;
 	}
 
 	/**
@@ -95,16 +96,13 @@ class WC_Unit_Tests_Bootstrap {
 
 		// framework
 		require_once( $this->tests_dir . '/framework/class-wc-unit-test-factory.php' );
-		require_once( $this->tests_dir . '/framework/class-wc-mock-session-handler.php' );
 
 		// test cases
 		require_once( $this->tests_dir . '/framework/class-wc-unit-test-case.php' );
-		require_once( $this->tests_dir . '/framework/class-wc-api-unit-test-case.php' );
 
 		// Helpers
 		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-product.php' );
 		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-coupon.php' );
-		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-fee.php' );
 		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-shipping.php' );
 		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-customer.php' );
 		require_once( $this->tests_dir . '/framework/helpers/class-wc-helper-order.php' );

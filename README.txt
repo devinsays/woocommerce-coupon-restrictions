@@ -28,8 +28,10 @@ This extension checks e-mail addresses of existing customers by converting to al
 
 = 1.1.0 =
 
-* Fix: Coupons without the new customer restriction were improperly marked invalid for logged in users
+* Fix: Coupons without the new customer restriction were improperly marked invalid for logged in users.
+* Fix: Filter woocommerce_coupon_is_valid in addition to woocommerce_coupon_error.
+* Update: Add unit tests.
 
 = 1.0.0 =
 
-* Initial release
+* Initial release.
