@@ -19,9 +19,9 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 
 		// Create an order and apply it to new customer
 		$order = \WC_Helper_Order::create_order();
-		$order->update_status( 'wc-completed' );
 		update_post_meta( $order->id, '_customer_user', $customer );
 		update_post_meta( $order->id, '_billing_email', $email );
+		$order->update_status( 'wc-completed' );
 
 		// Set up the New Customer Coupons Class
 		$plugin = new \WC_New_Customer_Coupons();
