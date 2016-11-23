@@ -108,14 +108,14 @@ class WC_New_Customer_Coupons {
 		}
 
 		// If specific coupon doesn't have restriction, return valid
-		$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
+		$new_customers_restriction = get_post_meta( $coupon->get_id(), 'new_customers_only', true );
 		if ( 'yes' !== $new_customers_restriction ) {
 			return $valid;
 		}
 
 		// If current customer is an existing customer, return false
 		$current_user = wp_get_current_user();
-		if ( WC()->customer->is_paying_customer( $current_user->ID ) ) {
+		if ( WC()->customer->get_is_paying_customer( $current_user->ID ) ) {
 
 			add_filter( 'woocommerce_coupon_is_valid', array( $this, 'coupon_is_valid' ), 10, 2 );
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message' ), 10, 2 );
@@ -168,7 +168,7 @@ class WC_New_Customer_Coupons {
 
 				if ( $coupon->is_valid() ) {
 
-					$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
+					$new_customers_restriction = get_post_meta( $coupon->get_id(), 'new_customers_only', true );
 
 					// Finally! Check if coupon is restricted to new customers.
 					if ( 'yes' === $new_customers_restriction ) {
@@ -178,7 +178,7 @@ class WC_New_Customer_Coupons {
 
 							// If user is logged in, we can check for paying_customer meta.
 							$current_user = wp_get_current_user();
-							if ( WC()->customer->is_paying_customer( $current_user->ID ) ) {
+							if ( WC()->customer->get_is_paying_customer( $current_user->ID ) ) {
 								$this->remove_coupon_returning_customer( $coupon, $code );
 							}
 
