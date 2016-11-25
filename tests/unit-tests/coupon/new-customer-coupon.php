@@ -63,7 +63,7 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 		WC()->cart->remove_coupons();
 
 		// Delete coupon
-		\WC_Helper_Coupon::delete_coupon( $coupon->get_id() );
+		\WC_Helper_Coupon::delete_coupon( $coupon->id );
 
 	}
 
@@ -97,7 +97,7 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 		WC()->cart->remove_coupons();
 
 		// Delete coupon
-		\WC_Helper_Coupon::delete_coupon( $coupon->get_id() );
+		\WC_Helper_Coupon::delete_coupon( $coupon->id );
 
 		// Delete order
 		\WC_Helper_Order::delete_order( $order->get_id() );
@@ -126,7 +126,7 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 
 		// Create coupon
 		$coupon = \WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'new_customers_only', 'yes' );
+		update_post_meta( $coupon->id, 'new_customers_only', 'yes' );
 
 		// Add coupon, test return statement
 		$this->assertFalse( WC()->cart->add_discount( $coupon->get_code() ) );
@@ -138,7 +138,7 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 		WC()->cart->remove_coupons();
 
 		// Delete coupon
-		\WC_Helper_Coupon::delete_coupon( $coupon->get_id() );
+		\WC_Helper_Coupon::delete_coupon( $coupon->id );
 
 		// Delete order
 		\WC_Helper_Order::delete_order( $order->get_id() );
