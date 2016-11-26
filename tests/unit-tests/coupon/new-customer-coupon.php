@@ -19,8 +19,8 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 
 		// Create an order and apply it to new customer
 		$order = \WC_Helper_Order::create_order();
-		update_post_meta( $order->get_id(), '_customer_user', $customer );
-		update_post_meta( $order->get_id(), '_billing_email', $email );
+		update_post_meta( $order->id, '_customer_user', $customer );
+		update_post_meta( $order->id, '_billing_email', $email );
 		$order->update_status( 'wc-completed' );
 
 		// Set up the New Customer Coupons Class
@@ -33,7 +33,7 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 		$this->assertFalse( $plugin->is_returning_customer( 'not@example.org' ) );
 
 		// Delete order
-		\WC_Helper_Order::delete_order( $order->get_id() );
+		\WC_Helper_Order::delete_order( $order->id );
 
 		// Delete customer
 		wp_delete_user( $email );
@@ -46,15 +46,15 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 	public function test_new_customer_apply_coupon() {
 
 		// Create a customer
-		$customer = \WC_Helper_Customer::create_customer( 'customer', 'customer', 'customer@example.org' );
-		$customer_id = $customer->get_id();
-		wp_set_current_user( $customer_id );
+		$email = 'customer@example.org';
+		$customer = wc_create_new_customer( $email, $email, 'password' );
+		wp_set_current_user( $customer );
 
 		// Create coupon
-		$coupon = \WC_Helper_Coupon::create_coupon( 'discount' );
+		$coupon = \WC_Helper_Coupon::create_coupon();
 
 		// Add coupon, test return statement
-		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertTrue( WC()->cart->add_discount( $coupon->code ) );
 
 		// Test if total amount of coupons is 1
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -80,15 +80,15 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 
 		// Create an order and apply it to new customer
 		$order = \WC_Helper_Order::create_order();
-		update_post_meta( $order->get_id(), '_customer_user', $customer );
-		update_post_meta( $order->get_id(), '_billing_email', $email );
+		update_post_meta( $order->id, '_customer_user', $customer );
+		update_post_meta( $order->id, '_billing_email', $email );
 		$order->update_status( 'wc-completed' );
 
 		// Create coupon
 		$coupon = \WC_Helper_Coupon::create_coupon();
 
 		// Add coupon, test return statement
-		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertTrue( WC()->cart->add_discount( $coupon->code ) );
 
 		// Test if total amount of coupons is 1
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -100,7 +100,7 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 		\WC_Helper_Coupon::delete_coupon( $coupon->id );
 
 		// Delete order
-		\WC_Helper_Order::delete_order( $order->get_id() );
+		\WC_Helper_Order::delete_order( $order->id );
 
 		// Delete customer
 		wp_delete_user( $email );
@@ -120,8 +120,8 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 
 		// Create an order and apply it to new customer
 		$order = \WC_Helper_Order::create_order();
-		update_post_meta( $order->get_id(), '_customer_user', $customer );
-		update_post_meta( $order->get_id(), '_billing_email', $email );
+		update_post_meta( $order->id, '_customer_user', $customer );
+		update_post_meta( $order->id, '_billing_email', $email );
 		$order->update_status( 'wc-completed' );
 
 		// Create coupon
@@ -129,7 +129,7 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 		update_post_meta( $coupon->id, 'new_customers_only', 'yes' );
 
 		// Add coupon, test return statement
-		$this->assertFalse( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertFalse( WC()->cart->add_discount( $coupon->code ) );
 
 		// Test if total amount of coupons is 0
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
@@ -141,7 +141,7 @@ class New_Customer_Coupon extends \WC_Unit_Test_Case {
 		\WC_Helper_Coupon::delete_coupon( $coupon->id );
 
 		// Delete order
-		\WC_Helper_Order::delete_order( $order->get_id() );
+		\WC_Helper_Order::delete_order( $order->id );
 
 		// Delete customer
 		wp_delete_user( $email );
