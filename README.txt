@@ -2,13 +2,13 @@
 
 Contributors: @downstairsdev
 Tags: woocommerce, coupon
-Requires at least: 4.4.0
-Tested up to: 4.4.0
-Stable tag: 1.1.0
+Requires at least: 4.6.1
+Tested up to: 4.6.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-WC requires at least: 2.4.0
-WC tested up to: 2.4.0
+WC requires at least: 2.6.0
+WC tested up to: 2.6.8
 
 == Description ==
 
@@ -25,6 +25,10 @@ Customers are considered "new customers" if they have not yet spent money on the
 This extension checks e-mail addresses of existing customers by converting to all lower-case and doing a strict string match. It will only flag e-mail addresses that have an exact match.
 
 == Changelog ==
+
+= 1.2.0 =
+
+* Fix: Compatibility updates for WooCommerce 2.6.8
 
 = 1.1.0 =
 
