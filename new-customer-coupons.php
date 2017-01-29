@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce New Customer Coupons
  * Plugin URI: http://github.com/devinsays/woocommerce-new-customer-coupons
- * Description: Allows coupons to be restricted to new customers only.
+ * Description: Allows coupons to be restricted to new customers or existing customers.
  * Version: 1.1.0
  * Author: DevPress
  * Author URI: https://devpress.com
@@ -41,13 +41,13 @@ class WC_New_Customer_Coupons {
 	public function init() {
 
 		// Adds metabox to usage restriction fields
-		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'new_customer_restriction' ) );
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'coupon_restrictions' ) );
 
 		// Saves the metabox
 		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save' ) );
 
 		// Validates coupons before checkout if customer is logged in
-		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupon' ), 10, 2 );
+		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupons' ), 10, 2 );
 
 		// Validates coupons again during checkout validation
 		add_action( 'woocommerce_after_checkout_validation', array( $this, 'check_customer_coupons' ), 1 );
@@ -59,7 +59,7 @@ class WC_New_Customer_Coupons {
 	 *
 	 * @return void
 	 */
-	public function new_customer_restriction() {
+	public function coupon_restrictions() {
 
 		echo '<div class="options_group">';
 
@@ -67,7 +67,15 @@ class WC_New_Customer_Coupons {
 			array(
 				'id' => 'new_customers_only',
 				'label' => __( 'New customers only', 'woocommerce-new-customer-coupons' ),
-				'description' => __( 'Verifies that customer e-mail address has not been used previously.', 'woocommerce-new-customer-coupons' )
+				'description' => __( 'Verifies customer e-mail address has not been used previously.', 'woocommerce-new-customer-coupons' )
+			)
+		);
+
+		woocommerce_wp_checkbox(
+			array(
+				'id' => 'existing_customers_only',
+				'label' => __( 'Existing customers only', 'woocommerce-new-customer-coupons' ),
+				'description' => __( 'Verifies customer e-mail address has been used previously.', 'woocommerce-new-customer-coupons' )
 			)
 		);
 
@@ -84,18 +92,20 @@ class WC_New_Customer_Coupons {
 
 		// Sanitize meta
 		$new_customers_only = isset( $_POST['new_customers_only'] ) ? 'yes' : 'no';
+		$existing_customers_only = isset( $_POST['existing_customers_only'] ) ? 'yes' : 'no';
 
 		// Save meta
 		update_post_meta( $post_id, 'new_customers_only', $new_customers_only );
+		update_post_meta( $post_id, 'existing_customers_only', $existing_customers_only );
 
 	}
 
 	/**
-	 * If user is logged in, validates coupon when added
+	 * Validates coupon when added (if possible due to log in state)
 	 *
 	 * @return void
 	 */
-	public function validate_coupon( $valid, $coupon ) {
+	public function validate_coupons( $valid, $coupon ) {
 
 		// If coupon already marked invalid, no sense in moving forward.
 		if ( ! $valid ) {
@@ -107,24 +117,54 @@ class WC_New_Customer_Coupons {
 			return $valid;
 		}
 
-		// If specific coupon doesn't have restriction, return valid
+		// Validate new customer restriction
 		$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
-		if ( 'yes' !== $new_customers_restriction ) {
-			return $valid;
+		if ( 'yes' == $new_customers_restriction ) {
+			$this->validate_new_customer_coupon();
 		}
+
+		// Validate existing customer restriction
+		$existing_customers_restriction = get_post_meta( $coupon->id, 'existing_customers_only', true );
+		if ( 'yes' == $existing_customers_only ) {
+			$this->validate_existing_customers_only();
+		}
+
+		return $valid;
+
+	}
+
+	/**
+	 * If user is logged in, validates new customer coupon
+	 *
+	 * @return void
+	 */
+	public function validate_new_customer_coupon() {
 
 		// If current customer is an existing customer, return false
 		$current_user = wp_get_current_user();
 		$customer = new WC_Customer( $current_user->ID );
 
 		if ( $customer->is_paying_customer( $current_user->ID ) ) {
-			add_filter( 'woocommerce_coupon_is_valid', array( $this, 'coupon_is_valid' ), 10, 2 );
-			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message' ), 10, 2 );
+			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_new_customer_restriction' ), 10, 2 );
 			return false;
 		}
+	}
 
-		return $valid;
+	/**
+	 * If user is logged in, validates existing cutomer coupon
+	 *
+	 * @return void
+	 */
+	public function validate_existing_customer_coupon() {
 
+		// If current customer is not an existing customer, return false
+		$current_user = wp_get_current_user();
+		$customer = new WC_Customer( $current_user->ID );
+
+		if ( ! $customer->is_paying_customer( $current_user->ID ) ) {
+			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_existing_customer_restriction' ), 10, 2 );
+			return false;
+		}
 	}
 
 	/**
@@ -137,16 +177,34 @@ class WC_New_Customer_Coupons {
 	}
 
 	/**
-	 * Applies correct error message
+	 * Applies new customer coupon error message
 	 *
 	 * @return $err error message
 	 */
-	function validation_message( $err, $err_code ) {
+	function validation_message_new_customer_restriction( $err, $err_code ) {
 
 		// Alter the validation message if coupon has been removed
 		if ( 100 == $err_code ) {
 			// Validation message
 			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-new-customer-coupons' );
+			$err = apply_filters( 'wcncc-coupon-removed-message', $msg );
+		}
+
+		// Return validation message
+		return $err;
+	}
+
+	/**
+	 * Applies existing customer coupon error message
+	 *
+	 * @return $err error message
+	 */
+	function validation_message_existing_customer_restriction( $err, $err_code ) {
+
+		// Alter the validation message if coupon has been removed
+		if ( 100 == $err_code ) {
+			// Validation message
+			$msg = __( 'Coupon removed. This coupon is only valid for existing customers.', 'woocommerce-new-customer-coupons' );
 			$err = apply_filters( 'wcncc-coupon-removed-message', $msg );
 		}
 
