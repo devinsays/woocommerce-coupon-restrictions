@@ -67,7 +67,7 @@ class WC_New_Customer_Coupons {
 			array(
 				'id' => 'new_customers_only',
 				'label' => __( 'New customers only', 'woocommerce-new-customer-coupons' ),
-				'description' => __( 'Verifies customer e-mail address has not been used previously.', 'woocommerce-new-customer-coupons' )
+				'description' => __( 'Verifies customer e-mail address <b>has not</b> been used previously.', 'woocommerce-new-customer-coupons' )
 			)
 		);
 
@@ -120,13 +120,13 @@ class WC_New_Customer_Coupons {
 		// Validate new customer restriction
 		$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
 		if ( 'yes' == $new_customers_restriction ) {
-			$this->validate_new_customer_coupon();
+			$valid = $this->validate_new_customer_coupon();
 		}
 
 		// Validate existing customer restriction
 		$existing_customers_restriction = get_post_meta( $coupon->id, 'existing_customers_only', true );
-		if ( 'yes' == $existing_customers_only ) {
-			$this->validate_existing_customers_only();
+		if ( 'yes' == $existing_customers_restriction ) {
+			$valid = $this->validate_existing_customer_coupon();
 		}
 
 		return $valid;
@@ -145,9 +145,12 @@ class WC_New_Customer_Coupons {
 		$customer = new WC_Customer( $current_user->ID );
 
 		if ( $customer->is_paying_customer( $current_user->ID ) ) {
+			error_log( 'is_paying_customer true' );
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_new_customer_restriction' ), 10, 2 );
 			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -165,15 +168,8 @@ class WC_New_Customer_Coupons {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_existing_customer_restriction' ), 10, 2 );
 			return false;
 		}
-	}
 
-	/**
-	 * Invalidates coupon
-	 *
-	 * @return boolean validity
-	 */
-	function invalidate_coupon( $value ) {
-		return false;
+		return true;
 	}
 
 	/**
@@ -187,7 +183,7 @@ class WC_New_Customer_Coupons {
 		if ( 100 == $err_code ) {
 			// Validation message
 			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-new-customer-coupons' );
-			$err = apply_filters( 'wcncc-coupon-removed-message', $msg );
+			$err = apply_filters( 'woocommerce-new-customer-coupons-removed-message', $msg );
 		}
 
 		// Return validation message
@@ -205,7 +201,7 @@ class WC_New_Customer_Coupons {
 		if ( 100 == $err_code ) {
 			// Validation message
 			$msg = __( 'Coupon removed. This coupon is only valid for existing customers.', 'woocommerce-new-customer-coupons' );
-			$err = apply_filters( 'wcncc-coupon-removed-message', $msg );
+			$err = apply_filters( 'woocommerce-new-customer-coupons-removed-message', $msg );
 		}
 
 		// Return validation message
@@ -227,51 +223,99 @@ class WC_New_Customer_Coupons {
 
 				if ( $coupon->is_valid() ) {
 
+					// Check if coupon is restricted to new customers.
 					$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
-
-					// Finally! Check if coupon is restricted to new customers.
 					if ( 'yes' === $new_customers_restriction ) {
-
-						// Check if order is for returning customer
-						if ( is_user_logged_in() ) {
-
-							// If user is logged in, we can check for paying_customer meta.
-							$current_user = wp_get_current_user();
-							$customer = new WC_Customer( $current_user->ID );
-
-							if ( $customer->is_paying_customer ) {
-								$this->remove_coupon_returning_customer( $coupon, $code );
-							}
-
-						} else {
-
-							// If user is not logged in, we can check against previous orders.
-							$email = strtolower( $posted['billing_email'] );
-							if ( $this->is_returning_customer( $email ) ) {
-								$this->remove_coupon_returning_customer( $coupon, $code );
-							}
-
-						}
+						$this->check_new_customer_coupon_checkout( $coupon, $code );
 					}
+
+					// Check if coupon is restricted to existing customers.
+					$existing_customers_restriction = get_post_meta( $coupon->id, 'existing_customers_only', true );
+					if ( 'yes' === $existing_customers_restriction ) {
+						$this->check_existing_customer_coupon_checkout( $coupon, $code );
+					}
+
 				}
 			}
 		}
-
 	}
 
 	/**
-	 * Removes coupon for existing customers if is restricted to new customers.
+	 * Validates new customer coupon on checkout
 	 *
 	 * @param object $coupon
 	 * @param string $code
 	 */
-	public function remove_coupon_returning_customer( $coupon, $code ) {
+	public function check_new_customer_coupon_checkout( $coupon, $code ) {
 
 		// Validation message
 		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for new customers.', 'woocommerce-new-customer-coupons' ), $code );
 
+		// Check if order is for returning customer
+		if ( is_user_logged_in() ) {
+
+			// If user is logged in, we can check for paying_customer meta.
+			$current_user = wp_get_current_user();
+			$customer = new WC_Customer( $current_user->ID );
+
+			if ( $customer->is_paying_customer ) {
+				$this->remove_coupon( $coupon, $code, $msg );
+			}
+
+		} else {
+
+			// If user is not logged in, we can check against previous orders.
+			$email = strtolower( $posted['billing_email'] );
+			if ( $this->is_returning_customer( $email ) ) {
+				$this->remove_coupon( $coupon, $code, $msg );
+			}
+
+		}
+	}
+
+	/**
+	 * Validates existing customer coupon on checkout
+	 *
+	 * @param object $coupon
+	 * @param string $code
+	 */
+	public function check_existing_customer_coupon_checkout( $coupon, $code ) {
+
+		// Validation message
+		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for existing customers.', 'woocommerce-new-customer-coupons' ), $code );
+
+		// Check if order is for returning customer
+		if ( is_user_logged_in() ) {
+
+			// If user is logged in, we can check for paying_customer meta.
+			$current_user = wp_get_current_user();
+			$customer = new WC_Customer( $current_user->ID );
+
+			if ( ! $customer->is_paying_customer ) {
+				$this->remove_coupon( $coupon, $code, $msg );
+			}
+
+		} else {
+
+			// If user is not logged in, we can check against previous orders.
+			$email = strtolower( $posted['billing_email'] );
+			if ( ! $this->is_returning_customer( $email ) ) {
+				$this->remove_coupon( $coupon, $code, $msg );
+			}
+
+		}
+	}
+
+	/**
+	 * Removes coupon and displays validation message
+	 *
+	 * @param object $coupon
+	 * @param string $code
+	 */
+	public function remove_coupon( $coupon, $code, $msg ) {
+
 		// Filter to change validation text
-		$msg = apply_filters( 'wcncc-coupon-removed-message-with-code', $msg, $code, $coupon );
+		$msg = apply_filters( 'woocommerce-new-customer-coupons-removed-message-with-code', $msg, $code, $coupon );
 
 		// Throw a notice to stop checkout
 		wc_add_notice( $msg, 'error' );
