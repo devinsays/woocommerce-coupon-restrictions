@@ -41,7 +41,8 @@ class WC_New_Customer_Coupons {
 	public function init() {
 
 		// Adds metabox to usage restriction fields
-		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'coupon_restrictions' ) );
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ) );
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ) );
 
 		// Saves the metabox
 		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save' ) );
@@ -55,11 +56,11 @@ class WC_New_Customer_Coupons {
 	}
 
 	/**
-	 * Adds "new customer" restriction checkbox
+	 * Adds "new customer" and "existing customer" restriction checkboxes
 	 *
 	 * @return void
 	 */
-	public function coupon_restrictions() {
+	public function customer_restrictions() {
 
 		echo '<div class="options_group">';
 
@@ -81,6 +82,46 @@ class WC_New_Customer_Coupons {
 
 		echo '</div>';
 
+	}
+
+	/**
+	 * Adds country restriction
+	 *
+	 * @return void
+	 */
+	public function location_restrictions() {
+
+		$id = 'country_restiction';
+		$title = __( 'Limit Countries', 'woocommerce-new-customer-coupons' );
+		$value['options'] = array();
+		$description = '';
+
+		echo '<div class="options_group">';
+		echo '<p class="form-field ' . $id . '_only_field">';
+
+			$selections = array();
+			if ( ! empty( $value['options'] ) ) {
+				$countries = $value['options'];
+			} else {
+				$countries = WC()->countries->countries;
+			}
+			asort( $countries );
+			?>
+			<label for="<?php echo esc_attr( $id ); ?>">
+				<?php echo esc_html( $title ); ?>
+			</label>
+			<select multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-new-customer-coupons' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce' ) ?>" class="wc-enhanced-select">
+				<?php
+					if ( ! empty( $countries ) ) {
+						foreach ( $countries as $key => $val ) {
+							echo '<option value="' . esc_attr( $key ) . '" ' . selected( in_array( $key, $selections ), true, false ) . '>' . $val . '</option>';
+						}
+					}
+				?>
+			</select>
+			<?php
+		echo '</p>';
+		echo '</div>';
 	}
 
 	/**
