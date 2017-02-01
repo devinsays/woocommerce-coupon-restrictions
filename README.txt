@@ -26,6 +26,10 @@ This extension checks e-mail addresses of existing customers by converting to al
 
 == Changelog ==
 
+= 1.3.0 =
+
+* Update: Added option to restrict to existing customers.
+
 = 1.2.0 =
 
 * Fix: Compatibility updates for WooCommerce 2.6.8
@@ -34,7 +38,7 @@ This extension checks e-mail addresses of existing customers by converting to al
 
 * Fix: Coupons without the new customer restriction were improperly marked invalid for logged in users.
 * Fix: Filter woocommerce_coupon_is_valid in addition to woocommerce_coupon_error.
-* Update: Add unit tests.
+* Update: Unit tests added.
 
 = 1.0.0 =
 
