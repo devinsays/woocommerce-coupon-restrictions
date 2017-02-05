@@ -91,26 +91,27 @@ class WC_New_Customer_Coupons {
 	 */
 	public function location_restrictions() {
 
-		$id = 'country_restiction';
+		global $post;
+
+		$id = 'country_restriction';
 		$title = __( 'Limit Countries', 'woocommerce-new-customer-coupons' );
-		$value['options'] = array();
+		$values = get_post_meta( $post->ID, $id, true );
 		$description = '';
 
 		echo '<div class="options_group">';
 		echo '<p class="form-field ' . $id . '_only_field">';
 
 			$selections = array();
-			if ( ! empty( $value['options'] ) ) {
-				$countries = $value['options'];
-			} else {
-				$countries = WC()->countries->countries;
+			if ( ! empty( $values ) ) {
+				$selections = $values;
 			}
+			$countries = WC()->countries->countries;
 			asort( $countries );
 			?>
 			<label for="<?php echo esc_attr( $id ); ?>">
 				<?php echo esc_html( $title ); ?>
 			</label>
-			<select multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-new-customer-coupons' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce' ) ?>" class="wc-enhanced-select">
+			<select multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-new-customer-coupons' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce-new-customer-coupons' ) ?>" class="wc-enhanced-select">
 				<?php
 					if ( ! empty( $countries ) ) {
 						foreach ( $countries as $key => $val ) {
@@ -134,10 +135,12 @@ class WC_New_Customer_Coupons {
 		// Sanitize meta
 		$new_customers_only = isset( $_POST['new_customers_only'] ) ? 'yes' : 'no';
 		$existing_customers_only = isset( $_POST['existing_customers_only'] ) ? 'yes' : 'no';
+		$country_restriction = array_filter( array_map( 'wc_clean', (array) $_POST['country_restriction'] ) );
 
 		// Save meta
 		update_post_meta( $post_id, 'new_customers_only', $new_customers_only );
 		update_post_meta( $post_id, 'existing_customers_only', $existing_customers_only );
+		update_post_meta( $post_id, 'country_restriction', $country_restriction );
 
 	}
 
