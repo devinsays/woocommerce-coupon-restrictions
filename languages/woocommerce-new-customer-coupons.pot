@@ -29,15 +29,31 @@ msgid "New customers only"
 msgstr ""
 
 #: new-customer-coupons.php:70
-msgid "Verifies that customer e-mail address has not been used previously."
+msgid "Verifies customer e-mail address <b>has not</b> been used previously."
 msgstr ""
 
-#: new-customer-coupons.php:132
+#: new-customer-coupons.php:77
+msgid "Existing customers only"
+msgstr ""
+
+#: new-customer-coupons.php:78
+msgid "Verifies customer e-mail address has been used previously."
+msgstr ""
+
+#: new-customer-coupons.php:185
 msgid "Coupon removed. This coupon is only valid for new customers."
 msgstr ""
 
-#: new-customer-coupons.php:194
+#: new-customer-coupons.php:203
+msgid "Coupon removed. This coupon is only valid for existing customers."
+msgstr ""
+
+#: new-customer-coupons.php:253
 msgid "Coupon removed. Code \"%s\" is only valid for new customers."
+msgstr ""
+
+#: new-customer-coupons.php:285
+msgid "Coupon removed. Code \"%s\" is only valid for existing customers."
 msgstr ""
 
 #. Plugin Name of the plugin/theme
