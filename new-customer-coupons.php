@@ -93,8 +93,8 @@ class WC_New_Customer_Coupons {
 
 		global $post;
 
-		$id = 'country_restriction';
-		$title = __( 'Limit Countries', 'woocommerce-new-customer-coupons' );
+		$id = 'shipping_country_restriction';
+		$title = __( 'Limit Countries (Shipping)', 'woocommerce-new-customer-coupons' );
 		$values = get_post_meta( $post->ID, $id, true );
 		$description = '';
 
@@ -135,12 +135,12 @@ class WC_New_Customer_Coupons {
 		// Sanitize meta
 		$new_customers_only = isset( $_POST['new_customers_only'] ) ? 'yes' : 'no';
 		$existing_customers_only = isset( $_POST['existing_customers_only'] ) ? 'yes' : 'no';
-		$country_restriction = array_filter( array_map( 'wc_clean', (array) $_POST['country_restriction'] ) );
+		$shipping_country_restriction = array_filter( array_map( 'wc_clean', (array) $_POST['shipping_country_restriction'] ) );
 
 		// Save meta
 		update_post_meta( $post_id, 'new_customers_only', $new_customers_only );
 		update_post_meta( $post_id, 'existing_customers_only', $existing_customers_only );
-		update_post_meta( $post_id, 'country_restriction', $country_restriction );
+		update_post_meta( $post_id, 'shipping_country_restriction', $shipping_country_restriction );
 
 	}
 
@@ -279,6 +279,12 @@ class WC_New_Customer_Coupons {
 						$this->check_existing_customer_coupon_checkout( $coupon, $code );
 					}
 
+					// Check country restrictions
+					$shipping_country_restriction = get_post_meta( $coupon->id, 'shipping_country_restriction', true );
+					if ( ! empty( $shipping_country_restriction ) ) {
+						$this->check_shipping_country_restriction_checkout( $coupon, $code );
+					}
+
 				}
 			}
 		}
@@ -348,6 +354,29 @@ class WC_New_Customer_Coupons {
 			}
 
 		}
+	}
+
+	/**
+	 * Validates country restrictions on checkout
+	 *
+	 * @param object $coupon
+	 * @param string $code
+	 */
+	public function check_shipping_country_restriction_checkout( $coupon, $code ) {
+
+		// Validation message
+		$msg = sprintf( __( 'Coupon removed. Code "%s" is not valid in your shipping country.', 'woocommerce-new-customer-coupons' ), $code );
+
+		error_log( print_r( $posted, true ) );
+
+		// Check against shipping country
+		$country = strtolower( $posted['shipping_country'] );
+		$restrictions = get_post_meta( $coupon->id, 'shipping_country_restriction', true );
+		if ( ! array_key_exists( $country, $restrictions ) ) {
+			$this->remove_coupon( $coupon, $code, $msg );
+		}
+
+
 	}
 
 	/**
