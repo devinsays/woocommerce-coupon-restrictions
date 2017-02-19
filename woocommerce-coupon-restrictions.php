@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: WooCommerce New Customer Coupons
- * Plugin URI: http://github.com/devinsays/woocommerce-new-customer-coupons
+ * Plugin Name: WooCommerce Coupon Restrictions
+ * Plugin URI: http://github.com/devinsays/woocommerce-coupon-restrictions
  * Description: Allows coupons to be restricted to new customers or existing customers.
  * Version: 1.1.0
  * Author: DevPress
  * Author URI: https://devpress.com
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain: woocommerce-new-customer-coupons
+ * Text Domain: woocommerce-coupon-restrictions
  * Domain Path: /languages
  *
  */
@@ -18,9 +18,9 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if ( ! class_exists( 'WC_New_Customer_Coupons' ) ) :
+if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 
-class WC_New_Customer_Coupons {
+class WC_Coupon_Restrictions {
 
 	/**
 	* Construct the plugin.
@@ -28,7 +28,7 @@ class WC_New_Customer_Coupons {
 	public function __construct() {
 
 		// Load translations
-		load_plugin_textdomain( 'woocommerce-new-customer-coupons', false, dirname( plugin_basename(__FILE__) ) . '/languages/' );
+		load_plugin_textdomain( 'woocommerce-coupon-restrictions', false, dirname( plugin_basename(__FILE__) ) . '/languages/' );
 
 		// Fire up the plugin!
 		add_action( 'plugins_loaded', array( $this, 'init' ) );
@@ -67,16 +67,16 @@ class WC_New_Customer_Coupons {
 		woocommerce_wp_checkbox(
 			array(
 				'id' => 'new_customers_only',
-				'label' => __( 'New customers only', 'woocommerce-new-customer-coupons' ),
-				'description' => __( 'Verifies customer e-mail address <b>has not</b> been used previously.', 'woocommerce-new-customer-coupons' )
+				'label' => __( 'New customers only', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Verifies customer e-mail address <b>has not</b> been used previously.', 'woocommerce-coupon-restrictions' )
 			)
 		);
 
 		woocommerce_wp_checkbox(
 			array(
 				'id' => 'existing_customers_only',
-				'label' => __( 'Existing customers only', 'woocommerce-new-customer-coupons' ),
-				'description' => __( 'Verifies customer e-mail address has been used previously.', 'woocommerce-new-customer-coupons' )
+				'label' => __( 'Existing customers only', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Verifies customer e-mail address has been used previously.', 'woocommerce-coupon-restrictions' )
 			)
 		);
 
@@ -94,7 +94,7 @@ class WC_New_Customer_Coupons {
 		global $post;
 
 		$id = 'shipping_country_restriction';
-		$title = __( 'Limit Countries (Shipping)', 'woocommerce-new-customer-coupons' );
+		$title = __( 'Limit Countries (Shipping)', 'woocommerce-coupon-restrictions' );
 		$values = get_post_meta( $post->ID, $id, true );
 		$description = '';
 
@@ -111,7 +111,7 @@ class WC_New_Customer_Coupons {
 			<label for="<?php echo esc_attr( $id ); ?>">
 				<?php echo esc_html( $title ); ?>
 			</label>
-			<select multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-new-customer-coupons' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce-new-customer-coupons' ) ?>" class="wc-enhanced-select">
+			<select multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
 				<?php
 					if ( ! empty( $countries ) ) {
 						foreach ( $countries as $key => $val ) {
@@ -226,8 +226,8 @@ class WC_New_Customer_Coupons {
 		// Alter the validation message if coupon has been removed
 		if ( 100 == $err_code ) {
 			// Validation message
-			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-new-customer-coupons' );
-			$err = apply_filters( 'woocommerce-new-customer-coupons-removed-message', $msg );
+			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-coupon-restrictions' );
+			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
 		// Return validation message
@@ -244,8 +244,8 @@ class WC_New_Customer_Coupons {
 		// Alter the validation message if coupon has been removed
 		if ( 100 == $err_code ) {
 			// Validation message
-			$msg = __( 'Coupon removed. This coupon is only valid for existing customers.', 'woocommerce-new-customer-coupons' );
-			$err = apply_filters( 'woocommerce-new-customer-coupons-removed-message', $msg );
+			$msg = __( 'Coupon removed. This coupon is only valid for existing customers.', 'woocommerce-coupon-restrictions' );
+			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
 		// Return validation message
@@ -299,7 +299,7 @@ class WC_New_Customer_Coupons {
 	public function check_new_customer_coupon_checkout( $coupon, $code ) {
 
 		// Validation message
-		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for new customers.', 'woocommerce-new-customer-coupons' ), $code );
+		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for new customers.', 'woocommerce-coupon-restrictions' ), $code );
 
 		// Check if order is for returning customer
 		if ( is_user_logged_in() ) {
@@ -332,7 +332,7 @@ class WC_New_Customer_Coupons {
 	public function check_existing_customer_coupon_checkout( $coupon, $code ) {
 
 		// Validation message
-		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for existing customers.', 'woocommerce-new-customer-coupons' ), $code );
+		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $code );
 
 		// Check if order is for returning customer
 		if ( is_user_logged_in() ) {
@@ -365,7 +365,7 @@ class WC_New_Customer_Coupons {
 	public function check_shipping_country_restriction_checkout( $coupon, $code ) {
 
 		// Validation message
-		$msg = sprintf( __( 'Coupon removed. Code "%s" is not valid in your shipping country.', 'woocommerce-new-customer-coupons' ), $code );
+		$msg = sprintf( __( 'Coupon removed. Code "%s" is not valid in your shipping country.', 'woocommerce-coupon-restrictions' ), $code );
 
 		error_log( print_r( $posted, true ) );
 
@@ -388,7 +388,7 @@ class WC_New_Customer_Coupons {
 	public function remove_coupon( $coupon, $code, $msg ) {
 
 		// Filter to change validation text
-		$msg = apply_filters( 'woocommerce-new-customer-coupons-removed-message-with-code', $msg, $code, $coupon );
+		$msg = apply_filters( 'woocommerce-coupon-restrictions-removed-message-with-code', $msg, $code, $coupon );
 
 		// Throw a notice to stop checkout
 		wc_add_notice( $msg, 'error' );
@@ -431,6 +431,6 @@ class WC_New_Customer_Coupons {
 
 }
 
-new WC_New_Customer_Coupons();
+new WC_Coupon_Restrictions();
 
 endif;

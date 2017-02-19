@@ -1,5 +1,5 @@
 {
-	"name": "woocommerce-new-customer-coupons",
+	"name": "woocommerce-coupon-restrictions",
 	"version": "1.3.0",
 	"devDependencies": {
 		"grunt": "~0.4.5",
