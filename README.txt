@@ -2,13 +2,13 @@
 
 Contributors: @downstairsdev
 Tags: woocommerce, coupon
-Requires at least: 4.6.1
-Tested up to: 4.6.1
+Requires at least: 4.7.0
+Tested up to: 4.7.0
 Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-WC requires at least: 2.6.0
-WC tested up to: 2.6.8
+WC requires at least: 2.7.0
+WC tested up to: 2.7.0
 
 == Description ==
 
@@ -30,24 +30,24 @@ This extension checks e-mail addresses of existing customers by converting to al
 
 == Compatibility ==
 
-* Requires WooCommerce 2.6.0 or later
-* Tested to WooCommerce 2.7.0
+* Requires WooCommerce 2.7.0 or later
 
 == Changelog ==
 
 = 1.3.0 =
 
 * Update: Added option to restrict to existing customers.
+* Update: Added option to restrict by shipping country.
+* Update: Compatibility updates for WooCommerce 2.7.0
 
 = 1.2.0 =
 
-* Fix: Compatibility updates for WooCommerce 2.6.8
+* Update: Compatibility updates for WooCommerce 2.6.8
 
 = 1.1.0 =
 
 * Fix: Coupons without the new customer restriction were improperly marked invalid for logged in users.
 * Fix: Filter woocommerce_coupon_is_valid in addition to woocommerce_coupon_error.
-* Update: Unit tests added.
 
 = 1.0.0 =
 

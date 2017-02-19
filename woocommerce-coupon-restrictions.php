@@ -162,13 +162,13 @@ class WC_Coupon_Restrictions {
 		}
 
 		// Validate new customer restriction
-		$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
+		$new_customers_restriction = $coupon->get_meta( 'new_customers_only', true );
 		if ( 'yes' == $new_customers_restriction ) {
 			$valid = $this->validate_new_customer_coupon();
 		}
 
 		// Validate existing customer restriction
-		$existing_customers_restriction = get_post_meta( $coupon->id, 'existing_customers_only', true );
+		$existing_customers_restriction = $coupon->get_meta( 'existing_customers_only', true );
 		if ( 'yes' == $existing_customers_restriction ) {
 			$valid = $this->validate_existing_customer_coupon();
 		}
@@ -188,8 +188,7 @@ class WC_Coupon_Restrictions {
 		$current_user = wp_get_current_user();
 		$customer = new WC_Customer( $current_user->ID );
 
-		if ( $customer->is_paying_customer( $current_user->ID ) ) {
-			error_log( 'is_paying_customer true' );
+		if ( $customer->get_is_paying_customer() ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_new_customer_restriction' ), 10, 2 );
 			return false;
 		}
@@ -208,7 +207,7 @@ class WC_Coupon_Restrictions {
 		$current_user = wp_get_current_user();
 		$customer = new WC_Customer( $current_user->ID );
 
-		if ( ! $customer->is_paying_customer( $current_user->ID ) ) {
+		if ( ! $customer->get_is_paying_customer() ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_existing_customer_restriction' ), 10, 2 );
 			return false;
 		}
@@ -268,19 +267,20 @@ class WC_Coupon_Restrictions {
 				if ( $coupon->is_valid() ) {
 
 					// Check if coupon is restricted to new customers.
-					$new_customers_restriction = get_post_meta( $coupon->id, 'new_customers_only', true );
+					$new_customers_restriction = $coupon->get_meta( 'new_customers_only', true );
+
 					if ( 'yes' === $new_customers_restriction ) {
 						$this->check_new_customer_coupon_checkout( $coupon, $code );
 					}
 
 					// Check if coupon is restricted to existing customers.
-					$existing_customers_restriction = get_post_meta( $coupon->id, 'existing_customers_only', true );
+					$existing_customers_restriction = $coupon->get_meta( 'existing_customers_only', true );
 					if ( 'yes' === $existing_customers_restriction ) {
 						$this->check_existing_customer_coupon_checkout( $coupon, $code );
 					}
 
 					// Check country restrictions
-					$shipping_country_restriction = get_post_meta( $coupon->id, 'shipping_country_restriction', true );
+					$shipping_country_restriction = $coupon->get_meta( 'shipping_country_restriction', true );
 					if ( ! empty( $shipping_country_restriction ) ) {
 						$this->check_shipping_country_restriction_checkout( $coupon, $code );
 					}
@@ -308,7 +308,7 @@ class WC_Coupon_Restrictions {
 			$current_user = wp_get_current_user();
 			$customer = new WC_Customer( $current_user->ID );
 
-			if ( $customer->is_paying_customer ) {
+			if ( $customer->get_is_paying_customer() ) {
 				$this->remove_coupon( $coupon, $code, $msg );
 			}
 
@@ -341,7 +341,7 @@ class WC_Coupon_Restrictions {
 			$current_user = wp_get_current_user();
 			$customer = new WC_Customer( $current_user->ID );
 
-			if ( ! $customer->is_paying_customer ) {
+			if ( ! $customer->get_is_paying_customer() ) {
 				$this->remove_coupon( $coupon, $code, $msg );
 			}
 
