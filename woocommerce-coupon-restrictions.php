@@ -135,7 +135,8 @@ class WC_Coupon_Restrictions {
 		// Sanitize meta
 		$new_customers_only = isset( $_POST['new_customers_only'] ) ? 'yes' : 'no';
 		$existing_customers_only = isset( $_POST['existing_customers_only'] ) ? 'yes' : 'no';
-		$shipping_country_restriction = array_filter( array_map( 'wc_clean', (array) $_POST['shipping_country_restriction'] ) );
+		$shipping_country_restriction_select = isset( $_POST['shipping_country_restriction'] ) ? $_POST['shipping_country_restriction'] : array();
+		$shipping_country_restriction = array_filter( array_map( 'wc_clean', (array) $shipping_country_restriction_select ) );
 
 		// Save meta
 		update_post_meta( $post_id, 'new_customers_only', $new_customers_only );
@@ -366,8 +367,6 @@ class WC_Coupon_Restrictions {
 
 		// Validation message
 		$msg = sprintf( __( 'Coupon removed. Code "%s" is not valid in your shipping country.', 'woocommerce-coupon-restrictions' ), $code );
-
-		error_log( print_r( $posted, true ) );
 
 		// Check against shipping country
 		$country = strtolower( $posted['shipping_country'] );
