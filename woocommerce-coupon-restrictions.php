@@ -136,7 +136,7 @@ class WC_Coupon_Restrictions {
 		$new_customers_only = isset( $_POST['new_customers_only'] ) ? 'yes' : 'no';
 		$existing_customers_only = isset( $_POST['existing_customers_only'] ) ? 'yes' : 'no';
 		$shipping_country_restriction_select = isset( $_POST['shipping_country_restriction'] ) ? $_POST['shipping_country_restriction'] : array();
-		$shipping_country_restriction = array_filter( array_map( 'wc_clean', (array) $shipping_country_restriction_select ) );
+		$shipping_country_restriction = array_filter( array_map( 'wc_clean', $shipping_country_restriction_select ) );
 
 		// Save meta
 		update_post_meta( $post_id, 'new_customers_only', $new_customers_only );
@@ -152,6 +152,8 @@ class WC_Coupon_Restrictions {
 	 */
 	public function validate_coupons( $valid, $coupon ) {
 
+		error_log( 'validating coupon of logged out customer' );
+
 		// If coupon already marked invalid, no sense in moving forward.
 		if ( ! $valid ) {
 			return $valid;
@@ -166,6 +168,7 @@ class WC_Coupon_Restrictions {
 		$new_customers_restriction = $coupon->get_meta( 'new_customers_only', true );
 		if ( 'yes' == $new_customers_restriction ) {
 			$valid = $this->validate_new_customer_coupon();
+			error_log( $valid );
 		}
 
 		// Validate existing customer restriction
@@ -184,6 +187,8 @@ class WC_Coupon_Restrictions {
 	 * @return void
 	 */
 	public function validate_new_customer_coupon() {
+
+		error_log( 'validating coupon of logged in customer: ' + $coupon );
 
 		// If current customer is an existing customer, return false
 		$current_user = wp_get_current_user();
@@ -316,7 +321,7 @@ class WC_Coupon_Restrictions {
 		} else {
 
 			// If user is not logged in, we can check against previous orders.
-			$email = strtolower( $posted['billing_email'] );
+			$email = strtolower( $_POST['billing_email'] );
 			if ( $this->is_returning_customer( $email ) ) {
 				$this->remove_coupon( $coupon, $code, $msg );
 			}
@@ -348,8 +353,10 @@ class WC_Coupon_Restrictions {
 
 		} else {
 
+			error_log( print_r( $_POST ) );
+
 			// If user is not logged in, we can check against previous orders.
-			$email = strtolower( $posted['billing_email'] );
+			$email = strtolower( $_POST['billing_email'] );
 			if ( ! $this->is_returning_customer( $email ) ) {
 				$this->remove_coupon( $coupon, $code, $msg );
 			}
@@ -365,12 +372,14 @@ class WC_Coupon_Restrictions {
 	 */
 	public function check_shipping_country_restriction_checkout( $coupon, $code ) {
 
+		error_log( print_r( $_POST ) );
+
 		// Validation message
 		$msg = sprintf( __( 'Coupon removed. Code "%s" is not valid in your shipping country.', 'woocommerce-coupon-restrictions' ), $code );
 
 		// Check against shipping country
-		$country = strtolower( $posted['shipping_country'] );
-		$restrictions = get_post_meta( $coupon->id, 'shipping_country_restriction', true );
+		$country = strtolower( $_POST['shipping_country'] );
+		$restrictions = $coupon->get_meta( 'shipping_country_restriction', true );
 		if ( ! array_key_exists( $country, $restrictions ) ) {
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
