@@ -398,14 +398,24 @@ class WC_Coupon_Restrictions {
 		// Filter to change validation text
 		$msg = apply_filters( 'woocommerce-coupon-restrictions-removed-message-with-code', $msg, $code, $coupon );
 
-		// Throw a notice to stop checkout
-		wc_add_notice( $msg, 'error' );
+		if ( wp_doing_ajax() ) {
 
-		// Remove the coupon
-		WC()->cart->remove_coupon( $code );
+			// Runs the ajax to remove the coupon from checkout
+			// How the F can we get this to work?
+			// https://github.com/woocommerce/woocommerce/blob/master/includes/class-wc-ajax.php
 
-		// Flag totals for refresh
-		WC()->session->set( 'refresh_totals', true );
+		} else {
+
+			// Remove the coupon
+			WC()->cart->remove_coupon( $code );
+
+			// Throw a notice to stop checkout
+			wc_add_notice( $msg, 'error' );
+
+			// Flag totals for refresh
+			WC()->session->set( 'refresh_totals', true );
+
+		}
 
 	}
 
