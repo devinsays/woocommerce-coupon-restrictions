@@ -4,15 +4,15 @@ Contributors: @downstairsdev
 Tags: woocommerce, coupon
 Requires at least: 4.7.0
 Tested up to: 4.7.0
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-WC requires at least: 2.7.0
-WC tested up to: 2.7.0
+WC requires at least: 3.2.1
+WC tested up to: 3.2.1
 
 == Description ==
 
-This extension allows you to create coupons with addition restriction options: new customers only, existing customers only, and shipping country. If you require addition coupon restrictions, let us know.
+This extension allows you to create coupons with addition restriction options: new customers only, existing customers only, and shipping country.
 
 New customer restriction: If a customer is logged in, the plugin will verify that they haven't purchased anything from the site before allowing the coupon to be applied. For customers that aren't logged in, the coupon verification runs right before checkout once the e-mail address has been entered.
 
@@ -30,7 +30,7 @@ This extension checks e-mail addresses of existing customers by converting to al
 
 == Compatibility ==
 
-* Requires WooCommerce 2.7.0 or later
+* Requires WooCommerce 3.2.1 or later.
 
 == Changelog ==
 
