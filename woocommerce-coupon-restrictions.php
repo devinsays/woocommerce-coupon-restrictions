@@ -56,7 +56,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Adds "new customer" and "existing customer" restriction checkboxes
+		 * Adds "new customer" and "existing customer" restriction checkboxes.
 		 *
 		 * @return void
 		 */
@@ -85,7 +85,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Adds country restriction
+		 * Adds country restriction.
 		 *
 		 * @return void
 		 */
@@ -127,7 +127,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Saves post meta for "new customer" restriction
+		 * Saves post meta for "new customer" restriction.
 		 *
 		 * @return void
 		 */
@@ -147,7 +147,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Validates coupon when added (if possible due to log in state)
+		 * Validates coupon when added (if possible due to log in state).
 		 *
 		 * @return void
 		 */
@@ -180,7 +180,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * If user is logged in, validates new customer coupon
+		 * If user is logged in, validates new customer coupon.
 		 *
 		 * @return void
 		 */
@@ -199,7 +199,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * If user is logged in, validates existing cutomer coupon
+		 * If user is logged in, validates existing cutomer coupon.
 		 *
 		 * @return void
 		 */
@@ -218,7 +218,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Applies new customer coupon error message
+		 * Applies new customer coupon error message.
 		 *
 		 * @return $err error message
 		 */
@@ -236,7 +236,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Applies existing customer coupon error message
+		 * Applies existing customer coupon error message.
 		 *
 		 * @return $err error message
 		 */
@@ -293,7 +293,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Validates new customer coupon on checkout
+		 * Validates new customer coupon on checkout.
 		 *
 		 * @param object $coupon
 		 * @param string $code
@@ -326,7 +326,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Validates existing customer coupon on checkout
+		 * Validates existing customer coupon on checkout.
 		 *
 		 * @param object $coupon
 		 * @param string $code
@@ -359,7 +359,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Validates country restrictions on checkout
+		 * Validates country restrictions on checkout.
 		 *
 		 * @param object $coupon
 		 * @param string $code
@@ -391,7 +391,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 		/**
-		 * Removes coupon and displays validation message
+		 * Removes coupon and displays validation message.
 		 *
 		 * @param object $coupon
 		 * @param string $code
@@ -415,21 +415,16 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		/**
 		 * Checks if e-mail address has been used previously for a purchase.
 		 *
-		 * @returns boolean
+		 * @param string $email of customer
+		 * @return boolean
 		 */
 		public function is_returning_customer( $email ) {
 
-			$customer_orders = get_posts( array(
-				'post_type'   => 'shop_order',
-				'meta_key'    => '_billing_email',
-				'post_status' => 'publish',
-				'post_status' => array( 'wc-processing', 'wc-completed' ),
-				'meta_value'  => $email,
-				'numberposts' => 1,
-				'cache_results' => false,
-				'no_found_rows' => true,
-				'fields' => 'ids',
-			) );
+			$customer_orders = wc_get_orders(
+				'status' => array( 'wc-processing', 'wc-completed' ),
+				'email'  => $email,
+				'limit'  => 1
+			);
 
 			// If there is at least one other order by billing e-mail
 			if ( 1 === count( $customer_orders ) ) {

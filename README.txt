@@ -34,6 +34,10 @@ This extension checks e-mail addresses of existing customers by converting to al
 
 == Changelog ==
 
+= Development =
+
+* Update: Use WooCommerce order wrapper to fetch orders.
+
 = 1.3.0 =
 
 * Update: Added option to restrict to existing customers.
