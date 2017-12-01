@@ -420,11 +420,11 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		 */
 		public function is_returning_customer( $email ) {
 
-			$customer_orders = wc_get_orders(
+			$customer_orders = wc_get_orders( array(
 				'status' => array( 'wc-processing', 'wc-completed' ),
 				'email'  => $email,
 				'limit'  => 1
-			);
+			) );
 
 			// If there is at least one other order by billing e-mail
 			if ( 1 === count( $customer_orders ) ) {
