@@ -45,15 +45,16 @@ class WC_Coupon_Restrictions_Validation {
 			return $valid;
 		}
 
-		// Validate new customer restriction
-		$new_customers_restriction = $coupon->get_meta( 'new_customers_only', true );
-		if ( 'yes' == $new_customers_restriction ) {
+		// Get customer restriction type meta.
+		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
+
+		// Validate new customer restriction.
+		if ( 'new' == $customer_restriction_type ) {
 			$valid = $this->validate_new_customer_coupon();
 		}
 
-		// Validate existing customer restriction
-		$existing_customers_restriction = $coupon->get_meta( 'existing_customers_only', true );
-		if ( 'yes' == $existing_customers_restriction ) {
+		// Validate existing customer restriction.
+		if ( 'existing' == $existing_customers_restriction ) {
 			$valid = $this->validate_existing_customer_coupon();
 		}
 
@@ -68,7 +69,7 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function validate_new_customer_coupon() {
 
-		// If current customer is an existing customer, return false
+		// If current customer is an existing customer, return false.
 		$current_user = wp_get_current_user();
 		$customer = new WC_Customer( $current_user->ID );
 
@@ -87,7 +88,7 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function validate_existing_customer_coupon() {
 
-		// If current customer is not an existing customer, return false
+		// If current customer is not an existing customer, return false.
 		$current_user = wp_get_current_user();
 		$customer = new WC_Customer( $current_user->ID );
 
@@ -106,7 +107,7 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function validation_message_new_customer_restriction( $err, $err_code ) {
 
-		// Alter the validation message if coupon has been removed
+		// Alter the validation message if coupon has been removed.
 		if ( 100 == $err_code ) {
 			// Validation message
 			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-coupon-restrictions' );
@@ -124,14 +125,14 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function validation_message_existing_customer_restriction( $err, $err_code ) {
 
-		// Alter the validation message if coupon has been removed
+		// Alter the validation message if coupon has been removed.
 		if ( 100 == $err_code ) {
 			// Validation message
 			$msg = __( 'Coupon removed. This coupon is only valid for existing customers.', 'woocommerce-coupon-restrictions' );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
-		// Return validation message
+		// Return validation message.
 		return $err;
 	}
 
@@ -150,17 +151,17 @@ class WC_Coupon_Restrictions_Validation {
 
 				if ( $coupon->is_valid() ) {
 
-					// Check if coupon is restricted to new customers.
-					$new_customers_restriction = $coupon->get_meta( 'new_customers_only', true );
+					// Get customer restriction type meta.
+					$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 
-					if ( 'yes' === $new_customers_restriction ) {
-						$this->check_new_customer_coupon_checkout( $coupon, $code );
+					// Check if coupon is restricted to new customers.
+					if ( 'new' == $customer_restriction_type ) {
+						$valid = $this->check_new_customer_coupon_checkout();
 					}
 
 					// Check if coupon is restricted to existing customers.
-					$existing_customers_restriction = $coupon->get_meta( 'existing_customers_only', true );
-					if ( 'yes' === $existing_customers_restriction ) {
-						$this->check_existing_customer_coupon_checkout( $coupon, $code );
+					if ( 'existing' == $existing_customers_restriction ) {
+						$valid = $this->check_existing_customer_coupon_checkout();
 					}
 
 					// Check country restrictions
@@ -217,10 +218,10 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function check_existing_customer_coupon_checkout( $coupon, $code ) {
 
-		// Validation message
+		// Validation message.
 		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $code );
 
-		// Check if order is for returning customer
+		// Check if order is for returning customer.
 		if ( is_user_logged_in() ) {
 
 			// If user is logged in, we can check for paying_customer meta.
@@ -251,22 +252,22 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function check_shipping_country_restriction_checkout( $coupon, $code ) {
 
-		// Validation message
+		// Validation message.
 		$msg = sprintf( __( 'Coupon removed. Code "%s" is not valid in your shipping country.', 'woocommerce-coupon-restrictions' ), $code );
 
 		if ( isset( $_POST['shipping_country'] ) ) {
-			// Get shipping country if it exists
+			// Get shipping country if it exists.
 			$country = esc_textarea( $_POST['shipping_country'] );
 		} elseif ( isset( $_POST['billing_country'] ) ) {
 			// Some sites don't have separate billing vs shipping option
-			// In that case we use the billing_country
+			// In that case we use the billing_country.
 			$country = esc_textarea( $_POST['billing_country'] );
 		} else {
-			// Fallback if we can't determine shipping or billing country
+			// Fallback if we can't determine shipping or billing country.
 			$country = '';
 		}
 
-		// Get the allowed countries from coupon meta
+		// Get the allowed countries from coupon meta.
 		$allowed_countries = $coupon->get_meta( 'shipping_country_restriction', true );
 
 		if ( ! in_array( $country, $allowed_countries ) ) {
@@ -284,16 +285,16 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function remove_coupon( $coupon, $code, $msg ) {
 
-		// Filter to change validation text
+		// Filter to change validation text.
 		$msg = apply_filters( 'woocommerce-coupon-restrictions-removed-message-with-code', $msg, $code, $coupon );
 
-		// Remove the coupon
+		// Remove the coupon.
 		WC()->cart->remove_coupon( $code );
 
-		// Throw a notice to stop checkout
+		// Throw a notice to stop checkout.
 		wc_add_notice( $msg, 'error' );
 
-		// Flag totals for refresh
+		// Flag totals for refresh.
 		WC()->session->set( 'refresh_totals', true );
 
 	}
@@ -312,12 +313,12 @@ class WC_Coupon_Restrictions_Validation {
 			'limit'  => 1
 		) );
 
-		// If there is at least one other order by billing e-mail
+		// If there is at least one other order by billing e-mail.
 		if ( 1 === count( $customer_orders ) ) {
 			return true;
 		}
 
-		// Otherwise there should not be any orders
+		// Otherwise there should not be any orders.
 		return false;
 	}
 

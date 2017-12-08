@@ -20,11 +20,11 @@ class WC_Coupon_Restrictions_Admin {
 	*/
 	public static function init() {
 
-		// Adds metabox to usage restriction fields
+		// Adds metabox to usage restriction fields.
 		add_action( 'woocommerce_coupon_options_usage_restriction', __CLASS__ . '::customer_restrictions' );
 		add_action( 'woocommerce_coupon_options_usage_restriction', __CLASS__ . '::location_restrictions' );
 
-		// Saves the metabox
+		// Saves the metabox.
 		add_action( 'woocommerce_coupon_options_save', __CLASS__ . '::coupon_options_save' );
 
 	}
@@ -32,25 +32,25 @@ class WC_Coupon_Restrictions_Admin {
 	/**
 	 * Adds "new customer" and "existing customer" restriction checkboxes.
 	 *
+	 * @since  1.3.0
 	 * @return void
 	 */
 	public static function customer_restrictions() {
 
 		echo '<div class="options_group">';
 
-		woocommerce_wp_checkbox(
+		woocommerce_wp_select(
 			array(
-				'id' => 'new_customers_only',
-				'label' => __( 'New customers only', 'woocommerce-coupon-restrictions' ),
-				'description' => __( 'Verifies customer e-mail address <b>has not</b> been used previously.', 'woocommerce-coupon-restrictions' )
-			)
-		);
-
-		woocommerce_wp_checkbox(
-			array(
-				'id' => 'existing_customers_only',
-				'label' => __( 'Existing customers only', 'woocommerce-coupon-restrictions' ),
-				'description' => __( 'Verifies customer e-mail address has been used previously.', 'woocommerce-coupon-restrictions' )
+				'id' => 'customer_restriction_type',
+				'label' => __( 'Purchase history', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Restricts coupon to new customers or existing customers based on purchase history.', 'woocommerce-coupon-restrictions' ),
+				'desc_tip' => true,
+				'class' => 'select',
+				'options' => array(
+					'none' => __( 'No restriction', 'woocommerce-coupon-restrictions' ),
+					'new' => __( 'New customers only', 'woocommerce-coupon-restrictions' ),
+					'existing' => __( 'Existing customers only', 'woocommerce-coupon-restrictions' ),
+				),
 			)
 		);
 
@@ -61,6 +61,7 @@ class WC_Coupon_Restrictions_Admin {
 	/**
 	 * Adds country restriction.
 	 *
+	 * @since  1.3.0
 	 * @return void
 	 */
 	public static function location_restrictions() {
@@ -103,19 +104,24 @@ class WC_Coupon_Restrictions_Admin {
 	/**
 	 * Saves post meta for "new customer" restriction.
 	 *
+	 * @since  1.3.0
+	 * @param $post_id Coupon post ID.
 	 * @return void
 	 */
 	public static function coupon_options_save( $post_id ) {
 
-		// Sanitize meta
-		$new_customers_only = isset( $_POST['new_customers_only'] ) ? 'yes' : 'no';
-		$existing_customers_only = isset( $_POST['existing_customers_only'] ) ? 'yes' : 'no';
+		// Sanitize customer restriction type meta.
+		$customer_restriction_type = isset( $_POST['customer_restriction_type'] ) ? $_POST['customer_restriction_type'] : 'none';
+		if ( ! in_array( $customer_restriction_type, array( 'new', 'existing', 'none' ) ) ) {
+			$customer_restriction_type = 'none';
+		}
+
+		// Sanitize country restriction meta.
 		$shipping_country_restriction_select = isset( $_POST['shipping_country_restriction'] ) ? $_POST['shipping_country_restriction'] : array();
 		$shipping_country_restriction = array_filter( array_map( 'wc_clean', $shipping_country_restriction_select ) );
 
-		// Save meta
-		update_post_meta( $post_id, 'new_customers_only', $new_customers_only );
-		update_post_meta( $post_id, 'existing_customers_only', $existing_customers_only );
+		// Save meta.
+		update_post_meta( $post_id, 'customer_restriction_type', $customer_restriction_type );
 		update_post_meta( $post_id, 'shipping_country_restriction', $shipping_country_restriction );
 
 	}

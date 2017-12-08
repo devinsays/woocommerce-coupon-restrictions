@@ -131,6 +131,12 @@ class WC_Coupon_Restrictions {
 	public function init_plugin() {
 		// Load translations.
 		load_plugin_textdomain( 'woocommerce-coupon-restrictions', false, dirname( plugin_basename(__FILE__) ) . '/languages/' );
+
+		// Upgrade routine.
+		$options = get_option( 'woocommerce-coupon-restrictions', false );
+		if ( false === $options ) {
+			$this->upgrade_routine();
+		}
 	}
 
 	/**
@@ -151,6 +157,69 @@ class WC_Coupon_Restrictions {
 		if ( ! is_admin() ) {
 			include_once( $this->plugin_path() . '/includes/class-wc-coupon-restrictions-validation.php' );
 		}
+
+	}
+
+	/**
+	 * Runs an upgrade routine.
+	 *
+	 * @access public
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function upgrade_routine() {
+
+		// Coupon meta keys changed between 1.3.0 and 1.4.0
+		// Instead of two checkboxes there is a single select option.
+		$args = array(
+			'post_type'  => 'shop_coupon',
+			'meta_query' => array(
+				'relation' => 'OR',
+				array(
+					'key'     => 'existing_customers_only',
+					'value'   => 'yes',
+					'compare' => '='
+				),
+				array(
+					'key'     => 'new_customers_only',
+					'value'   => 'yes',
+					'compare' => '='
+				)
+			)
+		);
+
+		// Query for all coupons that had customer restrictions set.
+		$coupon_query = new WP_Query( $args );
+		if ( $coupon_query->have_posts() ) {
+			while( $coupon_query->have_posts() ) {
+				$coupon_query->the_post();
+				$existing_customer = get_post_meta( get_the_ID(), 'existing_customers_only', true );
+				$new_customer = get_post_meta( get_the_ID(), 'new_customers_only', true );
+
+				$customer_restriction_type = 'none';
+				if ( 'yes' === $existing_customer && 'yes' == $new_customer ) {
+					// Coupon should not be set to both.
+					$customer_restriction_type = 'none';
+				} elseif ( 'yes' === $existing_customer ) {
+					$customer_restriction_type = 'existing';
+				} elseif ( 'yes' === $new_customer ) {
+					$customer_restriction_type = 'new';
+				}
+
+				error_log( get_the_ID() );
+
+				// Update to new meta field.
+				update_post_meta( get_the_ID(), 'customer_restriction_type', $customer_restriction_type );
+
+				// Clean up.
+				delete_post_meta( get_the_ID(), 'existing_customers_only' );
+				delete_post_meta( get_the_ID(), 'new_customers_only' );
+
+			}
+		}
+		wp_reset_postdata();
+
+		add_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 
 	}
 
