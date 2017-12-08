@@ -38,6 +38,7 @@ This extension checks e-mail addresses of existing customers by converting to al
 
 * Update: Use WooCommerce order wrapper to fetch orders.
 * Update: Organize plugin into multiple classes.
+* Update: Added option to restrict location based on shipping or billing address.
 
 = 1.3.0 =
 

@@ -169,8 +169,9 @@ class WC_Coupon_Restrictions {
 	 */
 	public function upgrade_routine() {
 
-		// Coupon meta keys changed between 1.3.0 and 1.4.0
-		// Instead of two checkboxes there is a single select option.
+		// Coupon meta keys changed between 1.3.0 and 1.4.0.
+		// Instead of two checkboxes there is a single select option for customer restrictions.
+		// An additional checkbox
 		$args = array(
 			'post_type'  => 'shop_coupon',
 			'meta_query' => array(
@@ -184,6 +185,10 @@ class WC_Coupon_Restrictions {
 					'key'     => 'new_customers_only',
 					'value'   => 'yes',
 					'compare' => '='
+				),
+				array(
+					'key'     => 'shipping_country_restriction',
+					'compare' => 'EXISTS'
 				)
 			)
 		);
@@ -192,6 +197,7 @@ class WC_Coupon_Restrictions {
 		$coupon_query = new WP_Query( $args );
 		if ( $coupon_query->have_posts() ) {
 			while( $coupon_query->have_posts() ) {
+
 				$coupon_query->the_post();
 				$existing_customer = get_post_meta( get_the_ID(), 'existing_customers_only', true );
 				$new_customer = get_post_meta( get_the_ID(), 'new_customers_only', true );
@@ -206,17 +212,20 @@ class WC_Coupon_Restrictions {
 					$customer_restriction_type = 'new';
 				}
 
-				error_log( get_the_ID() );
-
-				// Update to new meta field.
-				update_post_meta( get_the_ID(), 'customer_restriction_type', $customer_restriction_type );
-
-				// Clean up.
+				// Update customer_restriction_type field.
+				add_post_meta( get_the_ID(), 'customer_restriction_type', $customer_restriction_type, true );
 				delete_post_meta( get_the_ID(), 'existing_customers_only' );
 				delete_post_meta( get_the_ID(), 'new_customers_only' );
 
+				// Update shipping_country_restriction field.
+				$country_restriction = get_post_meta( get_the_ID(), 'shipping_country_restriction' );
+				if ( ! empty( $country_restriction ) ) {
+					add_post_meta( get_the_ID(), 'country_restriction', $country_restriction, true );
+				}
+
 			}
 		}
+
 		wp_reset_postdata();
 
 		add_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );

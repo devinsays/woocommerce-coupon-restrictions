@@ -68,12 +68,27 @@ class WC_Coupon_Restrictions_Admin {
 
 		global $post;
 
-		$id = 'shipping_country_restriction';
-		$title = __( 'Limit Countries (Shipping)', 'woocommerce-coupon-restrictions' );
+		echo '<div class="options_group">';
+
+		woocommerce_wp_select(
+			array(
+				'id' => 'address_for_location_restrictions',
+				'label' => __( 'Address', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Address to use for location restrictions.', 'woocommerce-coupon-restrictions' ),
+				'class' => 'select',
+				'options' => array(
+					'shipping' => __( 'Shipping', 'woocommerce-coupon-restrictions' ),
+					'billing' => __( 'Billing', 'woocommerce-coupon-restrictions' ),
+				),
+			)
+		);
+
+		// Country restriction.
+		$id = 'country_restriction';
+		$title = __( 'Limit Countries', 'woocommerce-coupon-restrictions' );
 		$values = get_post_meta( $post->ID, $id, true );
 		$description = '';
 
-		echo '<div class="options_group">';
 		echo '<p class="form-field ' . $id . '_only_field">';
 
 			$selections = array();
@@ -98,6 +113,7 @@ class WC_Coupon_Restrictions_Admin {
 
 			<?php
 		echo '</p>';
+
 		echo '</div>';
 	}
 
@@ -116,13 +132,20 @@ class WC_Coupon_Restrictions_Admin {
 			$customer_restriction_type = 'none';
 		}
 
+		// Sanitize address to use for location restrictions.
+		$address_for_location_restrictions = isset( $_POST['address_for_location_restrictions'] ) ? $_POST['address_for_location_restrictions'] : 'shipping';
+		if ( 'billing' !== $address_for_location_restrictions ) {
+			$address_for_location_restrictions = 'shipping';
+		}
+
 		// Sanitize country restriction meta.
-		$shipping_country_restriction_select = isset( $_POST['shipping_country_restriction'] ) ? $_POST['shipping_country_restriction'] : array();
-		$shipping_country_restriction = array_filter( array_map( 'wc_clean', $shipping_country_restriction_select ) );
+		$country_restriction_select = isset( $_POST['country_restriction'] ) ? $_POST['country_restriction'] : array();
+		$country_restriction = array_filter( array_map( 'wc_clean', $country_restriction_select ) );
 
 		// Save meta.
 		update_post_meta( $post_id, 'customer_restriction_type', $customer_restriction_type );
-		update_post_meta( $post_id, 'shipping_country_restriction', $shipping_country_restriction );
+		update_post_meta( $post_id, 'address_for_location_restrictions', $address_for_location_restrictions );
+		update_post_meta( $post_id, 'country_restriction', $country_restriction );
 
 	}
 }

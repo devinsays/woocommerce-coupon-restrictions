@@ -40,7 +40,7 @@ class WC_Coupon_Restrictions_Validation {
 			return $valid;
 		}
 
-		// Can't validate e-mail at this point unless customer is logged in.
+		// Can't validate coupon at this point unless customer is logged in.
 		if ( ! is_user_logged_in() ) {
 			return $valid;
 		}
@@ -50,12 +50,18 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Validate new customer restriction.
 		if ( 'new' == $customer_restriction_type ) {
-			$valid = $this->validate_new_customer_coupon();
+			$valid = self::validate_new_customer_coupon();
 		}
 
 		// Validate existing customer restriction.
-		if ( 'existing' == $existing_customers_restriction ) {
-			$valid = $this->validate_existing_customer_coupon();
+		if ( 'existing' == $customer_restriction_type ) {
+			$valid = self::validate_existing_customer_coupon();
+		}
+
+		// Check country restrictions
+		$country_restriction = $coupon->get_meta( 'country_restriction' );
+		if ( ! empty( $country_restriction ) ) {
+			$valid = self::check_country_restriction_user( $coupon );
 		}
 
 		return $valid;
@@ -74,7 +80,7 @@ class WC_Coupon_Restrictions_Validation {
 		$customer = new WC_Customer( $current_user->ID );
 
 		if ( $customer->get_is_paying_customer() ) {
-			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_new_customer_restriction' ), 10, 2 );
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_new_customer_restriction', 10, 2 );
 			return false;
 		}
 
@@ -93,11 +99,58 @@ class WC_Coupon_Restrictions_Validation {
 		$customer = new WC_Customer( $current_user->ID );
 
 		if ( ! $customer->get_is_paying_customer() ) {
-			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_existing_customer_restriction' ), 10, 2 );
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_existing_customer_restriction', 10, 2 );
 			return false;
 		}
 
 		return true;
+	}
+
+	/**
+	 * If user is logged in, validates country restriction.
+	 *
+	 * @param object $coupon
+	 * @return void
+	 */
+	public static function check_country_restriction_user( $coupon ) {
+
+		$current_user = wp_get_current_user();
+		$customer = new WC_Customer( $current_user->ID );
+
+		// Get address lookup for location restrictions.
+		$address_for_location_restrictions = $coupon->get_meta( 'address_for_location_restrictions', true );
+		if ( ! in_array( $address_for_location_restrictions, array( 'billing', 'shipping' ) ) ) {
+			$address_for_location_restrictions = 'shipping';
+		}
+
+		// Set $county to empty string as a fallback.
+		$country = '';
+
+		// If shipping address is selected, set $country to shipping_country.
+		// If shipping address is selected but not present, fallback to billing_country.
+		if ( 'shipping' === $address_for_location_restrictions ) {
+			if ( $customer->get_shipping_country() ) {
+				$country = $customer->get_shipping_country();
+			} elseif ( $customer->get_billing_country() ) {
+				$country = $customer->get_billing_country();
+			}
+		}
+
+		// If billing address is selected, set $country to billing_country.
+		if ( 'billing' === $address_for_location_restrictions && $customer->get_billing_country() ) {
+			$country = $customer->get_billing_country();
+		}
+
+		// Get the allowed countries from coupon meta.
+		$allowed_countries = $coupon->get_meta( 'country_restriction', true );
+
+		if ( ! in_array( $country, $allowed_countries ) ) {
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_country_restriction', 10, 2 );
+			return false;
+		}
+
+		return true;
+
 	}
 
 	/**
@@ -108,7 +161,7 @@ class WC_Coupon_Restrictions_Validation {
 	public static function validation_message_new_customer_restriction( $err, $err_code ) {
 
 		// Alter the validation message if coupon has been removed.
-		if ( 100 == $err_code ) {
+		if ( 100 === $err_code ) {
 			// Validation message
 			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-coupon-restrictions' );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
@@ -126,9 +179,27 @@ class WC_Coupon_Restrictions_Validation {
 	public static function validation_message_existing_customer_restriction( $err, $err_code ) {
 
 		// Alter the validation message if coupon has been removed.
-		if ( 100 == $err_code ) {
+		if ( 100 === $err_code ) {
 			// Validation message
 			$msg = __( 'Coupon removed. This coupon is only valid for existing customers.', 'woocommerce-coupon-restrictions' );
+			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
+		}
+
+		// Return validation message.
+		return $err;
+	}
+
+	/**
+	 * Applies country restriction error message.
+	 *
+	 * @return string $err
+	 */
+	public static function validation_message_country_restriction( $err, $err_code ) {
+
+		// Alter the validation message if coupon has been removed.
+		if ( 100 === $err_code ) {
+			// Validation message
+			$msg = __( 'Coupon removed. This coupon is not valid in your country.', 'woocommerce-coupon-restrictions' );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
@@ -156,18 +227,18 @@ class WC_Coupon_Restrictions_Validation {
 
 					// Check if coupon is restricted to new customers.
 					if ( 'new' == $customer_restriction_type ) {
-						$valid = $this->check_new_customer_coupon_checkout();
+						$valid = self::check_new_customer_coupon_checkout();
 					}
 
 					// Check if coupon is restricted to existing customers.
 					if ( 'existing' == $existing_customers_restriction ) {
-						$valid = $this->check_existing_customer_coupon_checkout();
+						$valid = self::check_existing_customer_coupon_checkout();
 					}
 
 					// Check country restrictions
-					$shipping_country_restriction = $coupon->get_meta( 'shipping_country_restriction', true );
-					if ( ! empty( $shipping_country_restriction ) ) {
-						$this->check_shipping_country_restriction_checkout( $coupon, $code );
+					$country_restriction = $coupon->get_meta( 'country_restriction', true );
+					if ( ! empty( $country_restriction ) ) {
+						self::check_country_restriction_checkout( $coupon, $code );
 					}
 
 				}
@@ -195,15 +266,15 @@ class WC_Coupon_Restrictions_Validation {
 			$customer = new WC_Customer( $current_user->ID );
 
 			if ( $customer->get_is_paying_customer() ) {
-				$this->remove_coupon( $coupon, $code, $msg );
+				self::remove_coupon( $coupon, $code, $msg );
 			}
 
 		} else {
 
 			// If user is not logged in, we can check against previous orders.
 			$email = strtolower( $_POST['billing_email'] );
-			if ( $this->is_returning_customer( $email ) ) {
-				$this->remove_coupon( $coupon, $code, $msg );
+			if ( self::is_returning_customer( $email ) ) {
+				self::remove_coupon( $coupon, $code, $msg );
 			}
 
 		}
@@ -229,15 +300,15 @@ class WC_Coupon_Restrictions_Validation {
 			$customer = new WC_Customer( $current_user->ID );
 
 			if ( ! $customer->get_is_paying_customer() ) {
-				$this->remove_coupon( $coupon, $code, $msg );
+				self::remove_coupon( $coupon, $code, $msg );
 			}
 
 		} else {
 
 			// If user is not logged in, we can check against previous orders.
 			$email = strtolower( $_POST['billing_email'] );
-			if ( ! $this->is_returning_customer( $email ) ) {
-				$this->remove_coupon( $coupon, $code, $msg );
+			if ( ! self::is_returning_customer( $email ) ) {
+				self::remove_coupon( $coupon, $code, $msg );
 			}
 
 		}
@@ -250,28 +321,52 @@ class WC_Coupon_Restrictions_Validation {
 	 * @param string $code
 	 * @return void
 	 */
-	public static function check_shipping_country_restriction_checkout( $coupon, $code ) {
+	public static function check_country_restriction_checkout( $coupon, $code ) {
 
-		// Validation message.
-		$msg = sprintf( __( 'Coupon removed. Code "%s" is not valid in your shipping country.', 'woocommerce-coupon-restrictions' ), $code );
+		// Get address lookup for location restrictions.
+		$address_for_location_restrictions = $coupon->get_meta( 'address_for_location_restrictions', true );
+		if ( ! in_array( $address_for_location_restrictions, array( 'billing', 'shipping' ) ) ) {
+			$address_for_location_restrictions = 'shipping';
+		}
 
-		if ( isset( $_POST['shipping_country'] ) ) {
-			// Get shipping country if it exists.
-			$country = esc_textarea( $_POST['shipping_country'] );
-		} elseif ( isset( $_POST['billing_country'] ) ) {
-			// Some sites don't have separate billing vs shipping option
-			// In that case we use the billing_country.
+		// Set $county to empty string as a fallback.
+		$country = '';
+
+		// If shipping address is selected, set $country to shipping_country.
+		// If shipping address is selected but not present, fallback to billing_country.
+		if ( 'shipping' === $address_for_location_restrictions ) {
+			if ( isset( $_POST['shipping_country'] ) ) {
+				$country = esc_textarea( $_POST['shipping_country'] );
+			} elseif ( isset( $_POST['billing_country'] ) ) {
+				$country = esc_textarea( $_POST['billing_country'] );
+			}
+		}
+
+		// If billing address is selected, set $country to billing_country.
+		if ( 'billing' === $address_for_location_restrictions && isset( $_POST['billing_country'] ) ) {
 			$country = esc_textarea( $_POST['billing_country'] );
-		} else {
-			// Fallback if we can't determine shipping or billing country.
-			$country = '';
 		}
 
 		// Get the allowed countries from coupon meta.
-		$allowed_countries = $coupon->get_meta( 'shipping_country_restriction', true );
+		$allowed_countries = $coupon->get_meta( 'country_restriction', true );
 
+		// If the billing/shipping country is not in an allowed country, remove it.
 		if ( ! in_array( $country, $allowed_countries ) ) {
-			$this->remove_coupon( $coupon, $code, $msg );
+
+			// Allow strings "shipping" and "billing" to be translated.
+			$i8n_address_type = __( 'shipping', 'woocommerce-coupon-restrictions' );
+			if ( 'billing' === $address_for_location_restrictions ) {
+				$i8n_address_type = __( 'billing', 'woocommerce-coupon-restrictions' );
+			}
+
+			// Validation message.
+			$msg = sprintf(
+				__( 'Coupon removed. Code "%s" is not valid in your %s country.', 'woocommerce-coupon-restrictions' ),
+				$code,
+				$i8n_address_type
+			);
+
+			self::remove_coupon( $coupon, $code, $msg );
 		}
 
 	}
