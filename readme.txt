@@ -14,18 +14,13 @@ WC tested up to: 3.2.1
 
 This extension allows you to create coupons with addition restriction options:
 
-* New customers only
-* Existing customers only
-* Restrict to specific countries
-* Restrict to specific postal codes or zip codes
-
 New customer restriction: If a customer is logged in, the plugin will verify that they haven't purchased anything from the site before allowing the coupon to be applied. For customers that aren't logged in, the coupon verification runs right before checkout once the e-mail address has been entered.
 
 Existing customer restrictions: Validates that the customer has made a purchase on the site previously before allowing the coupon to be applied.
 
-Country restriction: Allows you restrict a coupon to specific countries. Restriction can be applied to shipping or billing country.
+Country restriction: Allows you to restrict a coupon to specific countries. Restriction can be applied to shipping or billing country.
 
-Postal/zipcode restriction: Allows you restrict a coupon to specific postal codes or zip codes. Can be applied to the shipping or the billing address.
+Postal/zipcode restriction: Allows you to restrict a coupon to specific postal codes or zip codes. Can be applied to the shipping or the billing address.
 
 The plugin is fully translatable. Developers can also use filters to modify any notices displayed during coupon validation.
 
