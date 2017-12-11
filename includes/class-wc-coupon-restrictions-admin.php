@@ -42,7 +42,7 @@ class WC_Coupon_Restrictions_Admin {
 		woocommerce_wp_select(
 			array(
 				'id' => 'customer_restriction_type',
-				'label' => __( 'Purchase history', 'woocommerce-coupon-restrictions' ),
+				'label' => __( 'Restrict to customers (new or existing)', 'woocommerce-coupon-restrictions' ),
 				'description' => __( 'Restricts coupon to new customers or existing customers based on purchase history.', 'woocommerce-coupon-restrictions' ),
 				'desc_tip' => true,
 				'class' => 'select',
@@ -73,8 +73,8 @@ class WC_Coupon_Restrictions_Admin {
 		woocommerce_wp_select(
 			array(
 				'id' => 'address_for_location_restrictions',
-				'label' => __( 'Address', 'woocommerce-coupon-restrictions' ),
-				'description' => __( 'Address to use for location restrictions.', 'woocommerce-coupon-restrictions' ),
+				'label' => __( 'Address for location restrictions', 'woocommerce-coupon-restrictions' ),
+				'description' => '',
 				'class' => 'select',
 				'options' => array(
 					'shipping' => __( 'Shipping', 'woocommerce-coupon-restrictions' ),
@@ -85,7 +85,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Country restriction.
 		$id = 'country_restriction';
-		$title = __( 'Limit Countries', 'woocommerce-coupon-restrictions' );
+		$title = __( 'Restrict to specific countries', 'woocommerce-coupon-restrictions' );
 		$values = get_post_meta( $post->ID, $id, true );
 		$description = '';
 
@@ -114,11 +114,23 @@ class WC_Coupon_Restrictions_Admin {
 			<?php
 		echo '</p>';
 
+		// Postcode / ZIP restrictions
+		$id = 'postcode_restriction';
+		woocommerce_wp_textarea_input(
+			array(
+				'label'   => __( 'Restrict to specific postcodes', 'woocommerce' ),
+				'description'    => __( 'You can list multiple postcodes or zip codes (comma separated).', 'woocommerce' ),
+				'desc_tip' => true,
+				'id'      => $id,
+				'type'    => 'textarea',
+			)
+		);
+
 		echo '</div>';
 	}
 
 	/**
-	 * Saves post meta for "new customer" restriction.
+	 * Saves post meta for custom coupon meta.
 	 *
 	 * @since  1.3.0
 	 * @param $post_id Coupon post ID.
@@ -127,25 +139,42 @@ class WC_Coupon_Restrictions_Admin {
 	public static function coupon_options_save( $post_id ) {
 
 		// Sanitize customer restriction type meta.
-		$customer_restriction_type = isset( $_POST['customer_restriction_type'] ) ? $_POST['customer_restriction_type'] : 'none';
+		$id = 'customer_restriction_type';
+		$customer_restriction_type = isset( $_POST[$id] ) ? $_POST[$id] : 'none';
 		if ( ! in_array( $customer_restriction_type, array( 'new', 'existing', 'none' ) ) ) {
 			$customer_restriction_type = 'none';
 		}
 
 		// Sanitize address to use for location restrictions.
-		$address_for_location_restrictions = isset( $_POST['address_for_location_restrictions'] ) ? $_POST['address_for_location_restrictions'] : 'shipping';
+		$id = 'address_for_location_restrictions';
+		$address_for_location_restrictions = isset( $_POST[$id] ) ? $_POST[$id] : 'shipping';
 		if ( 'billing' !== $address_for_location_restrictions ) {
 			$address_for_location_restrictions = 'shipping';
 		}
 
 		// Sanitize country restriction meta.
-		$country_restriction_select = isset( $_POST['country_restriction'] ) ? $_POST['country_restriction'] : array();
+		$id = 'country_restriction';
+		$country_restriction_select = isset( $_POST[$id] ) ? $_POST[$id] : array();
 		$country_restriction = array_filter( array_map( 'wc_clean', $country_restriction_select ) );
+
+		// Sanitize postcode restriction meta.
+		$id = 'postcode_restriction';
+		$postcode_restriction = isset( $_POST[$id] ) ? $_POST[$id] : '';
+		if ( '' !== $postcode_restriction ) {
+			// Trim whitespace.
+			$postcode_restriction = trim( $postcode_restriction );
+			// Convert comma separated list into array for sanitization.
+			$postcode_array = explode( ',', $postcode_restriction );
+			$postcode_array = array_unique( array_map( 'trim', $postcode_array ) ); // Trim whitespace
+			$postcode_array = array_unique( array_map( 'esc_textarea', $postcode_array ) ); // Sanitize values
+			$postcode_restriction = implode(', ', $postcode_array ); // Convert back to comma separated string
+		}
 
 		// Save meta.
 		update_post_meta( $post_id, 'customer_restriction_type', $customer_restriction_type );
 		update_post_meta( $post_id, 'address_for_location_restrictions', $address_for_location_restrictions );
 		update_post_meta( $post_id, 'country_restriction', $country_restriction );
+		update_post_meta( $post_id, 'postcode_restriction', $postcode_restriction );
 
 	}
 }
