@@ -45,6 +45,7 @@ Postcode restrictions are not case sensitive.
 * Update: Use WooCommerce order wrapper to fetch orders.
 * Update: Organize plugin into multiple classes.
 * Update: Upgrade script for sites using earlier version of plugin.
+* Update: Unit test framework added.
 
 = 1.3.0 =
 

@@ -7,6 +7,7 @@ node_modules
 .sass-cache
 npm-debug.log
 
-# Unit tests
-/tmp
-/tests/bin/tmp
+# Composer
+composer.lock
+dist
+vendor

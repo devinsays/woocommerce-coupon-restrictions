@@ -32,6 +32,14 @@ E-mail addresses restrictions are not case sensitive, but otherwise require an e
 
 Postcode restrictions are not case sensitive.
 
+## Unit Tests
+
+PHPUnit and Composer are required for running unit tests.
+
+```
+Placeholder instructions.
+```
+
 ## Compatibility
 
 * Requires WooCommerce 3.2.1 or later.
@@ -45,6 +53,7 @@ Postcode restrictions are not case sensitive.
 * Update: Use WooCommerce order wrapper to fetch orders.
 * Update: Organize plugin into multiple classes.
 * Update: Upgrade script for sites using earlier version of plugin.
+* Update: Unit test framework added.
 
 **1.3.0**
 
