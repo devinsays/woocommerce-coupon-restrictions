@@ -228,7 +228,7 @@ class WC_Coupon_Restrictions {
 
 		wp_reset_postdata();
 
-		add_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
+		add_option( 'woocommerce-coupon-restrictions', array( 'version' => self::$version ) );
 
 	}
 
