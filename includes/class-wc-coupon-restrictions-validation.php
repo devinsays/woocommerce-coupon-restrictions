@@ -509,6 +509,8 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function is_returning_customer( $email ) {
 
+		echo $email;
+
 		$customer_orders = wc_get_orders( array(
 			'status' => array( 'wc-processing', 'wc-completed' ),
 			'email'  => $email,

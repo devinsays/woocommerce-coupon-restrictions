@@ -22,6 +22,8 @@ class WooCommerce_Coupon_Restrictions_Tests_Bootstrap {
 		tests_add_filter( 'muplugins_loaded', function() {
 			require( $this->locate_woocommerce() );
 			require( dirname( dirname( __DIR__ ) ) . '/woocommerce-coupon-restrictions.php' );
+			require( dirname( dirname( __DIR__ ) ) . '/includes/class-wc-coupon-restrictions-admin.php' );
+			require( dirname( dirname( __DIR__ ) ) . '/includes/class-wc-coupon-restrictions-validation.php' );
 		} );
 
 		require $tests_directory . '/includes/bootstrap.php';

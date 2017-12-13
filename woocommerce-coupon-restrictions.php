@@ -43,7 +43,7 @@ class WC_Coupon_Restrictions {
 	 * @static
 	 * @since  1.4.0
 	 */
-	public static $version = '1.4.0';
+	public $version = '1.4.0';
 
 	/**
 	 * Required WooCommerce Version
@@ -228,7 +228,7 @@ class WC_Coupon_Restrictions {
 
 		wp_reset_postdata();
 
-		add_option( 'woocommerce-coupon-restrictions', array( 'version' => self::$version ) );
+		add_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 
 	}
 
