@@ -34,11 +34,10 @@ Postcode restrictions are not case sensitive.
 
 ## Unit Tests
 
-PHPUnit and Composer are required for running unit tests.
+PHPUnit, Composer and WP-CLI are required for running unit tests.
 
-```
-Placeholder instructions.
-```
+Set up instructions:
+https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Compatibility
 
