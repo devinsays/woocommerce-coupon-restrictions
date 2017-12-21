@@ -1,4 +1,4 @@
-# WooCommerce Coupon Restrictions
+# WooCommerce Coupon Restrictions [![Build Status](https://travis-ci.org/devinsays/woocommerce-coupon-restrictions.svg?branch=master)](https://travis-ci.org/devinsays/woocommerce-coupon-restrictions)
 
 * Contributors: @downstairsdev
 * Tags: woocommerce, coupon

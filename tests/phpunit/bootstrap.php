@@ -24,7 +24,7 @@ class WooCommerce_Coupon_Restrictions_Tests_Bootstrap {
 			require( dirname( dirname( __DIR__ ) ) . '/woocommerce-coupon-restrictions.php' );
 			require( dirname( dirname( __DIR__ ) ) . '/includes/class-wc-coupon-restrictions-admin.php' );
 			require( dirname( dirname( __DIR__ ) ) . '/includes/class-wc-coupon-restrictions-validation.php' );
-		} );
+		});
 
 		require $tests_directory . '/includes/bootstrap.php';
 	}
