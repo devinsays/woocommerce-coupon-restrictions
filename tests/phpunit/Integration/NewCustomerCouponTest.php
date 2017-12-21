@@ -8,8 +8,6 @@ use WC_Coupon_Restrictions_Validation;
 
 class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 
-	protected $coupon;
-
 	/**
 	 * Test returning customer function.
 	 */
@@ -81,6 +79,7 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 		WC()->cart->remove_coupons();
 		$order->delete();
 		$coupon->delete();
+		$customer->delete();
 
 	}
 

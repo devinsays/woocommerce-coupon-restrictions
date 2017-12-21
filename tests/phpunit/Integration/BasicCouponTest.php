@@ -8,8 +8,6 @@ use WC_Coupon_Restrictions_Validation;
 
 class Basic_Coupon_Test extends \WP_UnitTestCase {
 
-	protected $coupon;
-
 	/**
 	 * Tests that generic coupons can be applied.
 	 */
@@ -32,8 +30,8 @@ class Basic_Coupon_Test extends \WP_UnitTestCase {
 		// Clean up.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
-		$customer->delete();
 		$coupon->delete();
+		$customer->delete();
 
 	}
 
