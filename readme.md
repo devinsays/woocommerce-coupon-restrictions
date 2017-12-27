@@ -4,7 +4,7 @@
 * Tags: woocommerce, coupon
 * Requires at least: 4.7.0
 * Tested up to: 4.7.0
-* Stable tag: 1.2.0
+* Stable tag: 1.4.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 * WC requires at least: 3.2.1
@@ -45,7 +45,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**Development**
+**1.4.0**
 
 * Enhancement: Adds option to restrict location based on shipping or billing address.
 * Enhancement: Adds option to restrict to postal code or zip code.
@@ -58,11 +58,11 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 * Enhancement: Adds option to restrict to existing customers.
 * Enhancement: Adds option to restrict by shipping country.
-* Update: Compatibility updates for WooCommerce 2.7.0
+* Update: Compatibility updates for WooCommerce 2.7.0.
 
 **1.2.0**
 
-* Update: Compatibility updates for WooCommerce 2.6.8
+* Update: Compatibility updates for WooCommerce 2.6.8.
 
 **1.1.0**
 
