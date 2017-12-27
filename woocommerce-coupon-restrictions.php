@@ -219,8 +219,11 @@ class WC_Coupon_Restrictions {
 
 				// Update shipping_country_restriction field.
 				$country_restriction = get_post_meta( get_the_ID(), 'shipping_country_restriction' );
-				if ( ! empty( $country_restriction ) ) {
-					add_post_meta( get_the_ID(), 'country_restriction', $country_restriction, true );
+				if ( ! empty( $country_restriction ) && is_array( $country_restriction ) ) {
+					// One more verification to make sure first item in array is a value.
+					if ( ! empty( $country_restriction[0] ) ) {
+						add_post_meta( get_the_ID(), 'country_restriction', $country_restriction, true );
+					}
 				}
 
 			}
