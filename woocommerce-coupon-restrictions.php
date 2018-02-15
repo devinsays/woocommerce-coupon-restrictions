@@ -3,14 +3,14 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://github.com/devinsays/woocommerce-coupon-restrictions
  * Description: Allows for additional coupon restrictions. Coupons can be restricted to new customers, existing customers, or by country.
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: DevPress
  * Author URI: https://devpress.com
  *
- * Requires at least: 4.5
- * Tested up to: 4.9.1
+ * Requires at least: 4.7.0
+ * Tested up to: 4.9.4
  * WC requires at least: 3.2.1
- * WC tested up to: 3.2.5
+ * WC tested up to: 3.3.1
  *
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -43,7 +43,7 @@ class WC_Coupon_Restrictions {
 	 * @static
 	 * @since  1.4.0
 	 */
-	public $version = '1.4.0';
+	public $version = '1.4.1';
 
 	/**
 	 * Required WooCommerce Version
@@ -51,7 +51,7 @@ class WC_Coupon_Restrictions {
 	 * @access public
 	 * @since  1.4.0
 	 */
-	public $required_woo = '3.0.0';
+	public $required_woo = '3.2.1';
 
 	/**
 	 * Plugin path.
@@ -134,7 +134,7 @@ class WC_Coupon_Restrictions {
 
 		// Upgrade routine.
 		$options = get_option( 'woocommerce-coupon-restrictions', false );
-		if ( false === $options ) {
+		if ( false === $options || $this->version !== $options['version'] ) {
 			$this->upgrade_routine();
 		}
 	}
@@ -168,71 +168,7 @@ class WC_Coupon_Restrictions {
 	 * @return void
 	 */
 	public function upgrade_routine() {
-
-		// Coupon meta keys changed between 1.3.0 and 1.4.0.
-		// Instead of two checkboxes there is a single select option for customer restrictions.
-		// An additional checkbox
-		$args = array(
-			'post_type'  => 'shop_coupon',
-			'meta_query' => array(
-				'relation' => 'OR',
-				array(
-					'key'     => 'existing_customers_only',
-					'value'   => 'yes',
-					'compare' => '='
-				),
-				array(
-					'key'     => 'new_customers_only',
-					'value'   => 'yes',
-					'compare' => '='
-				),
-				array(
-					'key'     => 'shipping_country_restriction',
-					'compare' => 'EXISTS'
-				)
-			)
-		);
-
-		// Query for all coupons that had customer restrictions set.
-		$coupon_query = new WP_Query( $args );
-		if ( $coupon_query->have_posts() ) {
-			while( $coupon_query->have_posts() ) {
-
-				$coupon_query->the_post();
-				$existing_customer = get_post_meta( get_the_ID(), 'existing_customers_only', true );
-				$new_customer = get_post_meta( get_the_ID(), 'new_customers_only', true );
-
-				$customer_restriction_type = 'none';
-				if ( 'yes' === $existing_customer && 'yes' == $new_customer ) {
-					// Coupon should not be set to both.
-					$customer_restriction_type = 'none';
-				} elseif ( 'yes' === $existing_customer ) {
-					$customer_restriction_type = 'existing';
-				} elseif ( 'yes' === $new_customer ) {
-					$customer_restriction_type = 'new';
-				}
-
-				// Update customer_restriction_type field.
-				add_post_meta( get_the_ID(), 'customer_restriction_type', $customer_restriction_type, true );
-				delete_post_meta( get_the_ID(), 'existing_customers_only' );
-				delete_post_meta( get_the_ID(), 'new_customers_only' );
-
-				// Update shipping_country_restriction field.
-				$country_restriction = get_post_meta( get_the_ID(), 'shipping_country_restriction' );
-				if ( ! empty( $country_restriction ) && is_array( $country_restriction ) ) {
-					// One more verification to make sure first item in array is a value.
-					if ( ! empty( $country_restriction[0] ) ) {
-						add_post_meta( get_the_ID(), 'country_restriction', $country_restriction, true );
-					}
-				}
-
-			}
-		}
-
-		wp_reset_postdata();
-
-		add_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
-
+		update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 	}
 
 }

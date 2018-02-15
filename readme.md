@@ -3,12 +3,12 @@
 * Contributors: @downstairsdev
 * Tags: woocommerce, coupon
 * Requires at least: 4.7.0
-* Tested up to: 4.7.0
-* Stable tag: 1.4.0
+* Tested up to: 4.9.4
+* Stable tag: 1.4.1
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 * WC requires at least: 3.2.1
-* WC tested up to: 3.2.1
+* WC tested up to: 3.3.1
 
 ## Description
 
@@ -44,6 +44,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 * Requires WooCommerce 3.2.1 or later.
 
 ## Changelog
+
+**1.4.1**
+
+* Update: Remove upgrade routine.
 
 **1.4.0**
 
