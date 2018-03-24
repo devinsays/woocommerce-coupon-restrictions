@@ -185,7 +185,7 @@ class WC_Coupon_Restrictions_Validation {
 		$postcode_array = array_map( 'strtoupper', $postcode_array );
 
 		if ( ! in_array( strtoupper( $postcode ), $postcode_array ) ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_postcode_restriction', 10, 2 );
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_zipcode_restriction', 10, 2 );
 			return false;
 		}
 
@@ -203,7 +203,7 @@ class WC_Coupon_Restrictions_Validation {
 		// Alter the validation message if coupon has been removed.
 		if ( 100 === $err_code ) {
 			// Validation message
-			$msg = __( 'Coupon removed. This coupon is only valid for new customers.', 'woocommerce-coupon-restrictions' );
+			$msg = __( 'Sorry, this coupon is only valid for new customers.', 'woocommerce-coupon-restrictions' );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
@@ -221,7 +221,7 @@ class WC_Coupon_Restrictions_Validation {
 		// Alter the validation message if coupon has been removed.
 		if ( 100 === $err_code ) {
 			// Validation message
-			$msg = __( 'Coupon removed. This coupon is only valid for existing customers.', 'woocommerce-coupon-restrictions' );
+			$msg = __( 'Sorry, this coupon is only valid for existing customers.', 'woocommerce-coupon-restrictions' );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
@@ -239,7 +239,7 @@ class WC_Coupon_Restrictions_Validation {
 		// Alter the validation message if coupon has been removed.
 		if ( 100 === $err_code ) {
 			// Validation message
-			$msg = __( 'Coupon removed. This coupon is not valid in your country.', 'woocommerce-coupon-restrictions' );
+			$msg = __( 'Sorry, this coupon is not valid in your country.', 'woocommerce-coupon-restrictions' );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
@@ -248,16 +248,16 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
-	 * Applies postcode restriction error message.
+	 * Applies zip code restriction error message.
 	 *
 	 * @return string $err
 	 */
-	public static function validation_message_postcode_restriction( $err, $err_code ) {
+	public static function validation_message_zipcode_restriction( $err, $err_code ) {
 
 		// Alter the validation message if coupon has been removed.
 		if ( 100 === $err_code ) {
 			// Validation message
-			$msg = __( 'Coupon removed. This coupon is not valid in your postcode.', 'woocommerce-coupon-restrictions' );
+			$msg = __( 'Sorry, this coupon is not valid in your zip code.', 'woocommerce-coupon-restrictions' );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
@@ -321,7 +321,7 @@ class WC_Coupon_Restrictions_Validation {
 	public static function check_new_customer_coupon_checkout( $coupon, $code ) {
 
 		// Validation message
-		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for new customers.', 'woocommerce-coupon-restrictions' ), $code );
+		$msg = sprintf( __( 'Sorry, coupon code "%s" is only valid for new customers.', 'woocommerce-coupon-restrictions' ), $code );
 
 		// Check if order is for returning customer
 		if ( is_user_logged_in() ) {
@@ -355,7 +355,7 @@ class WC_Coupon_Restrictions_Validation {
 	public static function check_existing_customer_coupon_checkout( $coupon, $code ) {
 
 		// Validation message.
-		$msg = sprintf( __( 'Coupon removed. Code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $code );
+		$msg = sprintf( __( 'Sorry, coupon code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $code );
 
 		// Check if order is for returning customer.
 		if ( is_user_logged_in() ) {
@@ -417,7 +417,7 @@ class WC_Coupon_Restrictions_Validation {
 
 			// Validation message.
 			$msg = sprintf(
-				__( 'Coupon removed. Code "%s" is not valid in your %s country.', 'woocommerce-coupon-restrictions' ),
+				__( 'Sorry, coupon code "%s" is not valid in your %s country.', 'woocommerce-coupon-restrictions' ),
 				$code,
 				$i8n_address_type
 			);
@@ -468,7 +468,7 @@ class WC_Coupon_Restrictions_Validation {
 
 			// Validation message.
 			$msg = sprintf(
-				__( 'Coupon removed. Code "%s" is not valid in your %s postcode.', 'woocommerce-coupon-restrictions' ),
+				__( 'Sorry, coupon code "%s" is not valid in your %s zip code.', 'woocommerce-coupon-restrictions' ),
 				$code,
 				$i8n_address_type
 			);
