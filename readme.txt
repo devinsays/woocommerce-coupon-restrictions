@@ -30,7 +30,7 @@ Customers are considered "new customers" if they have not yet spent money on the
 
 E-mail addresses restrictions are not case sensitive, but otherwise require an exact match.
 
-Postcode restrictions are not case sensitive.
+Zip code or postcode restrictions are not case sensitive.
 
 == Compatibility ==
 
@@ -41,6 +41,7 @@ Postcode restrictions are not case sensitive.
 = Development =
 
 * Update: Improve coupon coupon validation messages.
+* Update: Use "Zip code" as default label.
 
 = 1.4.1 (02.15.18)=
 

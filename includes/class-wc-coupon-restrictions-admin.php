@@ -118,8 +118,8 @@ class WC_Coupon_Restrictions_Admin {
 		$id = 'postcode_restriction';
 		woocommerce_wp_textarea_input(
 			array(
-				'label'   => __( 'Restrict to specific postcodes', 'woocommerce' ),
-				'description'    => __( 'You can list multiple postcodes or zip codes (comma separated).', 'woocommerce' ),
+				'label'   => __( 'Restrict to specific zip codes', 'woocommerce' ),
+				'description'    => __( 'You can list multiple zip codes or postcodes (comma separated).', 'woocommerce' ),
 				'desc_tip' => true,
 				'id'      => $id,
 				'type'    => 'textarea',
