@@ -39,15 +39,15 @@ class WC_Coupon_Restrictions_Admin {
 
 		echo '<div class="options_group">';
 
-		woocommerce_wp_select(
+		woocommerce_wp_radio(
 			array(
 				'id' => 'customer_restriction_type',
-				'label' => __( 'Restrict to customers (new or existing)', 'woocommerce-coupon-restrictions' ),
-				'description' => __( 'Restricts coupon to new customers or existing customers based on purchase history.', 'woocommerce-coupon-restrictions' ),
+				'label' => __( 'Customer restrictions', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Restricts coupon to specific customers based on purchase history.', 'woocommerce-coupon-restrictions' ),
 				'desc_tip' => true,
 				'class' => 'select',
 				'options' => array(
-					'none' => __( 'No restriction', 'woocommerce-coupon-restrictions' ),
+					'none' => __( 'Default (no restriction)', 'woocommerce-coupon-restrictions' ),
 					'new' => __( 'New customers only', 'woocommerce-coupon-restrictions' ),
 					'existing' => __( 'Existing customers only', 'woocommerce-coupon-restrictions' ),
 				),

@@ -49,6 +49,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 * Update: Improve coupon coupon validation messages.
 * Update: Use "Zip code" as default label.
+* Update: Improve customer restriction UX. Use radio buttons rather than select.
 
 **1.4.1 (02.15.18)**
 
