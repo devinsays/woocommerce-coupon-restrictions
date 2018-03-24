@@ -42,11 +42,11 @@ Postcode restrictions are not case sensitive.
 
 * Update: Improve coupon coupon validation messages.
 
-= 1.4.1 =
+= 1.4.1 (02.15.18)=
 
 * Update: Remove upgrade routine.
 
-= 1.4.0 =
+= 1.4.0 (12.27.17)=
 
 * Enhancement: Adds option to restrict location based on shipping or billing address.
 * Enhancement: Adds option to restrict to postal code or zip code.
@@ -55,21 +55,21 @@ Postcode restrictions are not case sensitive.
 * Update: Upgrade script for sites using earlier version of plugin.
 * Update: Unit test framework added.
 
-= 1.3.0 =
+= 1.3.0 (01.31.17)=
 
 * Enhancement: Adds option to restrict to existing customers.
 * Enhancement: Adds option to restrict by shipping country.
 * Update: Compatibility updates for WooCommerce 2.7.0.
 
-= 1.2.0 =
+= 1.2.0 (11.25.16)=
 
 * Update: Compatibility updates for WooCommerce 2.6.8.
 
-= 1.1.0 =
+= 1.1.0 (12.28.15)=
 
 * Fix: Coupons without the new customer restriction were improperly marked invalid for logged in users.
 * Fix: Filter woocommerce_coupon_is_valid in addition to woocommerce_coupon_error.
 
-= 1.0.0 =
+= 1.0.0 (06.18.15)=
 
 * Initial release.
