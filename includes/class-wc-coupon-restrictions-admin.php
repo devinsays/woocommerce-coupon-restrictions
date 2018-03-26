@@ -70,11 +70,22 @@ class WC_Coupon_Restrictions_Admin {
 
 		echo '<div class="options_group">';
 
+		woocommerce_wp_checkbox(
+			array(
+				'id' => 'location_restrictions',
+				'label' => __( 'Use location restrictions', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Displays and enables location restriction options.', 'woocommerce-coupon-restrictions' )
+			)
+		);
+		?>
+
+		<div class="woocommerce-coupon-restrictions-locations" style="display:none;">
+
+		<?php
 		woocommerce_wp_select(
 			array(
 				'id' => 'address_for_location_restrictions',
 				'label' => __( 'Address for location restrictions', 'woocommerce-coupon-restrictions' ),
-				'description' => '',
 				'class' => 'select',
 				'options' => array(
 					'shipping' => __( 'Shipping', 'woocommerce-coupon-restrictions' ),
@@ -119,14 +130,42 @@ class WC_Coupon_Restrictions_Admin {
 		woocommerce_wp_textarea_input(
 			array(
 				'label'   => __( 'Restrict to specific zip codes', 'woocommerce' ),
-				'description'    => __( 'You can list multiple zip codes or postcodes (comma separated).', 'woocommerce' ),
+				'description'    => __( 'You can list multiple zip codes or postcodes (comma separated).', 'woocommerce-coupon-restrictions' ),
 				'desc_tip' => true,
 				'id'      => $id,
 				'type'    => 'textarea',
 			)
 		);
 
-		echo '</div>';
+		echo '</div>'; // .woocommerce-coupon-restrictions-locations
+		echo '</div>'; // .options-group
+
+		wc_enqueue_js( self::location_restrictions_admin_js() );
+
+	}
+
+	/**
+	 * Returns javascript to be enqueued on the coupon admin screen.
+	 *
+	 * @since  1.4.0
+	 * @return void
+	 */
+	public static function location_restrictions_admin_js() {
+		$js = "
+			var location_restrictions_group = document.querySelector('.woocommerce-coupon-restrictions-locations');
+			var location_restrictions_cb = document.querySelector('#location_restrictions');
+			if ( 'yes' == location_restrictions_cb.value ) {
+				location_restrictions_group.removeAttribute('style');
+			}
+			location_restrictions_cb.addEventListener( 'change', function() {
+				if ( this.checked ) {
+					location_restrictions_group.removeAttribute('style');
+				} else {
+					location_restrictions_group.style.display = 'none';
+				}
+			});
+		";
+		return $js;
 	}
 
 	/**
@@ -144,6 +183,10 @@ class WC_Coupon_Restrictions_Admin {
 		if ( ! in_array( $customer_restriction_type, array( 'new', 'existing', 'none' ) ) ) {
 			$customer_restriction_type = 'none';
 		}
+
+		// Sanitize location restrictions checkbox.
+		$id = 'location_restrictions';
+		$location_restrictions = isset( $_POST[$id] ) ? 'yes' : 'no';
 
 		// Sanitize address to use for location restrictions.
 		$id = 'address_for_location_restrictions';
@@ -172,6 +215,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Save meta.
 		update_post_meta( $post_id, 'customer_restriction_type', $customer_restriction_type );
+		update_post_meta( $post_id, 'location_restrictions', $location_restrictions );
 		update_post_meta( $post_id, 'address_for_location_restrictions', $address_for_location_restrictions );
 		update_post_meta( $post_id, 'country_restriction', $country_restriction );
 		update_post_meta( $post_id, 'postcode_restriction', $postcode_restriction );
