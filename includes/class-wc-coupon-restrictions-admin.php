@@ -154,7 +154,7 @@ class WC_Coupon_Restrictions_Admin {
 		$js = "
 			var location_restrictions_group = document.querySelector('.woocommerce-coupon-restrictions-locations');
 			var location_restrictions_cb = document.querySelector('#location_restrictions');
-			if ( 'yes' == location_restrictions_cb.value ) {
+			if ( 'yes' == location_restrictions_cb.checked ) {
 				location_restrictions_group.removeAttribute('style');
 			}
 			location_restrictions_cb.addEventListener( 'change', function() {

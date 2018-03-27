@@ -58,17 +58,22 @@ class WC_Coupon_Restrictions_Validation {
 			$valid = self::validate_existing_customer_coupon();
 		}
 
-		// Check country restrictions.
-		$country_restriction = $coupon->get_meta( 'country_restriction' );
-		if ( ! empty( $country_restriction ) ) {
-			$valid = self::check_country_restriction_user( $coupon );
-		}
+		// Check location restrictions if active.
+		if ( 'yes' == $coupon->get_meta( 'location_restrictions' ) ) :
 
-		// Check postcode restrictions.
-		$postcode_restriction = $coupon->get_meta( 'postcode_restriction' );
-		if ( ! empty( $postcode_restriction ) ) {
-			$valid = self::check_postcode_restriction_user( $coupon );
-		}
+			// Check country restrictions.
+			$country_restriction = $coupon->get_meta( 'country_restriction' );
+			if ( ! empty( $country_restriction ) ) {
+				$valid = self::check_country_restriction_user( $coupon );
+			}
+
+			// Check postcode restrictions.
+			$postcode_restriction = $coupon->get_meta( 'postcode_restriction' );
+			if ( ! empty( $postcode_restriction ) ) {
+				$valid = self::check_postcode_restriction_user( $coupon );
+			}
+
+		endif;
 
 		return $valid;
 
@@ -293,17 +298,22 @@ class WC_Coupon_Restrictions_Validation {
 						$valid = self::check_existing_customer_coupon_checkout();
 					}
 
-					// Check country restrictions
-					$country_restriction = $coupon->get_meta( 'country_restriction', true );
-					if ( ! empty( $country_restriction ) ) {
-						self::check_country_restriction_checkout( $coupon, $code );
-					}
+					// Check location restrictions if active.
+					if ( 'yes' == $coupon->get_meta( 'location_restrictions' ) ) :
 
-					// Check postcode restrictions.
-					$postcode_restriction = $coupon->get_meta( 'postcode_restriction', true );
-					if ( ! empty( $postcode_restriction ) ) {
-						self::check_postcode_restriction_checkout( $coupon, $code );
-					}
+						// Check country restrictions.
+						$country_restriction = $coupon->get_meta( 'country_restriction', true );
+						if ( ! empty( $country_restriction ) ) {
+							self::check_country_restriction_checkout( $coupon, $code );
+						}
+
+						// Check postcode restrictions.
+						$postcode_restriction = $coupon->get_meta( 'postcode_restriction', true );
+						if ( ! empty( $postcode_restriction ) ) {
+							self::check_postcode_restriction_checkout( $coupon, $code );
+						}
+
+					endif;
 
 
 				}
@@ -530,7 +540,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * @param object $coupon
 	 * @return string
 	 */
-	public static function get_address_for_location_restriction( $coupon ){
+	public static function get_address_for_location_restriction( $coupon ) {
 		$address_for_location_restrictions = $coupon->get_meta( 'address_for_location_restrictions', true );
 		if ( ! in_array( $address_for_location_restrictions, array( 'billing', 'shipping' ) ) ) {
 			return 'shipping';
