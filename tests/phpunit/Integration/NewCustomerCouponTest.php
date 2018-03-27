@@ -8,17 +8,29 @@ use WC_Coupon_Restrictions_Validation;
 
 class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 
+	public $coupon;
+	public $customer;
+
+	public function setUp() {
+
+		// Create a customer.
+		$customer = \WC_Helper_Customer::create_customer();
+		$this->customer = $customer;
+
+		// Set the current customer.
+		wp_set_current_user( $customer->get_id() );
+	}
+
 	/**
 	 * Test returning customer function.
 	 */
 	public function test_is_returning_customer() {
 
-		// Creates a customer.
-		$customer = \WC_Helper_Customer::create_customer();
-		$customer_id = $customer->get_id();
+		// Get data from setup.
+		$customer = $this->customer;
 
 		// Creates an order and applies it to new customer.
-		$order = \WC_Helper_Order::create_order( $customer_id );
+		$order = \WC_Helper_Order::create_order( $customer->get_id() );
 		$order->set_billing_email( $customer->get_email() );
 		$order->set_status( 'completed' );
 		$order->save();
@@ -31,7 +43,6 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Clean up.
 		$order->delete();
-		$customer->delete();
 
 	}
 
@@ -41,10 +52,8 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 	 */
 	public function test_new_customer_restriction_type() {
 
-		// Create a customer.
-		$customer = \WC_Helper_Customer::create_customer();
-		$customer_id = $customer->get_id();
-		wp_set_current_user( $customer_id );
+		// Get data from setup.
+		$customer = $this->customer;
 
 		// Create coupon.
 		$coupon = \WC_Helper_Coupon::create_coupon();
@@ -63,7 +72,7 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Creates an order and applies it to new customer.
 		// This makes the customer a returning customer.
-		$order = \WC_Helper_Order::create_order( $customer_id );
+		$order = \WC_Helper_Order::create_order( $customer->get_id() );
 		$order->set_billing_email( $customer->get_email() );
 		$order->set_status( 'completed' );
 		$order->save();
@@ -79,7 +88,13 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 		WC()->cart->remove_coupons();
 		$order->delete();
 		$coupon->delete();
-		$customer->delete();
+
+	}
+
+	public function tearDown() {
+
+		// Delete customer.
+		$this->customer->delete();
 
 	}
 
