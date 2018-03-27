@@ -8,7 +8,7 @@
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 * WC requires at least: 3.2.1
-* WC tested up to: 3.3.1
+* WC tested up to: 3.3.4
 
 ## Description
 
@@ -47,9 +47,11 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 **Development**
 
-* Update: Improve coupon coupon validation messages.
+* Update: Improve coupon validation messages.
 * Update: Use "Zip code" as default label.
 * Update: Improve customer restriction UX. Use radio buttons rather than select.
+* Update: Adds "Location Restrictions" checkbox. Additional options display when checked.
+* Update: Country restriction only permits selection of countries that shop currently sells to.
 
 **1.4.1 (02.15.18)**
 
