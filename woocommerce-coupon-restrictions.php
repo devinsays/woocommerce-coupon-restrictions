@@ -94,15 +94,6 @@ class WC_Coupon_Restrictions {
 
 		// Include required files.
 		add_action( 'woocommerce_loaded', array( $this, 'includes' ) );
-
-		// Links displayed on the plugin page.
-		add_action( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
-
-		// Sets a transient on activation to determine if activation notices should be displayed.
-		register_activation_hook( plugin_basename( __FILE__ ), array( $this, 'activation_hook' ) );
-
-		// Displays a notice on activation.
-		add_action( 'admin_notices', array( $this, 'admin_installed_notice' ) );
 	}
 
 	/**
@@ -157,8 +148,12 @@ class WC_Coupon_Restrictions {
 	 */
 	public function includes() {
 
-		// Adds fields and metadata for coupons in admin screen.
+		// Files loaded in the dashboard only.
 		if ( is_admin() ) {
+			// Onboarding actions when plugin is first installed.
+			include_once( $this->plugin_path() . '/includes/class-wc-coupon-restrictions-onboarding.php' );
+
+			// Adds fields and metadata for coupons in admin screen.
 			include_once( $this->plugin_path() . '/includes/class-wc-coupon-restrictions-admin.php' );
 		}
 
@@ -170,20 +165,9 @@ class WC_Coupon_Restrictions {
 	}
 
 	/**
-	 * Runs an upgrade routine.
-	 *
-	 * @access public
-	 * @since  1.3.0
-	 * @return void
-	 */
-	public function upgrade_routine() {
-		update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
-	}
-
-	/**
 	 * Plugin action links.
 	 *
-	 * @since 1.4.0
+	 * @since 1.5.0
 	 *
 	 * @param  array $links List of existing plugin action links.
 	 * @return array List of modified plugin action links.
@@ -198,32 +182,14 @@ class WC_Coupon_Restrictions {
 	}
 
 	/**
-	 * Displays a welcome message. Called when the extension is activated.
+	 * Runs an upgrade routine.
 	 *
-	 * @since 1.4.0
+	 * @access public
+	 * @since  1.3.0
+	 * @return void
 	 */
-	public static function activation_hook() {
-		// Sets transient data
-		set_transient( 'woocommerce-coupon-restrictions-activated', true, 5 );
-	}
-
-	/**
-	 * Displays a welcome message. Called when the extension is activated.
-	 *
-	 * @since 1.4.0
-	 */
-	public static function admin_installed_notice() {
-
-		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
-		?>
-			<div class="updated notice is-dismissible woocommerce-message" style="border-left-color: #cc99c2">
-				<p>
-					<?php _e( 'WooCommerce Coupon Restrictions plugin activated.', 'woocommerce-coupon-restrictions' ); ?>
-					<a href="<?php echo admin_url( 'post-new.php?post_type=shop_coupon' ); ?>"><?php esc_html_e( 'Create a New Coupon', 'woocommerce-coupon-restrictions' ); ?></a>
-				</p>
-			</div>
-			<?php
-		endif;
+	public function upgrade_routine() {
+		update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 	}
 
 }
