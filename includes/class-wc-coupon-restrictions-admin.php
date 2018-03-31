@@ -39,6 +39,12 @@ class WC_Coupon_Restrictions_Admin {
 
 		echo '<div class="options_group">';
 
+		global $post;
+		$value = get_post_meta( $post->ID, 'customer_restriction_type', true );
+
+		// Default to none if no value has been saved.
+		$value = $value ? $value : 'none';
+
 		woocommerce_wp_radio(
 			array(
 				'id' => 'customer_restriction_type',
@@ -51,6 +57,7 @@ class WC_Coupon_Restrictions_Admin {
 					'new' => __( 'New customers only', 'woocommerce-coupon-restrictions' ),
 					'existing' => __( 'Existing customers only', 'woocommerce-coupon-restrictions' ),
 				),
+				'value' => $value
 			)
 		);
 

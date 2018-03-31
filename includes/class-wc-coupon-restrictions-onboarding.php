@@ -108,16 +108,59 @@ class WC_Coupon_Restrictions_Onboarding {
 			'pointers' => array(
 				'coupon-restrictions-panel' => array(
 					'target' => '#woocommerce-coupon-data .usage_restriction_options',
-					'next' => 'content',
+					'next' => 'customer-restriction-type',
+					'next_trigger' => array(
+						'target' => '#title',
+						'event'  => 'input',
+					),
+					'options' => array(
+						'content'  => '<h3>' . esc_html__( 'Usage Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
+						'<p>' . esc_html__( 'The new coupon restrictions can be found in this panel.', 'woocommerce-coupon-restrictions' ) . '</p>',
+						'position' => array(
+							'edge'  => 'top',
+							'align' => 'left',
+						)
+					)
+				),
+				'customer-restriction-type' => array(
+					'target' => '#usage_restriction_coupon_data .customer_restriction_type_field .woocommerce-help-tip',
+					'next' => 'location-restrictions',
 					'next_trigger' => array(
 						'target' => '#title',
 						'event'  => 'input',
 					),
 					'options'      => array(
-						'content'  => '<h3>' . esc_html__( 'Usage Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
-						'<p>' . esc_html__( 'The new coupon restrictions can be found in this panel.', 'woocommerce-coupon-restrictions' ) . '</p>',
+						'content'  => '<h3>' . esc_html__( 'Customer Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
+						'<p>' . esc_html__( 'You now have the option to restrict coupons to new customers or existing customers.', 'woocommerce-coupon-restrictions' ) . '</p>',
 						'position' => array(
-							'edge'  => 'top',
+							'edge'  => 'left',
+							'align' => 'left',
+						)
+					)
+				),
+				'location-restrictions' => array(
+					'target' => '#usage_restriction_coupon_data .location_restrictions_field input',
+					'next' => 'usage-limit',
+					'next_trigger' => array(
+						'target' => '#title',
+						'event'  => 'input',
+					),
+					'options'      => array(
+						'content'  => '<h3>' . esc_html__( 'Location Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
+						'<p>' . esc_html__( 'Check this box to see options for country and/or zip code restrictions.', 'woocommerce-coupon-restrictions' ) . '</p>',
+						'position' => array(
+							'edge'  => 'left',
+							'align' => 'left',
+						)
+					)
+				),
+				'usage-limit' => array(
+					'target' => '#usage_restriction_coupon_data .usage_limit_per_user_field .woocommerce-help-tip',
+					'options'      => array(
+						'content'  => '<h3>' . esc_html__( 'Limit User Tip', 'woocommerce-coupon-restrictions' ) . '</h3>' .
+						'<p>' . esc_html__( 'If you are using a new customer restriction, it is recommended you also limit the coupon to one use.', 'woocommerce-coupon-restrictions' ) . '</p>',
+						'position' => array(
+							'edge'  => 'left',
 							'align' => 'left',
 						)
 					)
@@ -144,8 +187,6 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		wc_enqueue_js(
 			"jQuery( function( $ ) {
-				jQuery('#woocommerce-coupon-data .usage_restriction_tab a').trigger('click');
-
 				var wc_pointers = {$pointers};
 				setTimeout( init_wc_pointers, 800 );
 				function init_wc_pointers() {
@@ -153,6 +194,12 @@ class WC_Coupon_Restrictions_Onboarding {
 					console.log(wc_pointers);
 					$.each( wc_pointers.pointers, function( i ) {
 						console.log(i);
+						if ( 'coupon-restrictions-panel' === i ) {
+							jQuery('#woocommerce-coupon-data .usage_restriction_tab a').trigger('click');
+						}
+						if ( 'usage-limit' === i ) {
+							jQuery('#woocommerce-coupon-data .usage_limit_tab a').trigger('click');
+						}
 						show_wc_pointer( i );
 						return false;
 					});
