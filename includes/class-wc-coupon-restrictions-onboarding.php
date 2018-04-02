@@ -279,8 +279,6 @@ class WC_Coupon_Restrictions_Onboarding {
 					var options = $.extend( pointer.options, {
 						pointerClass: 'wp-pointer wc-pointer',
 						close: function() {
-							// $('html, body').animate({ scrollTop: target.offset().top });
-							console.log( pointer.next );
 							pre_show_wccr_pointer( pointer.next );
 							if ( pointer.next ) {
 								show_wc_pointer( pointer.next );
