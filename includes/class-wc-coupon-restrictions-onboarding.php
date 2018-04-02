@@ -40,9 +40,9 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @since 1.5.0
 	 */
 	public static function activation_hook() {
-		// After the plugin is activated a transient variable is set for 10 minutes.
+		// After the plugin is activated set a transient that expires after one week.
 		// This variable determines whether onboarding notice should be displayed.
-		set_transient( 'woocommerce-coupon-restrictions-activated', true, 10 * 60 );
+		set_transient( 'woocommerce-coupon-restrictions-activated', true, 60 * 60 * 24 * 7 );
 	}
 
 	/**
@@ -63,14 +63,16 @@ class WC_Coupon_Restrictions_Onboarding {
 	 */
 	public static function admin_installed_notice() {
 
-		if ( true ) :
-		// if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
+		if (
+			get_transient( 'woocommerce-coupon-restrictions-activated' ) &&
+			current_user_can( 'manage_options' )
+		) :
 			$url = 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1';
 			?>
 			<div class="updated notice is-dismissible woocommerce-message" style="border-left-color: #cc99c2">
 				<p>
 					<?php _e( 'WooCommerce Coupon Restrictions plugin activated.', 'woocommerce-coupon-restrictions' ); ?>
-					<a href="<?php echo admin_url( $url ); ?>"><?php esc_html_e( 'See How it Works', 'woocommerce-coupon-restrictions' ); ?></a>
+					<a href="<?php echo admin_url( $url ); ?>"><?php esc_html_e( 'See how it works.', 'woocommerce-coupon-restrictions' ); ?></a>
 				</p>
 			</div>
 			<?php
@@ -139,7 +141,7 @@ class WC_Coupon_Restrictions_Onboarding {
 					)
 				),
 				'location-restrictions' => array(
-					'target' => '#usage_restriction_coupon_data .location_restrictions_field input',
+					'target' => '#usage_restriction_coupon_data .location_restrictions_field',
 					'next' => 'usage-limit',
 					'next_trigger' => array(
 						'target' => '#title',
@@ -147,15 +149,16 @@ class WC_Coupon_Restrictions_Onboarding {
 					),
 					'options'      => array(
 						'content'  => '<h3>' . esc_html__( 'Location Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
-						'<p>' . esc_html__( 'Check this box to see options for country and/or zip code restrictions.', 'woocommerce-coupon-restrictions' ) . '</p>',
+						'<p>' . esc_html__( 'Checking this box displays options for country and/or zip code restrictions.', 'woocommerce-coupon-restrictions' ) . '</p>',
 						'position' => array(
-							'edge'  => 'left',
-							'align' => 'left',
+							'edge'  => 'right',
+							'align' => 'right',
 						)
 					)
 				),
 				'usage-limit' => array(
-					'target' => '#usage_restriction_coupon_data .usage_limit_per_user_field .woocommerce-help-tip',
+					'target' => '#usage_limit_coupon_data .usage_limit_per_user_field .woocommerce-help-tip',
+					'next'    => '',
 					'options'      => array(
 						'content'  => '<h3>' . esc_html__( 'Limit User Tip', 'woocommerce-coupon-restrictions' ) . '</h3>' .
 						'<p>' . esc_html__( 'If you are using a new customer restriction, it is recommended you also limit the coupon to one use.', 'woocommerce-coupon-restrictions' ) . '</p>',
@@ -190,16 +193,8 @@ class WC_Coupon_Restrictions_Onboarding {
 				var wc_pointers = {$pointers};
 				setTimeout( init_wc_pointers, 800 );
 				function init_wc_pointers() {
-					console.log('Pointers!');
-					console.log(wc_pointers);
 					$.each( wc_pointers.pointers, function( i ) {
-						console.log(i);
-						if ( 'coupon-restrictions-panel' === i ) {
-							jQuery('#woocommerce-coupon-data .usage_restriction_tab a').trigger('click');
-						}
-						if ( 'usage-limit' === i ) {
-							jQuery('#woocommerce-coupon-data .usage_limit_tab a').trigger('click');
-						}
+						pre_show_wc_pointer( i );
 						show_wc_pointer( i );
 						return false;
 					});
@@ -209,6 +204,7 @@ class WC_Coupon_Restrictions_Onboarding {
 					var options = $.extend( pointer.options, {
 						pointerClass: 'wp-pointer wc-pointer',
 						close: function() {
+							pre_show_wc_pointer( pointer.next );
 							if ( pointer.next ) {
 								show_wc_pointer( pointer.next );
 							}
@@ -216,19 +212,31 @@ class WC_Coupon_Restrictions_Onboarding {
 						buttons: function( event, t ) {
 							var close   = '" . esc_js( __( 'Dismiss', 'woocommerce' ) ) . "',
 								next    = '" . esc_js( __( 'Next', 'woocommerce' ) ) . "',
-								button  = $( '<a class=\"close\" href=\"#\">' + close + '</a>' ),
-								button2 = $( '<a class=\"button button-primary\" href=\"#\">' + next + '</a>' ),
+								enjoy    = '" . esc_js( __( 'Enjoy!', 'woocommerce' ) ) . "',
+								btn_close  = $( '<a class=\"close\" href=\"#\">' + close + '</a>' ),
+								btn_next = $( '<a class=\"button button-primary\" href=\"#\">' + next + '</a>' ),
+								btn_complete = $( '<a class=\"button button-primary\" href=\"#\">' + enjoy + '</a>' ),
 								wrapper = $( '<div class=\"wc-pointer-buttons\" />' );
-							button.bind( 'click.pointer', function(e) {
+							btn_close.bind( 'click.pointer', function(e) {
 								e.preventDefault();
 								t.element.pointer('destroy');
 							});
-							button2.bind( 'click.pointer', function(e) {
+							btn_next.bind( 'click.pointer', function(e) {
 								e.preventDefault();
 								t.element.pointer('close');
 							});
-							wrapper.append( button );
-							wrapper.append( button2 );
+							btn_complete.bind( 'click.pointer', function(e) {
+								e.preventDefault();
+								t.element.pointer('close');
+							});
+
+							wrapper.append( btn_close );
+
+							if ('usage-limit' !== id) {
+								wrapper.append( btn_next );
+							} else {
+								wrapper.append( btn_complete );
+							}
 							return wrapper;
 						},
 					} );
@@ -238,6 +246,17 @@ class WC_Coupon_Restrictions_Onboarding {
 						$( pointer.next_trigger.target ).on( pointer.next_trigger.event, function() {
 							setTimeout( function() { this_pointer.pointer( 'close' ); }, 400 );
 						});
+					}
+				}
+				function pre_show_wc_pointer( pointer ) {
+					if ( 'coupon-restrictions-panel' === pointer ) {
+						jQuery('#woocommerce-coupon-data .usage_restriction_tab a').trigger('click');
+					}
+					if ( 'location-restrictions' === pointer ) {
+						jQuery('#usage_restriction_coupon_data .checkbox').trigger('click');
+					}
+					if ( 'usage-limit' === pointer ) {
+						jQuery('#woocommerce-coupon-data .usage_limit_tab a').trigger('click');
 					}
 				}
 			});"
