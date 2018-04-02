@@ -45,6 +45,7 @@ Zip code or postcode restrictions are not case sensitive.
 * Update: Improve customer restriction UX. Use radio buttons rather than select.
 * Update: Adds "Location Restrictions" checkbox. Additional options display when checked.
 * Update: Country restriction only permits selection of countries that shop currently sells to.
+* Update: New onboarding flow that shows where the new coupon options are located.
 
 = 1.4.1 (02.15.18)=
 

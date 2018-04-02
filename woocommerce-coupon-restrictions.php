@@ -65,6 +65,18 @@ class WC_Coupon_Restrictions {
 	}
 
 	/**
+	 * Plugin base file.
+	 * Used for activation hook and plugin links.
+	 *
+	 * @access public
+	 * @static
+	 * @since  1.5.0
+	 */
+	public static function plugin_base() {
+		return plugin_basename( __FILE__ );
+	}
+
+	/**
 	 * Main WC_Coupon_Restrictions Instance.
 	 *
 	 * Ensures only one instance of WC_Coupon_Restrictions is loaded or can be loaded.
@@ -130,13 +142,44 @@ class WC_Coupon_Restrictions {
 	 */
 	public function init_plugin() {
 		// Load translations.
-		load_plugin_textdomain( 'woocommerce-coupon-restrictions', false, dirname( plugin_basename(__FILE__) ) . '/languages/' );
+		load_plugin_textdomain(
+			'woocommerce-coupon-restrictions',
+			false,
+			dirname( plugin_basename(__FILE__) ) . '/languages/'
+		);
 
 		// Upgrade routine.
 		$options = get_option( 'woocommerce-coupon-restrictions', false );
+
+		if ( false === $options ) {
+			$this->onboard_routine();
+		}
+
 		if ( false === $options || $this->version !== $options['version'] ) {
 			$this->upgrade_routine();
 		}
+	}
+
+	/**
+	 * Sets a transient that triggers our onboarding routine.
+	 *
+	 * @access public
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function onboard_routine() {
+		set_transient( 'woocommerce-coupon-restrictions-activated', true, 60 * 60 * 24 * 7 );
+	}
+
+	/**
+	 * Runs an upgrade routine.
+	 *
+	 * @access public
+	 * @since  1.3.0
+	 * @return void
+	 */
+	public function upgrade_routine() {
+		update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 	}
 
 	/**
@@ -162,34 +205,6 @@ class WC_Coupon_Restrictions {
 			include_once( $this->plugin_path() . '/includes/class-wc-coupon-restrictions-validation.php' );
 		}
 
-	}
-
-	/**
-	 * Plugin action links.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param  array $links List of existing plugin action links.
-	 * @return array List of modified plugin action links.
-	 */
-	function plugin_action_links( $links ) {
-
-		$custom = array(
-			'<a href="https://devpress.com/products/woocommerce-coupon-restrictions/">' . __( 'Docs', 'woocommerce-coupon-restrictions' ) . '</a>'
-		);
-		$links = array_merge( $custom, $links );
-		return $links;
-	}
-
-	/**
-	 * Runs an upgrade routine.
-	 *
-	 * @access public
-	 * @since  1.3.0
-	 * @return void
-	 */
-	public function upgrade_routine() {
-		update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 	}
 
 }

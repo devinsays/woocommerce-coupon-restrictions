@@ -20,14 +20,27 @@ class WC_Coupon_Restrictions_Onboarding {
 	*/
 	public static function init() {
 
-		// Sets a transient on activation to determine if activation notices should be displayed.
-		register_activation_hook( plugin_basename( __FILE__ ), __CLASS__ . '::activation_hook' );
+		// Gets the base file for plugin.
+		$base = WC_Coupon_Restrictions::plugin_base();
 
-		// Deletes the transient based on url query string.
-		add_action( 'init', __CLASS__ . '::query_string_dismiss_admin_notice' );
+		// Adds links for plugin on the plugin admin screen.
+		add_filter( 'plugin_action_links_' . $base, __CLASS__ . '::plugin_action_links' );
 
-		// Displays a notice on activation.
-		add_action( 'admin_notices', __CLASS__ . '::admin_installed_notice' );
+		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
+
+			// Displays the onboarding notice.
+			add_action( 'admin_notices', __CLASS__ . '::admin_installed_notice' );
+
+			// Inline script deletes the transient when notice is dismissed.
+			add_action( 'admin_footer', __CLASS__ . '::admin_notice_dismiss', 100 );
+
+			// Deletes the transient via query string (when user clicks to start onboarding).
+			add_action( 'init', __CLASS__ . '::dismiss_notice_via_query' );
+
+			// Deletes the transient via ajax (when user dismisses notice).
+			add_action( 'wp_ajax_wc_customer_coupons_dismiss_notice', __CLASS__ . '::dismiss_notice_via_ajax' );
+
+		endif;
 
 		// Initialize the pointers for onboarding flow.
 		add_action( 'admin_enqueue_scripts', __CLASS__ . '::init_pointers_for_screen' );
@@ -35,14 +48,24 @@ class WC_Coupon_Restrictions_Onboarding {
 	}
 
 	/**
-	 * Displays a welcome message. Called when the extension is activated.
+	 * Plugin action links.
 	 *
 	 * @since 1.5.0
+	 *
+	 * @param  array $links List of existing plugin action links.
+	 * @return array List of modified plugin action links.
 	 */
-	public static function activation_hook() {
-		// After the plugin is activated set a transient that expires after one week.
-		// This variable determines whether onboarding notice should be displayed.
-		set_transient( 'woocommerce-coupon-restrictions-activated', true, 60 * 60 * 24 * 7 );
+	public static function plugin_action_links( $links ) {
+
+		// URL for coupon screen onboarding
+		$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
+
+		$custom = array(
+			'<a href="' . esc_url( $url ) . '">' . __( 'New Coupon', 'woocommerce-coupon-restrictions' ) . '</a>',
+			'<a href="https://devpress.com/products/woocommerce-coupon-restrictions/">' . __( 'Docs', 'woocommerce-coupon-restrictions' ) . '</a>'
+		);
+		$links = array_merge( $custom, $links );
+		return $links;
 	}
 
 	/**
@@ -50,32 +73,84 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @since 1.5.0
 	 */
-	public static function query_string_dismiss_admin_notice() {
-		if ( isset( $_GET['woocommerce-coupon-restriction-pointers'] ) ) {
+	public static function dismiss_notice_via_query() {
+		if (
+			current_user_can( 'manage_options' ) &&
+			isset( $_GET['woocommerce-coupon-restriction-pointers'] ) )
+		{
 			delete_transient( 'woocommerce-coupon-restrictions-activated' );
 		}
 	}
 
 	/**
-	 * Displays a welcome message. Called when the extension is activated.
+	 * Deletes the admin notice transient via ajax.
+	 *
+	 * @since 1.5.0
+	 */
+	public static function dismiss_notice_via_ajax() {
+
+		if ( ! check_ajax_referer( 'wc_customer_coupons_nonce', 'nonce', false ) ) {
+			wp_send_json_error();
+			exit;
+		}
+
+		$notice = delete_transient( 'woocommerce-coupon-restrictions-activated' );
+		if ( $notice ) {
+			wp_send_json_success();
+			exit;
+		}
+
+		wp_send_json_error();
+		exit;
+	}
+
+	/**
+	 * Displays a welcome notice.
 	 *
 	 * @since 1.5.0
 	 */
 	public static function admin_installed_notice() {
-
-		if (
-			get_transient( 'woocommerce-coupon-restrictions-activated' ) &&
-			current_user_can( 'manage_options' )
-		) :
-			$url = 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1';
+		if ( current_user_can( 'manage_options' ) ) :
+			$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
 			?>
-			<div class="updated notice is-dismissible woocommerce-message" style="border-left-color: #cc99c2">
+			<div class="updated notice is-dismissible woocommerce-message" data-woocommerce-coupon-restrictions="true" style="border-left-color: #cc99c2">
 				<p>
 					<?php _e( 'WooCommerce Coupon Restrictions plugin activated.', 'woocommerce-coupon-restrictions' ); ?>
-					<a href="<?php echo admin_url( $url ); ?>"><?php esc_html_e( 'See how it works.', 'woocommerce-coupon-restrictions' ); ?></a>
+					<a href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'See how it works.', 'woocommerce-coupon-restrictions' ); ?></a>
 				</p>
 			</div>
 			<?php
+		endif;
+	}
+
+	public static function admin_notice_dismiss() {
+		if ( current_user_can( 'manage_options' ) ) :
+			// Loads jQuery if not already available
+			wp_enqueue_script( 'jquery' );
+			?>
+			<script>
+			( function ( window, $ ) {
+				'use strict';
+
+				$( '.notice' ).on( 'click', '.notice-dismiss', function( event ) {
+					var notice = event.delegateTarget.getAttribute( 'data-woocommerce-coupon-restrictions' );
+
+					if ( ! notice ) {
+						return;
+					}
+
+					$.ajax( {
+						method: 'post',
+						data: {
+							nonce: '<?php echo wp_create_nonce( 'wc_customer_coupons_nonce' ); ?>',
+							action: 'wc_customer_coupons_dismiss_notice'
+						},
+						url: ajaxurl
+					} );
+				} );
+			} )( window, jQuery );
+			</script>
+		<?php
 		endif;
 	}
 
