@@ -265,29 +265,31 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		wc_enqueue_js(
 			"jQuery( function( $ ) {
-				var wc_pointers = {$pointers};
-				setTimeout( init_wc_pointers, 800 );
-				function init_wc_pointers() {
-					$.each( wc_pointers.pointers, function( i ) {
-						pre_show_wc_pointer( i );
+				var wccr_pointers = {$pointers};
+				setTimeout( init_wccr_pointers, 800 );
+				function init_wccr_pointers() {
+					$.each( wccr_pointers.pointers, function( i ) {
+						pre_show_wccr_pointer( i );
 						show_wc_pointer( i );
 						return false;
 					});
 				}
 				function show_wc_pointer( id ) {
-					var pointer = wc_pointers.pointers[ id ];
+					var pointer = wccr_pointers.pointers[ id ];
 					var options = $.extend( pointer.options, {
 						pointerClass: 'wp-pointer wc-pointer',
 						close: function() {
-							pre_show_wc_pointer( pointer.next );
+							// $('html, body').animate({ scrollTop: target.offset().top });
+							console.log( pointer.next );
+							pre_show_wccr_pointer( pointer.next );
 							if ( pointer.next ) {
 								show_wc_pointer( pointer.next );
 							}
 						},
 						buttons: function( event, t ) {
-							var close   = '" . esc_js( __( 'Dismiss', 'woocommerce' ) ) . "',
-								next    = '" . esc_js( __( 'Next', 'woocommerce' ) ) . "',
-								enjoy    = '" . esc_js( __( 'Enjoy!', 'woocommerce' ) ) . "',
+							var close   = '" . esc_js( __( 'Dismiss', 'woocommerce-customer-coupons' ) ) . "',
+								next    = '" . esc_js( __( 'Next', 'woocommerce-customer-coupons' ) ) . "',
+								enjoy    = '" . esc_js( __( 'Enjoy!', 'woocommerce-customer-coupons' ) ) . "',
 								btn_close  = $( '<a class=\"close\" href=\"#\">' + close + '</a>' ),
 								btn_next = $( '<a class=\"button button-primary\" href=\"#\">' + next + '</a>' ),
 								btn_complete = $( '<a class=\"button button-primary\" href=\"#\">' + enjoy + '</a>' ),
@@ -316,6 +318,7 @@ class WC_Coupon_Restrictions_Onboarding {
 						},
 					} );
 					var this_pointer = $( pointer.target ).pointer( options );
+					$('html, body').animate({ scrollTop: $( pointer.target ).offset().top - 200 });
 					this_pointer.pointer( 'open' );
 					if ( pointer.next_trigger ) {
 						$( pointer.next_trigger.target ).on( pointer.next_trigger.event, function() {
@@ -323,15 +326,15 @@ class WC_Coupon_Restrictions_Onboarding {
 						});
 					}
 				}
-				function pre_show_wc_pointer( pointer ) {
+				function pre_show_wccr_pointer( pointer ) {
 					if ( 'coupon-restrictions-panel' === pointer ) {
-						jQuery('#woocommerce-coupon-data .usage_restriction_tab a').trigger('click');
+						$('#woocommerce-coupon-data .usage_restriction_tab a').trigger('click');
 					}
 					if ( 'location-restrictions' === pointer ) {
-						jQuery('#usage_restriction_coupon_data .checkbox').trigger('click');
+						$('#usage_restriction_coupon_data .checkbox').trigger('click');
 					}
 					if ( 'usage-limit' === pointer ) {
-						jQuery('#woocommerce-coupon-data .usage_limit_tab a').trigger('click');
+						$('#woocommerce-coupon-data .usage_limit_tab a').trigger('click');
 					}
 				}
 			});"
