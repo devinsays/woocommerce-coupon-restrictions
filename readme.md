@@ -32,6 +32,8 @@ E-mail addresses restrictions are not case sensitive, but otherwise require an e
 
 Zip code or postcode restrictions are not case sensitive.
 
+A customer must meet all requirements if multiple restrictions are set. For instance, if a "New Customer" and "Country Restriction" are set, a customer must meet both restrictions in order to checkout with the coupon.
+
 ## Unit Tests
 
 PHPUnit, Composer and WP-CLI are required for running unit tests.

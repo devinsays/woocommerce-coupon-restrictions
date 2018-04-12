@@ -76,7 +76,6 @@ class WC_Coupon_Restrictions_Validation {
 		endif;
 
 		return $valid;
-
 	}
 
 	/**
@@ -152,7 +151,6 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		return true;
-
 	}
 
 	/**
@@ -195,7 +193,6 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		return true;
-
 	}
 
 	/**

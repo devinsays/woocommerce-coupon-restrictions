@@ -26,6 +26,11 @@ class WC_Coupon_Restrictions_Onboarding {
 		// Adds links for plugin on the plugin admin screen.
 		add_filter( 'plugin_action_links_' . $base, __CLASS__ . '::plugin_action_links' );
 
+		$options = get_option( 'woocommerce-coupon-restrictions', false );
+		if ( false === $options ) {
+			self::onboard_routine();
+		}
+
 		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
 
 			// Displays the onboarding notice.
@@ -105,6 +110,17 @@ class WC_Coupon_Restrictions_Onboarding {
 	}
 
 	/**
+	 * Sets a transient that triggers our onboarding routine.
+	 *
+	 * @access public
+	 * @since  1.5.0
+	 * @return void
+	 */
+	public static function onboard_routine() {
+		set_transient( 'woocommerce-coupon-restrictions-activated', true, 60 * 60 * 24 * 7 );
+	}
+
+	/**
 	 * Displays a welcome notice.
 	 *
 	 * @since 1.5.0
@@ -123,6 +139,13 @@ class WC_Coupon_Restrictions_Onboarding {
 		endif;
 	}
 
+	/**
+	 * Allows admin notice to be dismissed via ajax.
+	 *
+	 * @access public
+	 * @since  1.5.0
+	 * @return void
+	 */
 	public static function admin_notice_dismiss() {
 		if ( current_user_can( 'manage_options' ) ) :
 			// Loads jQuery if not already available

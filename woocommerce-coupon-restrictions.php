@@ -102,10 +102,10 @@ class WC_Coupon_Restrictions {
 	 */
 	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'load_plugin' ) );
-		add_action( 'init', array( $this, 'init_plugin' ) );
-
-		// Include required files.
 		add_action( 'woocommerce_loaded', array( $this, 'includes' ) );
+
+		// Init hooks runs after plugins_loaded and woocommerce_loaded hooks.
+		add_action( 'init', array( $this, 'init_plugin' ) );
 	}
 
 	/**
@@ -150,25 +150,9 @@ class WC_Coupon_Restrictions {
 
 		// Upgrade routine.
 		$options = get_option( 'woocommerce-coupon-restrictions', false );
-
-		if ( false === $options ) {
-			$this->onboard_routine();
-		}
-
 		if ( false === $options || $this->version !== $options['version'] ) {
 			$this->upgrade_routine();
 		}
-	}
-
-	/**
-	 * Sets a transient that triggers our onboarding routine.
-	 *
-	 * @access public
-	 * @since  1.3.0
-	 * @return void
-	 */
-	public function onboard_routine() {
-		set_transient( 'woocommerce-coupon-restrictions-activated', true, 60 * 60 * 24 * 7 );
 	}
 
 	/**
