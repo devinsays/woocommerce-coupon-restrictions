@@ -1,13 +1,13 @@
 {
 	"name": "woocommerce-coupon-restrictions",
-	"version": "1.4.1",
+	"version": "1.4.2",
 	"repository": "https://github.com/devinsays/woocommerce-coupon-restrictions",
 	"license": "GPL-2.0",
 	"devDependencies": {
-		"grunt": "^1.0.0",
+		"grunt": "^1.0.2",
 		"grunt-cli": "^1.2.0",
-		"load-grunt-tasks": "^3.5.0",
 		"grunt-text-replace": "^0.4.0",
-		"grunt-wp-i18n": "^1.0.0"
+		"grunt-wp-i18n": "^1.0.2",
+		"load-grunt-tasks": "^3.5.0"
 	}
 }
