@@ -114,10 +114,12 @@ class WC_Coupon_Restrictions_Admin {
 				$selections = $values;
 			}
 
+			// An array of all countries.
 			$countries = WC()->countries->countries;
 			asort( $countries );
-			$allowed_countries = get_option( 'woocommerce_specific_allowed_countries' );
 
+			// An array of countries the shop sells to.
+			$shop_countries = self::shop_countries();
 			?>
 			<label for="<?php echo esc_attr( $id ); ?>">
 				<?php echo esc_html( $title ); ?>
@@ -131,7 +133,7 @@ class WC_Coupon_Restrictions_Admin {
 							$selected = in_array( $key, $selections );
 
 							// Any country that shop sells to should appear as a selectable option.
-							$allowed = in_array( $key, $allowed_countries );
+							$allowed = in_array( $key, $shop_countries );
 
 							// Output the options.
 							if ( $selected ||  $allowed ) {
@@ -165,9 +167,43 @@ class WC_Coupon_Restrictions_Admin {
 	}
 
 	/**
-	 * Returns javascript to be enqueued on the coupon admin screen.
+	 * Returns an array of countries the shop sells to.
 	 *
-	 * @since  1.4.0
+	 * @since  1.5.0
+	 * @return array $shop_countries
+	 */
+	public static function shop_countries() {
+
+		// An array of all countries.
+		$countries = WC()->countries->countries;
+
+		// We just need the array keys.
+		$countries = array_keys( $countries );
+
+		// This option is set in the WooCommerce settings.
+		// Possible values are: all, all_except_countries, specific.
+		$allowed_countries = get_option( 'woocommerce_allowed_countries' );
+
+		if ( 'specific' === $allowed_countries ) {
+			$shop_countries = get_option( 'woocommerce_specific_allowed_countries' );
+			return $shop_countries;
+		}
+
+		if ( 'all_except_countries' === $allowed_countries ) {
+			$all_except_countries = get_option( 'woocommerce_all_except_countries' );
+			$shop_countries = array_diff_key($countries, $all_except_countries);
+			return $shop_countries;
+		}
+
+		// Returns all countries if above conditions are not met.
+		return $countries;
+
+	}
+
+	/**
+	 * Outputs javascript to be enqueued on the coupon admin screen.
+	 *
+	 * @since  1.5.0
 	 * @return void
 	 */
 	public static function location_restrictions_admin_js() {
