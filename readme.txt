@@ -8,7 +8,7 @@ Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 WC requires at least: 3.2.1
-WC tested up to: 3.3.4
+WC tested up to: 3.3.5
 
 == Description ==
 
@@ -31,6 +31,8 @@ Customers are considered "new customers" if they have not yet spent money on the
 E-mail addresses restrictions are not case sensitive, but otherwise require an exact match.
 
 Zip code or postcode restrictions are not case sensitive.
+
+A customer must meet all requirements if multiple restrictions are set. For instance, if a "New Customer" and "Country Restriction" are set, a customer must meet both restrictions in order to checkout with the coupon.
 
 == Compatibility ==
 
