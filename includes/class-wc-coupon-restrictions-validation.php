@@ -287,7 +287,7 @@ class WC_Coupon_Restrictions_Validation {
 
 					// Check if coupon is restricted to new customers.
 					if ( 'new' == $customer_restriction_type ) {
-						$valid = self::check_new_customer_coupon_checkout();
+						$valid = self::check_new_customer_coupon_checkout( $coupon, $code );
 					}
 
 					// Check if coupon is restricted to existing customers.
