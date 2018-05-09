@@ -301,26 +301,16 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function validate_coupons_at_checkout( $posted ) {
 
-		if ( ! empty( WC()->cart->applied_coupons ) ) {
+		if ( ! empty( WC()->cart->applied_coupons ) ) :
 
-			foreach ( WC()->cart->applied_coupons as $code ) {
+			foreach ( WC()->cart->applied_coupons as $code ) :
 
 				$coupon = new WC_Coupon( $code );
 
-				if ( $coupon->is_valid() ) {
+				if ( $coupon->is_valid() ) :
 
-					// Get customer restriction type meta.
-					$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
-
-					// Check if coupon is restricted to new customers.
-					if ( 'new' == $customer_restriction_type ) {
-						$valid = self::check_new_customer_coupon_checkout();
-					}
-
-					// Check if coupon is restricted to existing customers.
-					if ( 'existing' == $existing_customers_restriction ) {
-						$valid = self::check_existing_customer_coupon_checkout();
-					}
+					self::checkout_validate_new_customer_restriction( $coupon, $code, $posted );
+					self::check_existing_customer_coupon_checkout( $coupon, $code, $posted );
 
 					// Check location restrictions if active.
 					if ( 'yes' == $coupon->get_meta( 'location_restrictions' ) ) :
@@ -339,10 +329,11 @@ class WC_Coupon_Restrictions_Validation {
 
 					endif;
 
+				endif;
 
-				}
-			}
-		}
+			endforeach;
+
+		endif;
 	}
 
 	/**
@@ -352,65 +343,43 @@ class WC_Coupon_Restrictions_Validation {
 	 * @param string $code
 	 * @return void
 	 */
-	public static function check_new_customer_coupon_checkout( $coupon, $code ) {
+	public static function checkout_validate_new_customer_restriction( $coupon, $code ) {
 
-		// Validation message
+		// Validation message.
 		$msg = sprintf( __( 'Sorry, coupon code "%s" is only valid for new customers.', 'woocommerce-coupon-restrictions' ), $code );
 
-		// Check if order is for returning customer
-		if ( is_user_logged_in() ) {
+		// @TODO Email sanitization.
+		$email = strtolower( $posted['billing_email'] );
 
-			// If user is logged in, we can check for paying_customer meta.
-			$current_user = wp_get_current_user();
-			$customer = new WC_Customer( $current_user->ID );
+		$valid = self::validate_new_customer_restriction( $coupon, $email );
 
-			if ( $customer->get_is_paying_customer() ) {
-				self::remove_coupon( $coupon, $code, $msg );
-			}
-
-		} else {
-
-			// If user is not logged in, we can check against previous orders.
-			$email = strtolower( $_POST['billing_email'] );
-			if ( self::is_returning_customer( $email ) ) {
-				self::remove_coupon( $coupon, $code, $msg );
-			}
-
+		if ( false == $valid ) {
+			self::remove_coupon( $coupon, $code, $msg );
 		}
+
 	}
 
 	/**
-	 * Validates existing customer coupon on checkout.
+	 * Validates new customer coupon on checkout.
 	 *
 	 * @param object $coupon
 	 * @param string $code
 	 * @return void
 	 */
-	public static function check_existing_customer_coupon_checkout( $coupon, $code ) {
+	public static function checkout_validate_new_customer_restriction( $coupon, $code ) {
 
 		// Validation message.
 		$msg = sprintf( __( 'Sorry, coupon code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $code );
 
-		// Check if order is for returning customer.
-		if ( is_user_logged_in() ) {
+		// @TODO Email sanitization.
+		$email = strtolower( $posted['billing_email'] );
 
-			// If user is logged in, we can check for paying_customer meta.
-			$current_user = wp_get_current_user();
-			$customer = new WC_Customer( $current_user->ID );
+		$valid = self::validate_existing_customer_restriction( $coupon, $email );
 
-			if ( ! $customer->get_is_paying_customer() ) {
-				self::remove_coupon( $coupon, $code, $msg );
-			}
-
-		} else {
-
-			// If user is not logged in, we can check against previous orders.
-			$email = strtolower( $_POST['billing_email'] );
-			if ( ! self::is_returning_customer( $email ) ) {
-				self::remove_coupon( $coupon, $code, $msg );
-			}
-
+		if ( false == $valid ) {
+			self::remove_coupon( $coupon, $code, $msg );
 		}
+
 	}
 
 	/**
