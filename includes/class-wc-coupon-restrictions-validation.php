@@ -29,7 +29,7 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
-	 * Validates coupon when added (if possible due to log in state).
+	 * Validates coupon when added if customer session data is available.
 	 *
 	 * @return boolean $valid
 	 */
@@ -40,36 +40,47 @@ class WC_Coupon_Restrictions_Validation {
 			return $valid;
 		}
 
-		// Can't validate coupon at this point unless customer is logged in.
-		if ( ! is_user_logged_in() ) {
+		// Get the customer data from the session.
+		$session_customer = WC()->session->get( 'customer' );
+
+		// If session data is not available, the coupon should remain valid.
+		// We do additional validation at checkout.
+		if ( ! $customer_session ) {
 			return $valid;
 		}
 
-		// Get customer restriction type meta.
-		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
+		// If email is available in session, we can check customer restrictions.
+		if ( isset( $customer_session['email'] ) ) :
 
-		// Validate new customer restriction.
-		if ( 'new' == $customer_restriction_type ) {
-			$valid = self::validate_new_customer_coupon();
-		}
+			$email = $customer_session['email'];
 
-		// Validate existing customer restriction.
-		if ( 'existing' == $customer_restriction_type ) {
-			$valid = self::validate_existing_customer_coupon();
-		}
+			// Validate new customer restriction.
+			if ( false === self::validate_new_customer_restriction( $coupon, $email ) ) {
+				add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_new_customer_restriction', 10, 2 );
+				$valid = false;
+			}
+
+			// Validate existing customer restriction.
+			if ( false === self::validate_existing_customer_restriction( $coupon, $email ) ) {
+				add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_existing_customer_restriction', 10, 2 );
+				$valid = false;
+			}
+
+		endif;
 
 		// Check location restrictions if active.
 		if ( 'yes' == $coupon->get_meta( 'location_restrictions' ) ) :
 
 			// Check country restrictions.
 			$country_restriction = $coupon->get_meta( 'country_restriction' );
-			if ( ! empty( $country_restriction ) ) {
-				$valid = self::check_country_restriction_user( $coupon );
+			if ( ! empty( $country_restriction ) && isset( $customer_session['country'] ) ) {
+				$country = $customer_session['country'];
+				$valid = self::check_country_restriction_user( $coupon, $country );
 			}
 
 			// Check postcode restrictions.
 			$postcode_restriction = $coupon->get_meta( 'postcode_restriction' );
-			if ( ! empty( $postcode_restriction ) ) {
+			if ( ! empty( $postcode_restriction ) && isset( $customer_session['country'] ) ) {
 				$valid = self::check_postcode_restriction_user( $coupon );
 			}
 
@@ -79,39 +90,37 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
-	 * If user is logged in, validates new customer coupon.
+	 * Validates new customer restriction.
+	 * Returns true if customer meets $coupon criteria.
 	 *
+	 * @param string $email
 	 * @return boolean
 	 */
-	public static function validate_new_customer_coupon() {
-
-		// If current customer is an existing customer, return false.
-		$current_user = wp_get_current_user();
-		$customer = new WC_Customer( $current_user->ID );
-
-		if ( $customer->get_is_paying_customer() ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_new_customer_restriction', 10, 2 );
-			return false;
-		}
+	function validate_new_customer_restriction( $coupon, $email ) {
+		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
+		if ( 'new' == $customer_restriction_type ) :
+			if ( self::is_returning_customer( $email ) ) {
+				return false;
+			}
+		endif;
 
 		return true;
 	}
 
 	/**
-	 * If user is logged in, validates existing cutomer coupon.
+	 * Validates existing customer restriction.
+	 * Returns true if customer meets $coupon criteria.
 	 *
+	 * @param string $email
 	 * @return boolean
 	 */
-	public static function validate_existing_customer_coupon() {
-
-		// If current customer is not an existing customer, return false.
-		$current_user = wp_get_current_user();
-		$customer = new WC_Customer( $current_user->ID );
-
-		if ( ! $customer->get_is_paying_customer() ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_existing_customer_restriction', 10, 2 );
-			return false;
-		}
+	function validate_existing_customer_restriction( $coupon, $email ) {
+		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
+		if ( 'existing' == $customer_restriction_type ) :
+			if ( self::is_returning_customer( $email ) ) {
+				return false;
+			}
+		endif;
 
 		return true;
 	}
@@ -516,18 +525,30 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public static function is_returning_customer( $email ) {
 
+		// Checks if there is an account associated with the $email.
+		$user = get_user_by( 'email', $email );
+
+		// If there is a user account, we can check if customer is_paying_customer.
+		if ( $user ) :
+			$customer = new WC_Customer( $user->ID );
+			if ( $customer->get_is_paying_customer() ) {
+				return true;
+			}
+		endif;
+
+		// If there isn't a user account, we can check against orders.
 		$customer_orders = wc_get_orders( array(
 			'status' => array( 'wc-processing', 'wc-completed' ),
 			'email'  => $email,
 			'limit'  => 1
 		) );
 
-		// If there is at least one other order by billing e-mail.
+		// If there is at least one order, customer is returning.
 		if ( 1 === count( $customer_orders ) ) {
 			return true;
 		}
 
-		// Otherwise there should not be any orders.
+		// If we've gotten to this point, the customer must be new.
 		return false;
 	}
 
