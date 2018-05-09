@@ -29,7 +29,7 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
-	 * Validates coupon when added if customer session data is available.
+	 * Validates coupon if customer session data is available.
 	 *
 	 * @return boolean $valid
 	 */
@@ -41,52 +41,53 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		// Get the customer data from the session.
-		$session_customer = WC()->session->get( 'customer' );
+		$session = WC()->session->get( 'customer' );
 
 		// If session data is not available, the coupon should remain valid.
 		// We do additional validation at checkout.
-		if ( ! $customer_session ) {
+		if ( ! $session ) {
 			return $valid;
 		}
 
-		// If email is available in session, we can check customer restrictions.
-		if ( isset( $customer_session['email'] ) ) :
+		// Validate customer restrictions.
+		$valid = self::session_validate_customer_restrictions( $coupon, $session );
 
-			$email = $customer_session['email'];
-
-			// Validate new customer restriction.
-			if ( false === self::validate_new_customer_restriction( $coupon, $email ) ) {
-				add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_new_customer_restriction', 10, 2 );
-				$valid = false;
-			}
-
-			// Validate existing customer restriction.
-			if ( false === self::validate_existing_customer_restriction( $coupon, $email ) ) {
-				add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_existing_customer_restriction', 10, 2 );
-				$valid = false;
-			}
-
-		endif;
-
-		// Check location restrictions if active.
-		if ( 'yes' == $coupon->get_meta( 'location_restrictions' ) ) :
-
-			// Check country restrictions.
-			$country_restriction = $coupon->get_meta( 'country_restriction' );
-			if ( ! empty( $country_restriction ) && isset( $customer_session['country'] ) ) {
-				$country = $customer_session['country'];
-				$valid = self::check_country_restriction_user( $coupon, $country );
-			}
-
-			// Check postcode restrictions.
-			$postcode_restriction = $coupon->get_meta( 'postcode_restriction' );
-			if ( ! empty( $postcode_restriction ) && isset( $customer_session['country'] ) ) {
-				$valid = self::check_postcode_restriction_user( $coupon );
-			}
-
-		endif;
+		// Validate location restrictions.
+		$valid = self::session_validate_location_restrictions( $coupon, $session );
 
 		return $valid;
+	}
+
+	/**
+	 * Validates customer restrictions.
+	 * Returns true if customer meets $coupon criteria.
+	 *
+	 * @param string $email
+	 * @return boolean
+	 */
+	function session_validate_customer_restrictions( $coupon, $session ) {
+
+		// If email address isn't available, coupon remains valid.
+		if ( ! isset( $session['email'] ) ) {
+			return true;
+		}
+
+		// @TODO Email sanitization.
+		$email = strtolower( $session['email'] );
+
+		// Validate new customer restriction.
+		if ( false === self::validate_new_customer_restriction( $coupon, $email ) ) {
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_new_customer_restriction', 10, 2 );
+			return false;
+		}
+
+		// Validate existing customer restriction.
+		if ( false === self::validate_existing_customer_restriction( $coupon, $email ) ) {
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_existing_customer_restriction', 10, 2 );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -126,36 +127,70 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
-	 * If user is logged in, validates country restriction.
+	 * Validates location restrictions.
+	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param object $coupon
-	 * @return void
+	 * @param string $email
+	 * @return boolean
 	 */
-	public static function check_country_restriction_user( $coupon ) {
+	function session_validate_location_restrictions( $coupon, $session ) {
 
-		$current_user = wp_get_current_user();
-		$customer = new WC_Customer( $current_user->ID );
-
-		// Get address lookup for location restrictions.
-		$address_for_location_restrictions = self::get_address_for_location_restriction( $coupon );
-
-		// Gets customer country.
-		if ( 'shipping' === $address_for_location_restrictions && $customer->get_shipping_country() ) {
-			// If shipping country is selected and set, use it.
-			$country = $customer->get_shipping_country();
-		} elseif ( $customer->get_billing_country() ) {
-			// Otherwise if a billing country is set, let's use that.
-			$country = $customer->get_billing_country();
-		} else {
-			// If no customer data is set, we'll use a blank string as a fallback.
-			$country = '';
+		// If location restrictions aren't set, coupon is valid.
+		if ( 'yes' != $coupon->get_meta( 'location_restrictions' ) ) {
+			return true;
 		}
 
+		// Get the address type used for location restrictions (billing or shipping).
+		$address = self::get_address_type_for_restriction( $coupon );
+
+		if ( 'shipping' == $address ) :
+
+			// If shipping_country is available in session, we can check restrictions.
+			if ( isset( $session['shipping_country'] ) ) :
+				if ( false === self::validate_country_restriction( $coupon, $session['shipping_country'] ) ) {
+					add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_country_restriction', 10, 2 );
+					$valid = false;
+				}
+			endif;
+
+			// If shipping_postcode is available in session, we can check restrictions.
+			if ( isset( $session['shipping_postcode'] ) ) {
+				$valid = self::validate_postcode_restriction( $coupon, $session['shipping_postcode'] );
+			}
+
+		endif;
+
+		if ( 'billing' == $address ) :
+
+			// If billing_country is available in session, we can check restrictions.
+			if ( isset( $session['billing_country'] ) ) {
+				if ( false === self::validate_country_restriction( $coupon, $session['billing_country'] ) ) {
+					add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_country_restriction', 10, 2 );
+					$valid = false;
+				}
+			}
+
+			// If billing_postcode is available in session, we can check restrictions.
+			if ( isset( $session['billing_postcode'] ) ) {
+				$valid = self::validate_postcode_restriction( $coupon, $session['billing_postcode'] );
+			}
+
+		endif;
+
+	}
+
+	/**
+	 * Validates country restriction.
+	 * Returns true if customer meets $coupon criteria.
+	 *
+	 * @param string $country
+	 * @return boolean
+	 */
+	function validate_country_restriction( $coupon, $country ) {
 		// Get the allowed countries from coupon meta.
 		$allowed_countries = $coupon->get_meta( 'country_restriction', true );
 
 		if ( ! in_array( $country, $allowed_countries ) ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_country_restriction', 10, 2 );
 			return false;
 		}
 
@@ -163,45 +198,28 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
-	 * If user is logged in, validates postcode restriction.
+	 * Validates postcode restriction.
+	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param object $coupon
-	 * @return void
+	 * @param string $country
+	 * @return boolean
 	 */
-	public static function check_postcode_restriction_user( $coupon ) {
+	function validate_postcode_restriction( $coupon, $postcode ) {
 
-		$current_user = wp_get_current_user();
-		$customer = new WC_Customer( $current_user->ID );
-
-		// Get address lookup for location restrictions.
-		$address_for_location_restrictions = self::get_address_for_location_restriction( $coupon );
-
-		// Gets customer postcode.
-		if ( 'shipping' === $address_for_location_restrictions && $customer->get_shipping_postcode() ) {
-			// If shipping postcode is selected and set, use it.
-			$postcode = $customer->get_shipping_postcode();
-		} elseif ( $customer->get_billing_postcode() ) {
-			// Otherwise if a billing postcode is set, let's use that.
-			$postcode = $customer->get_billing_postcode();
-		} else {
-			// If no customer data is set, we'll use a blank string as a fallback.
-			$postcode = '';
-		}
-
-		// Get the allowed postcode from coupon meta.
+		// Get the allowed postcodes from coupon meta.
 		$postcode_restriction = $coupon->get_meta( 'postcode_restriction', true );
 		$postcode_array = explode( ',', $postcode_restriction );
 		$postcode_array = array_map( 'trim', $postcode_array );
 
-		// Converting the string uppercase so postcode comparison is not case sensitive.
+		// Converting the string to uppercase so postcode comparison is not case sensitive.
 		$postcode_array = array_map( 'strtoupper', $postcode_array );
 
 		if ( ! in_array( strtoupper( $postcode ), $postcode_array ) ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_zipcode_restriction', 10, 2 );
 			return false;
 		}
 
 		return true;
+
 	}
 
 	/**
@@ -405,7 +423,7 @@ class WC_Coupon_Restrictions_Validation {
 	public static function check_country_restriction_checkout( $coupon, $code ) {
 
 		// Get address lookup for location restrictions.
-		$address_for_location_restrictions = self::get_address_for_location_restriction( $coupon );
+		$address_for_location_restrictions = self::get_address_type_for_restriction( $coupon );
 
 		// Gets customer country.
 		if ( 'shipping' === $address_for_location_restrictions && isset( $_POST['shipping_country'] ) ) {
@@ -453,7 +471,7 @@ class WC_Coupon_Restrictions_Validation {
 	public static function check_postcode_restriction_checkout( $coupon, $code ) {
 
 		// Get address lookup for location restrictions.
-		$address_for_location_restrictions = self::get_address_for_location_restriction( $coupon );
+		$address_for_location_restrictions = self::get_address_type_for_restriction( $coupon );
 
 		// Gets customer postcode.
 		if ( 'shipping' === $address_for_location_restrictions && isset( $_POST['shipping_postcode'] ) ) {
@@ -558,7 +576,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * @param object $coupon
 	 * @return string
 	 */
-	public static function get_address_for_location_restriction( $coupon ) {
+	public static function get_address_type_for_restriction( $coupon ) {
 		$address_for_location_restrictions = $coupon->get_meta( 'address_for_location_restrictions', true );
 		if ( ! in_array( $address_for_location_restrictions, array( 'billing', 'shipping' ) ) ) {
 			return 'shipping';
