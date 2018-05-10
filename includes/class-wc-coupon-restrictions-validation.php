@@ -20,11 +20,11 @@ class WC_Coupon_Restrictions_Validation {
 	*/
 	public static function init() {
 
-		// Validates coupons before checkout if customer is logged in
+		// Validates coupons before checkout if customer is logged in.
 		add_filter( 'woocommerce_coupon_is_valid', __CLASS__ . '::validate_coupons_before_checkout', 10, 2 );
 
-		// Validates coupons again during checkout validation
-		add_action( 'woocommerce_after_checkout_validation', __CLASS__ . '::validate_coupons_at_checkout', 1 );
+		// Validates coupons again during checkout validation.
+		add_action( 'woocommerce_after_checkout_validation', __CLASS__ . '::validate_coupons_after_checkout', 1 );
 
 	}
 
@@ -62,10 +62,11 @@ class WC_Coupon_Restrictions_Validation {
 	 * Validates customer restrictions.
 	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param string $email
+	 * @param object $coupon
+	 * @param object $session
 	 * @return boolean
 	 */
-	function session_validate_customer_restrictions( $coupon, $session ) {
+	public static function session_validate_customer_restrictions( $coupon, $session ) {
 
 		// If email address isn't available, coupon remains valid.
 		if ( ! isset( $session['email'] ) ) {
@@ -77,13 +78,13 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Validate new customer restriction.
 		if ( false === self::validate_new_customer_restriction( $coupon, $email ) ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_new_customer_restriction', 10, 2 );
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_new_customer_restriction', 10, 3 );
 			return false;
 		}
 
 		// Validate existing customer restriction.
 		if ( false === self::validate_existing_customer_restriction( $coupon, $email ) ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_existing_customer_restriction', 10, 2 );
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_existing_customer_restriction', 10, 3 );
 			return false;
 		}
 
@@ -94,10 +95,11 @@ class WC_Coupon_Restrictions_Validation {
 	 * Validates new customer restriction.
 	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param string $email
+	 * @param object $coupon
+	 * @param object $session
 	 * @return boolean
 	 */
-	function validate_new_customer_restriction( $coupon, $email ) {
+	public static function validate_new_customer_restriction( $coupon, $email ) {
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 		if ( 'new' == $customer_restriction_type ) :
 			if ( self::is_returning_customer( $email ) ) {
@@ -112,10 +114,11 @@ class WC_Coupon_Restrictions_Validation {
 	 * Validates existing customer restriction.
 	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param string $email
+	 * @param object $coupon
+	 * @param object $session
 	 * @return boolean
 	 */
-	function validate_existing_customer_restriction( $coupon, $email ) {
+	public static function validate_existing_customer_restriction( $coupon, $email ) {
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 		if ( 'existing' == $customer_restriction_type ) :
 			if ( self::is_returning_customer( $email ) ) {
@@ -130,10 +133,11 @@ class WC_Coupon_Restrictions_Validation {
 	 * Validates location restrictions.
 	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param string $email
+	 * @param object $coupon
+	 * @param object $session
 	 * @return boolean
 	 */
-	function session_validate_location_restrictions( $coupon, $session ) {
+	public static function session_validate_location_restrictions( $coupon, $session ) {
 
 		// If location restrictions aren't set, coupon is valid.
 		if ( 'yes' != $coupon->get_meta( 'location_restrictions' ) ) {
@@ -181,10 +185,11 @@ class WC_Coupon_Restrictions_Validation {
 	 * Validates country restriction.
 	 * Returns true if customer meets $coupon criteria.
 	 *
+	 * @param object $coupon
 	 * @param string $country
 	 * @return boolean
 	 */
-	function validate_country_restriction( $coupon, $country ) {
+	public static function validate_country_restriction( $coupon, $country ) {
 		// Get the allowed countries from coupon meta.
 		$allowed_countries = $coupon->get_meta( 'country_restriction', true );
 
@@ -199,10 +204,11 @@ class WC_Coupon_Restrictions_Validation {
 	 * Validates postcode restriction.
 	 * Returns true if customer meets $coupon criteria.
 	 *
+	 * @param object $coupon
 	 * @param string $country
 	 * @return boolean
 	 */
-	function validate_postcode_restriction( $coupon, $postcode ) {
+	public static function validate_postcode_restriction( $coupon, $postcode ) {
 
 		// Get the allowed postcodes from coupon meta.
 		$postcode_restriction = $coupon->get_meta( 'postcode_restriction', true );
@@ -225,8 +231,8 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string $err
 	 */
-	public static function validation_message_new_customer_restriction( $err, $err_code ) {
-		$err = self::coupon_error_message( 'new-customer', $err, $err_code );
+	public static function validation_message_new_customer_restriction( $err, $err_code, $coupon ) {
+		$err = self::coupon_error_message( 'new-customer', $err, $err_code, $coupon );
 		return $err;
 	}
 
@@ -235,8 +241,8 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string $err
 	 */
-	public static function validation_message_existing_customer_restriction( $err, $err_code ) {
-		$err = self::coupon_error_message( 'existing-customer', $err, $err_code );
+	public static function validation_message_existing_customer_restriction( $err, $err_code, $coupon ) {
+		$err = self::coupon_error_message( 'existing-customer', $err, $err_code, $coupon );
 		return $err;
 	}
 
@@ -245,8 +251,8 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string $err
 	 */
-	public static function validation_message_country_restriction( $err, $err_code ) {
-		$err = self::coupon_error_message( 'country', $err, $err_code );
+	public static function validation_message_country_restriction( $err, $err_code, $coupon ) {
+		$err = self::coupon_error_message( 'country', $err, $err_code, $coupon );
 		return $err;
 	}
 
@@ -255,8 +261,8 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string $err
 	 */
-	public static function validation_message_zipcode_restriction($err, $err_code) {
-		$err = self::coupon_error_message( 'zipcode', $err, $err_code );
+	public static function validation_message_zipcode_restriction($err, $err_code, $coupon ) {
+		$err = self::coupon_error_message( 'zipcode', $err, $err_code, $coupon );
 		return $err;
 	}
 
@@ -265,7 +271,7 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string
 	 */
-	public static function get_validation_message( $key ) {
+	public static function get_validation_message( $key, $coupon ) {
 
 		if ( $key === 'new-customer' ) {
 			return __( 'Sorry, this coupon is only valid for new customers.', 'woocommerce-coupon-restrictions' );
@@ -294,11 +300,11 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string
 	 */
-	public static function coupon_error_message( $key, $err, $err_code ) {
+	public static function coupon_error_message( $key, $err, $err_code, $coupon ) {
 
 		// Alter the validation message if coupon has been removed.
 		if ( 100 === $err_code ) {
-			$msg = self::get_validation_message( $key );
+			$msg = self::get_validation_message( $key, $coupon );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
@@ -312,7 +318,7 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @param array $posted
 	 */
-	public static function validate_coupons_at_checkout( $posted ) {
+	public static function validate_coupons_after_checkout( $posted ) {
 
 		if ( ! empty( WC()->cart->applied_coupons ) ) :
 			foreach ( WC()->cart->applied_coupons as $code ) :
