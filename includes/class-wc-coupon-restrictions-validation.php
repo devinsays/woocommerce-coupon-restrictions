@@ -148,7 +148,7 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		if ( 'shipping' == $address && isset( $session['shipping_postcode'] ) ) {
-			$postcode_validation = self::validate_postcode_restriction( $coupon, $session['shipping_postcode'] );
+			$zipcode_validation = self::validate_postcode_restriction( $coupon, $session['shipping_postcode'] );
 		}
 
 		if ( 'billing' == $address && isset( $session['billing_country'] ) ) {
@@ -163,12 +163,12 @@ class WC_Coupon_Restrictions_Validation {
 			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_country_restriction', 10, 2 );
 		}
 
-		if ( false === $postcode_validation ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_postcode_restriction', 10, 2 );
+		if ( false === $zipcode_validation ) {
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_zipcode_restriction', 10, 2 );
 		}
 
 		// Coupon is not valid if country or postcode validation failed.
-		if ( false === $country_validation || false === $postcode_validation ) {
+		if ( false === $country_validation || false === $zipcode_validation ) {
 			return false;
 		}
 
@@ -226,15 +226,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return string $err
 	 */
 	public static function validation_message_new_customer_restriction( $err, $err_code ) {
-
-		// Alter the validation message if coupon has been removed.
-		if ( 100 === $err_code ) {
-			// Validation message
-			$msg = __( 'Sorry, this coupon is only valid for new customers.', 'woocommerce-coupon-restrictions' );
-			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
-		}
-
-		// Return validation message
+		$err = self::coupon_error_message( 'new-customer', $err, $err_code );
 		return $err;
 	}
 
@@ -244,15 +236,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return string $err
 	 */
 	public static function validation_message_existing_customer_restriction( $err, $err_code ) {
-
-		// Alter the validation message if coupon has been removed.
-		if ( 100 === $err_code ) {
-			// Validation message
-			$msg = __( 'Sorry, this coupon is only valid for existing customers.', 'woocommerce-coupon-restrictions' );
-			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
-		}
-
-		// Return validation message.
+		$err = self::coupon_error_message( 'existing-customer', $err, $err_code );
 		return $err;
 	}
 
@@ -262,15 +246,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return string $err
 	 */
 	public static function validation_message_country_restriction( $err, $err_code ) {
-
-		// Alter the validation message if coupon has been removed.
-		if ( 100 === $err_code ) {
-			// Validation message
-			$msg = __( 'Sorry, this coupon is not valid in your country.', 'woocommerce-coupon-restrictions' );
-			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
-		}
-
-		// Return validation message.
+		$err = self::coupon_error_message( 'country', $err, $err_code );
 		return $err;
 	}
 
@@ -279,17 +255,56 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string $err
 	 */
-	public static function validation_message_zipcode_restriction( $err, $err_code ) {
+	public static function validation_message_zipcode_restriction($err, $err_code) {
+		$err = self::coupon_error_message( 'zipcode', $err, $err_code );
+		return $err;
+	}
+
+	/**
+	 * Validation message helper.
+	 *
+	 * @return string
+	 */
+	public static function get_validation_message( $key ) {
+
+		if ( $key === 'new-customer' ) {
+			return __( 'Sorry, this coupon is only valid for new customers.', 'woocommerce-coupon-restrictions' );
+		}
+
+		if ( $key === 'existing-customer' ) {
+			return __( 'Sorry, this coupon is only valid for existing customers.', 'woocommerce-coupon-restrictions' );
+		}
+
+		if ( $key === 'existing-customer' ) {
+			return __( 'Sorry, this coupon is only valid for existing customers.', 'woocommerce-coupon-restrictions' );
+		}
+
+		if ( $key === 'country' ) {
+			return __( 'Sorry, this coupon is not valid in your country.', 'woocommerce-coupon-restrictions' );
+		}
+
+		if ( $key === 'zipcode' ) {
+			return __( 'Sorry, this coupon is not valid in your zip code.', 'woocommerce-coupon-restrictions' );
+		}
+
+	}
+
+	/**
+	 * Validation message helper.
+	 *
+	 * @return string
+	 */
+	public static function coupon_error_message( $key, $err, $err_code ) {
 
 		// Alter the validation message if coupon has been removed.
 		if ( 100 === $err_code ) {
-			// Validation message
-			$msg = __( 'Sorry, this coupon is not valid in your zip code.', 'woocommerce-coupon-restrictions' );
+			$msg = self::get_validation_message( $key );
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
 		}
 
 		// Return validation message.
 		return $err;
+
 	}
 
 	/**
