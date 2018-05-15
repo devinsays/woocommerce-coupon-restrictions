@@ -162,7 +162,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		if ( 'shipping' === $address && isset( $session['shipping_country'] ) ) {
 			$country = esc_textarea( $session['shipping_country'] );
-			$country_validation = self::validate_country_restriction( $coupon, $country ) );
+			$country_validation = self::validate_country_restriction( $coupon, $country );
 		}
 
 		if ( 'shipping' === $address && isset( $session['shipping_postcode'] ) ) {
