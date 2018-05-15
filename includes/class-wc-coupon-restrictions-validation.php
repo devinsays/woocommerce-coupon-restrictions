@@ -37,7 +37,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		// If coupon already marked invalid, no sense in moving forward.
 		if ( ! $valid ) {
-			return $valid;
+			return false;
 		}
 
 		// Get the customer data from the session.
@@ -46,16 +46,22 @@ class WC_Coupon_Restrictions_Validation {
 		// If session data is not available, the coupon should remain valid.
 		// We do additional validation at checkout.
 		if ( ! $session ) {
-			return $valid;
+			return true;
 		}
 
 		// Validate customer restrictions.
-		$valid = self::session_validate_customer_restrictions( $coupon, $session );
+		$customer = self::session_validate_customer_restrictions( $coupon, $session );
+		if ( false === $customer ) {
+			return false;
+		}
 
 		// Validate location restrictions.
-		$valid = self::session_validate_location_restrictions( $coupon, $session );
+		$location = self::session_validate_location_restrictions( $coupon, $session );
+		if ( false === $location ) {
+			return false;
+		}
 
-		return $valid;
+		return true;
 	}
 
 	/**
@@ -73,7 +79,6 @@ class WC_Coupon_Restrictions_Validation {
 			return true;
 		}
 
-		// @TODO Email sanitization.
 		$email = strtolower( $session['email'] );
 
 		// Validate new customer restriction.
@@ -100,6 +105,12 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public static function validate_new_customer_restriction( $coupon, $email ) {
+
+		// If email address isn't valid, we'll wait to run the coupon validation.
+		if ( ! is_email( $email ) ) {
+			return true;
+		}
+
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 		if ( 'new' == $customer_restriction_type ) :
 			if ( self::is_returning_customer( $email ) ) {
@@ -547,6 +558,7 @@ class WC_Coupon_Restrictions_Validation {
 		if ( $user ) :
 			$customer = new WC_Customer( $user->ID );
 			if ( $customer->get_is_paying_customer() ) {
+				error_log( 'line561' );
 				return true;
 			}
 		endif;
@@ -560,10 +572,12 @@ class WC_Coupon_Restrictions_Validation {
 
 		// If there is at least one order, customer is returning.
 		if ( 1 === count( $customer_orders ) ) {
+			error_log( 'line575' );
 			return true;
 		}
 
 		// If we've gotten to this point, the customer must be new.
+		error_log( 'line580' );
 		return false;
 	}
 
