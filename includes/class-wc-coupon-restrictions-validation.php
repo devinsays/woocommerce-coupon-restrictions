@@ -181,11 +181,11 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		if ( false === $country_validation ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_country_restriction', 10, 2 );
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_country_restriction', 10, 3 );
 		}
 
 		if ( false === $zipcode_validation ) {
-			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_zipcode_restriction', 10, 2 );
+			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_zipcode_restriction', 10, 3 );
 		}
 
 		// Coupon is not valid if country or postcode validation failed.
@@ -207,9 +207,16 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public static function validate_country_restriction( $coupon, $country ) {
+
 		// Get the allowed countries from coupon meta.
 		$allowed_countries = $coupon->get_meta( 'country_restriction', true );
 
+		// If $allowed_countries has not been set, coupon remains valid.
+		if ( ! $allowed_countries ) {
+			return true;
+		}
+
+		// If the customer country is not in allowed countries, return false.
 		if ( ! in_array( $country, $allowed_countries ) ) {
 			return false;
 		}
@@ -229,6 +236,12 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Get the allowed postcodes from coupon meta.
 		$postcode_restriction = $coupon->get_meta( 'postcode_restriction', true );
+
+		// If $postcode_restriction has not been set, coupon remains valid.
+		if ( ! $postcode_restriction ) {
+			return true;
+		}
+
 		$postcode_array = explode( ',', $postcode_restriction );
 		$postcode_array = array_map( 'trim', $postcode_array );
 
@@ -424,23 +437,23 @@ class WC_Coupon_Restrictions_Validation {
 		);
 
 		if ( $key === 'new-customer' ) {
-			return sprintf( __( 'Sorry, coupon code "%s" is only valid for new customers.', 'woocommerce-coupon-restrictions' ), $coupon->code );
+			return sprintf( __( 'Sorry, coupon code "%s" is only valid for new customers.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'existing-customer' ) {
-			return sprintf( __( 'Sorry, coupon code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $coupon->code );
+			return sprintf( __( 'Sorry, coupon code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'country' ) {
 			$address_type = self::get_address_type_for_restriction( $coupon );
 			$i8n_address_type = $i8n_address[$address_type];
-			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s country.', 'woocommerce-coupon-restrictions' ), $coupon->code, $i8n_address_type );
+			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s country.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
 		if ( $key === 'zipcode' ) {
 			$address_type = self::get_address_type_for_restriction( $coupon );
 			$i8n_address_type = $i8n_address[$address_type];
-			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->code, $i8n_address_type );
+			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
 	}

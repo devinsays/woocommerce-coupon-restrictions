@@ -78,7 +78,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 		$customer = $this->customer;
 		$coupon = $this->coupon;
 
-		// Apply country restriction single country "CA"
+		// Apply country restriction single country "CA".
 		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'CA' ) );
 
 		// Adds a country restricted coupon.
@@ -102,7 +102,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 		// Location restriction is not checked.
 		update_post_meta( $coupon->get_id(), 'location_restrictions', 'no' );
 
-		// Apply country restriction single country "CA"
+		// Apply country restriction single country "CA".
 		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'CA' ) );
 
 		// Adds a country restricted coupon.
