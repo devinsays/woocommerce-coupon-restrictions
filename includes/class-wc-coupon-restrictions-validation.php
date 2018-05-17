@@ -157,6 +157,10 @@ class WC_Coupon_Restrictions_Validation {
 			return true;
 		}
 
+		// Defaults in case no conditions are met.
+		$country_validation = true;
+		$zipcode_validation = true;
+
 		// Get the address type used for location restrictions (billing or shipping).
 		$address = self::get_address_type_for_restriction( $coupon );
 
@@ -170,13 +174,13 @@ class WC_Coupon_Restrictions_Validation {
 			$zipcode_validation = self::validate_postcode_restriction( $coupon, $zipcode );
 		}
 
-		if ( 'billing' === $address && isset( $session['billing_country'] ) ) {
-			$country = esc_textarea( $session['billing_country'] );
+		if ( 'billing' === $address && isset( $session['country'] ) ) {
+			$country = esc_textarea( $session['country'] );
 			$country_validation = self::validate_country_restriction( $coupon, $country );
 		}
 
-		if ( 'billing' === $address && isset( $session['billing_postcode'] ) ) {
-			$zipcode = esc_textarea( $session['billing_postcode'] );
+		if ( 'billing' === $address && isset( $session['postcode'] ) ) {
+			$zipcode = esc_textarea( $session['postcode'] );
 			$country_validation = self::validate_postcode_restriction( $coupon, $zipcode );
 		}
 
@@ -188,7 +192,7 @@ class WC_Coupon_Restrictions_Validation {
 			add_filter( 'woocommerce_coupon_error', __CLASS__ . '::validation_message_zipcode_restriction', 10, 3 );
 		}
 
-		// Coupon is not valid if country or postcode validation failed.
+		// Coupon is not valid if country or zipcode validation failed.
 		if ( false === $country_validation || false === $zipcode_validation ) {
 			return false;
 		}

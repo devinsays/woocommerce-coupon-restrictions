@@ -99,14 +99,24 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 		$customer = $this->customer;
 		$coupon = $this->coupon;
 
-		// Location restriction is not checked.
-		update_post_meta( $coupon->get_id(), 'location_restrictions', 'no' );
+		// Location restriction is checked.
+		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
 
 		// Apply country restriction single country "CA".
 		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'CA' ) );
 
 		// Adds a country restricted coupon.
-		// This should return false because customer billing is in US.
+		// This should fail because customer country is US and location restrictions are true.
+		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+
+		// Verifies the coupon has not been added to cart.
+		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
+
+		// Now we'll test the inverse.
+		update_post_meta( $coupon->get_id(), 'location_restrictions', 'no' );
+
+		// Adds a country restricted coupon.
+		// This should now pass because location restrictions aren't being checked.
 		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
 
 		// Verifies 1 coupon has been applied to cart.
