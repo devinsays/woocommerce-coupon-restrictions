@@ -2,7 +2,6 @@
 
 namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
-use DevPress\WooCommerce\CouponLinks\Test\Framework\MockSession;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 use WC_Coupon_Restrictions_Validation;
@@ -15,13 +14,14 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 	public function setUp() {
 
 		// Create a customer.
-		$customer = \WC_Helper_Customer::create_customer();
+		$customer = WC_Helper_Customer::create_customer();
 		$customer->set_billing_country( 'US' );
+		$customer->set_shipping_country( 'US' );
 		$customer->save();
 		$this->customer = $customer;
 
 		// Create a coupon.
-		$coupon = \WC_Helper_Coupon::create_coupon();
+		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
 		update_post_meta( $coupon->get_id(), 'address_for_location_restrictions', 'billing' );
 		$this->coupon = $coupon;

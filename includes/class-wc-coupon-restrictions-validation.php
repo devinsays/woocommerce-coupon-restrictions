@@ -181,7 +181,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		if ( 'billing' === $address && isset( $session['postcode'] ) ) {
 			$zipcode = esc_textarea( $session['postcode'] );
-			$country_validation = self::validate_postcode_restriction( $coupon, $zipcode );
+			$zipcode_validation = self::validate_postcode_restriction( $coupon, $zipcode );
 		}
 
 		if ( false === $country_validation ) {
@@ -400,7 +400,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		if ( 'shipping' === $address && isset( $posted['shipping_country'] ) ) {
 			$country_validation = self::validate_country_restriction( $coupon, $posted['shipping_country'] );
-		}
+		} else
 
 		if ( 'shipping' === $address && isset( $posted['shipping_postcode'] ) ) {
 			$zipcode_validation = self::validate_postcode_restriction( $coupon, $posted['shipping_postcode'] );

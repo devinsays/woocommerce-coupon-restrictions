@@ -4,6 +4,7 @@ namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
+use WC_Helper_Order;
 use WC_Coupon_Restrictions_Validation;
 
 class Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
@@ -14,11 +15,11 @@ class Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
 	public function setUp() {
 
 		// Create a customer.
-		$customer = \WC_Helper_Customer::create_customer();
+		$customer = WC_Helper_Customer::create_customer();
 		$this->customer = $customer;
 
 		// Create a coupon.
-		$coupon = \WC_Helper_Coupon::create_coupon();
+		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'customer_restriction_type', 'existing' );
 		$this->coupon = $coupon;
 
@@ -58,7 +59,7 @@ class Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Creates an order and applies it to new customer.
 		// This makes the customer a returning customer.
-		$order = \WC_Helper_Order::create_order( $customer->get_id() );
+		$order = WC_Helper_Order::create_order( $customer->get_id() );
 		$order->set_billing_email( $customer->get_email() );
 		$order->set_status( 'completed' );
 		$order->save();

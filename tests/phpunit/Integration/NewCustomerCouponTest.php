@@ -4,6 +4,7 @@ namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
+use WC_Helper_Order;
 use WC_Coupon_Restrictions_Validation;
 
 class New_Customer_Coupon_Test extends \WP_UnitTestCase {
@@ -14,7 +15,7 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 	public function setUp() {
 
 		// Create a customer.
-		$customer = \WC_Helper_Customer::create_customer();
+		$customer = WC_Helper_Customer::create_customer();
 		$this->customer = $customer;
 
 		// Set the current customer.
@@ -30,16 +31,16 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 		$customer = $this->customer;
 
 		// Creates an order and applies it to new customer.
-		$order = \WC_Helper_Order::create_order( $customer->get_id() );
+		$order = WC_Helper_Order::create_order( $customer->get_id() );
 		$order->set_billing_email( $customer->get_email() );
 		$order->set_status( 'completed' );
 		$order->save();
 
 		// Test should return true because customer has a completed order.
-		$this->assertTrue( \WC_Coupon_Restrictions_Validation::is_returning_customer( $customer->get_email() ) );
+		$this->assertTrue( WC_Coupon_Restrictions_Validation::is_returning_customer( $customer->get_email() ) );
 
 		// Test should return false because customer hasn't purchased.
-		$this->assertFalse( \WC_Coupon_Restrictions_Validation::is_returning_customer( 'not@example.org' ) );
+		$this->assertFalse( WC_Coupon_Restrictions_Validation::is_returning_customer( 'not@example.org' ) );
 
 		// Clean up.
 		$order->delete();
@@ -56,7 +57,7 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 		$customer = $this->customer;
 
 		// Create coupon.
-		$coupon = \WC_Helper_Coupon::create_coupon();
+		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'customer_restriction_type', 'new' );
 
 		// Adds a new customer restricted coupon.
@@ -72,7 +73,7 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Creates an order and applies it to new customer.
 		// This makes the customer a returning customer.
-		$order = \WC_Helper_Order::create_order( $customer->get_id() );
+		$order = WC_Helper_Order::create_order( $customer->get_id() );
 		$order->set_billing_email( $customer->get_email() );
 		$order->set_status( 'completed' );
 		$order->save();
