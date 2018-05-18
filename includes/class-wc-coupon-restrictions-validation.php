@@ -287,12 +287,12 @@ class WC_Coupon_Restrictions_Validation {
 
 					// Check if coupon is restricted to new customers.
 					if ( 'new' == $customer_restriction_type ) {
-						$valid = self::check_new_customer_coupon_checkout();
+						$valid = self::check_new_customer_coupon_checkout( $coupon, $code );
 					}
 
 					// Check if coupon is restricted to existing customers.
 					if ( 'existing' == $existing_customers_restriction ) {
-						$valid = self::check_existing_customer_coupon_checkout();
+						$valid = self::check_existing_customer_coupon_checkout( $coupon, $code );
 					}
 
 					// Check location restrictions if active.
