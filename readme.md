@@ -4,10 +4,10 @@
 * Tags: woocommerce, coupon
 * Requires at least: 4.7.0
 * Tested up to: 4.9.4
-* Stable tag: 1.4.2
+* Stable tag: 1.5.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
-* WC requires at least: 3.2.1
+* WC requires at least: 3.3.0
 * WC tested up to: 3.3.5
 
 ## Description
@@ -47,7 +47,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**Development**
+**1.5.0 (05.17.18)**
 
 * Update: Improve coupon validation messages.
 * Update: Use "Zip code" as default label.
@@ -55,6 +55,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 * Update: Adds "Location Restrictions" checkbox. Additional options display when checked.
 * Update: Country restriction only permits selection of countries that shop currently sells to.
 * Update: New onboarding flow that shows where the new coupon options are located.
+* Fix: Bug with new customer coupon validation at checkout.
 
 **1.4.1 (02.15.18)**
 
