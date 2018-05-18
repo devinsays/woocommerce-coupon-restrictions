@@ -291,7 +291,7 @@ class WC_Coupon_Restrictions_Validation {
 					}
 
 					// Check if coupon is restricted to existing customers.
-					if ( 'existing' == $existing_customers_restriction ) {
+					if ( 'existing' == $customer_restriction_type ) {
 						$valid = self::check_existing_customer_coupon_checkout( $coupon, $code );
 					}
 
