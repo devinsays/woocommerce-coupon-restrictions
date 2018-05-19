@@ -4,7 +4,7 @@ Contributors: @downstairsdev
 Tags: woocommerce, coupon
 Requires at least: 4.7.0
 Tested up to: 4.9.4
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 WC requires at least: 3.3.0
@@ -39,6 +39,10 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 * Requires WooCommerce 3.2.1 or later.
 
 == Changelog ==
+
+=1.5.1 (05.19.18)=
+* Integration of Github Updater Lite : https://github.com/FacetWP/github-updater-lite
+* Plugin will check every 12 hours for a new build/release on https://github.com/devinsays/woocommerce-coupon-restrictions and allow updating from within Wordpress.
 
 = 1.5.0 (05.17.18)=
 
