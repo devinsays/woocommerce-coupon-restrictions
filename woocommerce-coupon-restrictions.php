@@ -26,6 +26,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+include( dirname( __FILE__ ) . '/github-updater.php' );
+
 if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 class WC_Coupon_Restrictions {
 
