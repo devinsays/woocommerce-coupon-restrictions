@@ -3,14 +3,14 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: https://devpress.com/products/woocommerce-coupon-restrictions/
  * Description: Allows for additional coupon restrictions. Coupons can be restricted to new customers, existing customers, or by country.
- * Version: 1.4.2
+ * Version: 1.5.0
  * Author: DevPress
  * Author URI: https://devpress.com
  *
  * Requires at least: 4.7.0
- * Tested up to: 4.9.4
- * WC requires at least: 3.2.1
- * WC tested up to: 3.3.4
+ * Tested up to: 4.9.5
+ * WC requires at least: 3.3.0
+ * WC tested up to: 3.3.5
  *
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -43,7 +43,7 @@ class WC_Coupon_Restrictions {
 	 * @static
 	 * @since  1.4.0
 	 */
-	public $version = '1.4.2';
+	public $version = '1.5.0';
 
 	/**
 	 * Required WooCommerce Version
@@ -51,7 +51,7 @@ class WC_Coupon_Restrictions {
 	 * @access public
 	 * @since  1.4.0
 	 */
-	public $required_woo = '3.2.1';
+	public $required_woo = '3.3.0';
 
 	/**
 	 * Plugin path.
