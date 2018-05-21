@@ -36,7 +36,7 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 
 == Compatibility ==
 
-* Requires WooCommerce 3.2.1 or later.
+* Requires WooCommerce 3.3.0 or later.
 
 == Changelog ==
 

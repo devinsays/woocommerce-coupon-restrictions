@@ -43,7 +43,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Compatibility
 
-* Requires WooCommerce 3.2.1 or later.
+* Requires WooCommerce 3.3.0 or later.
 
 ## Changelog
 
