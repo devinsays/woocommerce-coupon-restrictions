@@ -51,6 +51,7 @@ class WC_Coupon_Restrictions_Validation {
 			return true;
 		}
 
+
 		// Validate customer restrictions.
 		$customer = self::session_validate_customer_restrictions( $coupon, $session );
 		if ( false === $customer ) {
@@ -114,7 +115,9 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
+
 		if ( 'new' === $customer_restriction_type ) :
+			// If customer has purchases, coupon is not valid.
 			if ( self::is_returning_customer( $email ) ) {
 				return false;
 			}
@@ -132,9 +135,17 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public static function validate_existing_customer_restriction( $coupon, $email ) {
+
+		// If email address isn't valid, we'll wait to run the coupon validation.
+		if ( ! is_email( $email ) ) {
+			return true;
+		}
+
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
+
+		// If customer has purchases, coupon is valid.
 		if ( 'existing' === $customer_restriction_type ) :
-			if ( self::is_returning_customer( $email ) ) {
+			if ( ! self::is_returning_customer( $email ) ) {
 				return false;
 			}
 		endif;

@@ -18,10 +18,10 @@ class Basic_Coupon_Test extends \WP_UnitTestCase {
 		$customer_id = $customer->get_id();
 		wp_set_current_user( $customer_id );
 
-		// Create coupon.
+		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 
-		// Add coupon, test return statement.
+		// Adds a coupon, test return statement.
 		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
 
 		// Test if total amount of coupons is 1.

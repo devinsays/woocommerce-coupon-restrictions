@@ -6,7 +6,6 @@ use WC_Helper_Customer;
 use WC_Helper_Coupon;
 use WC_Coupon_Restrictions_Validation;
 use WC_Mock_Session_Handler;
-// use DevPress\WooCommerce\CouponRestrictions\Test\Framework;
 
 class Country_Restriction_Test extends \WP_UnitTestCase {
 
@@ -50,7 +49,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests coupon with country restriction and valid customer.
+	 * Tests applying a coupon with country restriction and valid customer.
 	 */
 	public function test_coupon_country_restriction_with_valid_customer() {
 
@@ -70,7 +69,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests coupon with two country restrictions and valid customer.
+	 * Tests applying a coupon with a two country restriction and valid customer.
 	 */
 	public function test_coupon_two_country_restriction_with_valid_customer() {
 
@@ -89,7 +88,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests coupon with one country restrictions and non-valid customer.
+	 * Tests applying a coupon with a two country restriction and non-valid customer.
 	 */
 	public function test_coupon_country_restriction_with_nonvalid_customer() {
 
@@ -109,9 +108,11 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * If customer doesn't meet coupon location requirements,
+	 * Tests applying a coupon with a country location requirement.
+	 *
+	 * The customer doesn't meet coupon location requirements,
 	 * but the location restriction option is not checked,
-	 * coupon should be valid.
+	 * so coupon should be valid.
 	 */
 	public function test_location_restrictions_should_apply() {
 
@@ -135,9 +136,11 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * If customer doesn't meet coupon location requirements,
+	 * Tests applying a coupon with a country location requirement.
+	 *
+	 * locale_filter_matches customer doesn't meet coupon location requirements,
 	 * and location restriction option is checked,
-	 * coupon should not apply.
+	 * so the coupon should not apply.
 	 */
 	public function test_location_restrictions_should_not_apply() {
 
