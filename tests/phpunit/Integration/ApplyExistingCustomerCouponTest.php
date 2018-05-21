@@ -7,7 +7,7 @@ use WC_Helper_Coupon;
 use WC_Helper_Order;
 use WC_Coupon_Restrictions_Validation;
 
-class Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
+class Apply_Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 	public $coupon;
 
@@ -30,7 +30,7 @@ class Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Adds a coupon restricted to existing customers.
 		// This should return false because customer hasn't yet purchased.
-		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -54,7 +54,7 @@ class Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Adds a coupon restricted to existing customers.
 		// This should return false because customer hasn't yet purchased.
-		$this->assertFalse( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
@@ -89,7 +89,7 @@ class Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Adds a coupon restricted to existing customers.
 		// This should return true because customer has purchased.
-		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );

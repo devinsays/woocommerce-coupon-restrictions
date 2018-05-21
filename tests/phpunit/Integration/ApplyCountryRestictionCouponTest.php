@@ -7,7 +7,7 @@ use WC_Helper_Coupon;
 use WC_Coupon_Restrictions_Validation;
 use WC_Mock_Session_Handler;
 
-class Country_Restriction_Test extends \WP_UnitTestCase {
+class Apply_Country_Restriction_Test extends \WP_UnitTestCase {
 
 	public $coupon;
 	public $customer;
@@ -61,7 +61,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 
 		// Adds a country restricted coupon.
 		// This should return true because customer billing is in US.
-		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -80,7 +80,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'US', 'CA' ) );
 
 		// This should return true because customer billing is in US.
-		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -100,7 +100,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 
 		// Adds a country restricted coupon.
 		// This should return false because customer billing is in US.
-		$this->assertFalse( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
@@ -128,7 +128,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 
 		// Adds a country restricted coupon.
 		// This should be valid since location restrictions are not being checked.
-		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies the coupon has not been added to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -157,7 +157,7 @@ class Country_Restriction_Test extends \WP_UnitTestCase {
 		// Adds a country restricted coupon.
 		// This should fail because customer doesn't meet requirements,
 		// and location restrictions are checked.
-		$this->assertFalse( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies the coupon has not been added to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );

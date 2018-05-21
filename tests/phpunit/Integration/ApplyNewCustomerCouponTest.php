@@ -7,7 +7,7 @@ use WC_Helper_Coupon;
 use WC_Helper_Order;
 use WC_Coupon_Restrictions_Validation;
 
-class New_Customer_Coupon_Test extends \WP_UnitTestCase {
+class Apply_New_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 	public $coupon;
 
@@ -37,7 +37,7 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Adds a coupon restricted to new customers.
 		// This should return true because customer hasn't yet purchased.
-		$this->assertTrue( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 1 coupons have been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -72,7 +72,7 @@ class New_Customer_Coupon_Test extends \WP_UnitTestCase {
 
 		// Adds a coupon restricted to new customers.
 		// This should return false because customer has purchased.
-		$this->assertFalse( WC()->cart->add_discount( $coupon->get_code() ) );
+		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 1 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
