@@ -47,6 +47,12 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
+**Development**
+
+* Enhancement: Coupon validation now uses stored session data.
+* Enhancement: Checkout validation now uses $posted data.
+* Enhancement: Additional unit and integration tests.
+
 **1.5.0 (05.17.18)**
 
 * Update: Improve coupon validation messages.
