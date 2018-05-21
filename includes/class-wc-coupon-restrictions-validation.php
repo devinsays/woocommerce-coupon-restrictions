@@ -337,6 +337,13 @@ class WC_Coupon_Restrictions_Validation {
 	public static function validate_coupons_after_checkout( $posted ) {
 
 		if ( ! empty( WC()->cart->applied_coupons ) ) :
+
+			// If no billing email is set, we'll default to empty string.
+			// WooCommerce validation should catch this before we do.
+			if ( ! isset( $posted['billing_email'] ) ) {
+				$posted['billing_email'] = '';
+			}
+
 			foreach ( WC()->cart->applied_coupons as $code ) :
 
 				$coupon = new WC_Coupon( $code );
@@ -408,6 +415,10 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Get the address type used for location restrictions (billing or shipping).
 		$address = self::get_address_type_for_restriction( $coupon );
+
+		// Defaults in case no conditions are met.
+		$country_validation = true;
+		$zipcode_validation = true;
 
 		if ( 'shipping' === $address && isset( $posted['shipping_country'] ) ) {
 			$country_validation = self::validate_country_restriction( $coupon, $posted['shipping_country'] );

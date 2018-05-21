@@ -2,11 +2,12 @@
 
 namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
+use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 use WC_Coupon_Restrictions_Validation;
 
-class Apply_Basic_Coupon_Test extends \WP_UnitTestCase {
+class Apply_Basic_Coupon_Test extends WP_UnitTestCase {
 
 	/**
 	 * Tests that generic coupons can be applied.
