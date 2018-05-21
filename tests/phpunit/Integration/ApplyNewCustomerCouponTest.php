@@ -2,12 +2,13 @@
 
 namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
+use WP_UnitTestCase;
+use WC_Customer;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 use WC_Helper_Order;
-use WC_Coupon_Restrictions_Validation;
 
-class Apply_New_Customer_Coupon_Test extends \WP_UnitTestCase {
+class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 
 	public $coupon;
 
@@ -29,8 +30,9 @@ class Apply_New_Customer_Coupon_Test extends \WP_UnitTestCase {
 		// Get data from setup.
 		$coupon = $this->coupon;
 
-		// Crate a mock customer session.
+		// Create a mock customer session.
 		$session = array(
+			'id' => 0,
 			'email' => 'new@woo.com'
 		);
 		WC_Helper_Customer::set_customer_details( $session );
@@ -48,24 +50,23 @@ class Apply_New_Customer_Coupon_Test extends \WP_UnitTestCase {
 	 * Coupon will not apply once a session with email has been created,
 	 * and email matches existing customer with purchases.
 	 */
-	public function test_new_customer_restriction_with_session_not_valid() {
+	public function new_customer_restriction_with_session_not_valid() {
 
 		// Get data from setup.
 		$coupon = $this->coupon;
 
 		// Create a customer.
 		$customer = WC_Helper_Customer::create_customer();
-		$this->customer = $customer;
 
 		// Creates an order and applies it to new customer.
 		$order = WC_Helper_Order::create_order( $customer->get_id() );
 		$order->set_billing_email( $customer->get_email() );
 		$order->set_status( 'completed' );
 		$order->save();
-		$this->order = $order;
 
-		// Crate a mock customer session.
+		// Create a mock customer session.
 		$session = array(
+			'id' => 0,
 			'email' => $customer->get_email()
 		);
 		WC_Helper_Customer::set_customer_details( $session );
@@ -74,13 +75,20 @@ class Apply_New_Customer_Coupon_Test extends \WP_UnitTestCase {
 		// This should return false because customer has purchased.
 		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
-		// Verifies 1 coupons have been applied to cart.
+		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
+
+		// Clean up.
+		$order->delete();
+		$customer->delete();
 
 	}
 
 
 	public function tearDown() {
+
+		// Reset the customer session data.
+		WC()->session->set( 'customer', array() );
 
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();

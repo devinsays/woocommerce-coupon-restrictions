@@ -79,7 +79,6 @@ class Apply_Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
 		$order->set_billing_email( $customer->get_email() );
 		$order->set_status( 'completed' );
 		$order->save();
-		$this->order = $order;
 
 		// Crate a mock customer session.
 		$session = array(
@@ -94,10 +93,15 @@ class Apply_Existing_Customer_Coupon_Test extends \WP_UnitTestCase {
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 
+		$order->delete();
+
 	}
 
 
 	public function tearDown() {
+
+		// Reset the customer session data.
+		WC()->session->set( 'customer', array() );
 
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();

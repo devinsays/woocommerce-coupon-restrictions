@@ -343,8 +343,8 @@ class WC_Coupon_Restrictions_Validation {
 
 				if ( $coupon->is_valid() ) :
 					self::checkout_validate_new_customer_restriction( $coupon, $code, $posted );
-					self::checkout_existing_customer_coupon_checkout( $coupon, $code, $posted );
-					self::checkout_location_restrictions( $coupon, $code, $posted );
+					self::checkout_validate_existing_customer_restriction( $coupon, $code, $posted );
+					self::checkout_validate_location_restrictions( $coupon, $code, $posted );
 				endif;
 
 			endforeach;

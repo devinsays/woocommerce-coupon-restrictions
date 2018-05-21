@@ -30,6 +30,7 @@ class Apply_Basic_Coupon_Test extends \WP_UnitTestCase {
 		// Clean up.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
+
 		$coupon->delete();
 		$customer->delete();
 

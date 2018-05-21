@@ -166,6 +166,9 @@ class Apply_Country_Restriction_Test extends \WP_UnitTestCase {
 
 	public function tearDown() {
 
+		// Reset the customer session data.
+		WC()->session->set( 'customer', array() );
+
 		// Remove the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
