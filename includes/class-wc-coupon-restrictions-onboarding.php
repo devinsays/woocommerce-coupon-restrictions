@@ -16,39 +16,39 @@ if ( ! defined('ABSPATH') ) {
 class WC_Coupon_Restrictions_Onboarding {
 
 	/**
-	* Initialize the class.
+	* Construct the class.
 	*/
-	public static function init() {
+	public function __construct() {
 
 		// Gets the base file for plugin.
 		$base = WC_Coupon_Restrictions::plugin_base();
 
 		// Adds links for plugin on the plugin admin screen.
-		add_filter( 'plugin_action_links_' . $base, __CLASS__ . '::plugin_action_links' );
+		add_filter( 'plugin_action_links_' . $base, array( $this, 'plugin_action_links' ) );
 
 		$options = get_option( 'woocommerce-coupon-restrictions', false );
 		if ( false === $options ) {
-			self::onboard_routine();
+			$this->onboard_routine();
 		}
 
 		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
 
 			// Displays the onboarding notice.
-			add_action( 'admin_notices', __CLASS__ . '::admin_installed_notice' );
+			add_action( 'admin_notices', array( $this, 'admin_installed_notice' ) );
 
 			// Inline script deletes the transient when notice is dismissed.
-			add_action( 'admin_footer', __CLASS__ . '::admin_notice_dismiss', 100 );
+			add_action( 'admin_footer', array( $this, 'admin_notice_dismiss' ), 100 );
 
 			// Deletes the transient via query string (when user clicks to start onboarding).
-			add_action( 'init', __CLASS__ . '::dismiss_notice_via_query' );
+			add_action( 'init', array( $this, 'dismiss_notice_via_query' ) );
 
 			// Deletes the transient via ajax (when user dismisses notice).
-			add_action( 'wp_ajax_wc_customer_coupons_dismiss_notice', __CLASS__ . '::dismiss_notice_via_ajax' );
+			add_action( 'wp_ajax_wc_customer_coupons_dismiss_notice', array( $this, 'dismiss_notice_via_ajax' ) );
 
 		endif;
 
 		// Initialize the pointers for onboarding flow.
-		add_action( 'admin_enqueue_scripts', __CLASS__ . '::init_pointers_for_screen' );
+		add_action( 'admin_enqueue_scripts', array( $this, 'init_pointers_for_screen' ) );
 
 	}
 
@@ -193,8 +193,8 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		$screen = get_current_screen();
 		if ( 'shop_coupon' === $screen->id ) {
-			$pointers = self::get_pointers();
-			self::display_pointers( $pointers );
+			$pointers = $this->get_pointers();
+			$this->display_pointers( $pointers );
 		}
 	}
 
@@ -382,4 +382,4 @@ class WC_Coupon_Restrictions_Onboarding {
 
 }
 
-WC_Coupon_Restrictions_Onboarding::init();
+new WC_Coupon_Restrictions_Onboarding();

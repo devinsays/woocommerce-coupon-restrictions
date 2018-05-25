@@ -43,7 +43,8 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		WC()->cart->apply_coupon( $coupon->get_code() );
 
 		// Run the post checkout validation.
-		WC_Coupon_Restrictions_Validation::validate_coupons_after_checkout( $posted );
+		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 1 coupon is still in cart after checkout validation.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -72,7 +73,8 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		WC()->cart->apply_coupon( $coupon->get_code() );
 
 		// Run the post checkout validation.
-		WC_Coupon_Restrictions_Validation::validate_coupons_after_checkout( $posted );
+		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 0 coupons are still in cart after checkout validation.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );

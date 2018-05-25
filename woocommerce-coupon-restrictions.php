@@ -87,7 +87,7 @@ class WC_Coupon_Restrictions {
 	 * @see    WC_Coupon_Restrictions()
 	 * @return WC_Coupon_Restrictions - Main instance.
 	 */
-	public static function instance() {
+	public static function get_instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
 		}
@@ -192,6 +192,7 @@ class WC_Coupon_Restrictions {
 	}
 
 }
-endif;
 
-return WC_Coupon_Restrictions::instance();
+WC_Coupon_Restrictions::get_instance();
+
+endif;
