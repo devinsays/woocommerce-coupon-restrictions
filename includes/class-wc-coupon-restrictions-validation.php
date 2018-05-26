@@ -16,9 +16,9 @@ if ( ! defined('ABSPATH') ) {
 class WC_Coupon_Restrictions_Validation {
 
 	/**
-	* Construct the class.
+	* Init the class.
 	*/
-	public function __construct() {
+	public function init() {
 
 		// Validates coupons before checkout if customer is logged in.
 		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupons_before_checkout'), 10, 2 );
@@ -557,5 +557,3 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 }
-
-new WC_Coupon_Restrictions_Validation();

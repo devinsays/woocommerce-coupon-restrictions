@@ -16,9 +16,9 @@ if ( ! defined('ABSPATH') ) {
 class WC_Coupon_Restrictions_Admin {
 
 	/**
-	* Construct the class.
+	* Init the class.
 	*/
-	public function __construct() {
+	public function init() {
 
 		// Adds metabox to usage restriction fields.
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ) );
@@ -278,5 +278,3 @@ class WC_Coupon_Restrictions_Admin {
 
 	}
 }
-
-new WC_Coupon_Restrictions_Admin();

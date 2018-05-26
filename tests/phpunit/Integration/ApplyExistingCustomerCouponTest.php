@@ -6,7 +6,6 @@ use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 use WC_Helper_Order;
-use WC_Coupon_Restrictions_Validation;
 
 class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
