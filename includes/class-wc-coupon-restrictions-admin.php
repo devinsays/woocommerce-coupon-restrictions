@@ -16,16 +16,16 @@ if ( ! defined('ABSPATH') ) {
 class WC_Coupon_Restrictions_Admin {
 
 	/**
-	* Initialize the class.
+	* Init the class.
 	*/
-	public static function init() {
+	public function init() {
 
 		// Adds metabox to usage restriction fields.
-		add_action( 'woocommerce_coupon_options_usage_restriction', __CLASS__ . '::customer_restrictions' );
-		add_action( 'woocommerce_coupon_options_usage_restriction', __CLASS__ . '::location_restrictions' );
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ) );
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ) );
 
 		// Saves the metabox.
-		add_action( 'woocommerce_coupon_options_save', __CLASS__ . '::coupon_options_save' );
+		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save'  ) );
 
 	}
 
@@ -119,7 +119,7 @@ class WC_Coupon_Restrictions_Admin {
 			asort( $countries );
 
 			// An array of countries the shop sells to.
-			$shop_countries = self::shop_countries();
+			$shop_countries = $this->shop_countries();
 			?>
 			<label for="<?php echo esc_attr( $id ); ?>">
 				<?php echo esc_html( $title ); ?>
@@ -162,7 +162,7 @@ class WC_Coupon_Restrictions_Admin {
 		echo '</div>'; // .woocommerce-coupon-restrictions-locations
 		echo '</div>'; // .options-group
 
-		wc_enqueue_js( self::location_restrictions_admin_js() );
+		wc_enqueue_js( $this->location_restrictions_admin_js() );
 
 	}
 
@@ -191,7 +191,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		if ( 'all_except_countries' === $allowed_countries ) {
 			$all_except_countries = get_option( 'woocommerce_all_except_countries' );
-			$shop_countries = array_diff_key($countries, $all_except_countries);
+			$shop_countries = array_diff_key( $countries, $all_except_countries );
 			return $shop_countries;
 		}
 
@@ -278,5 +278,3 @@ class WC_Coupon_Restrictions_Admin {
 
 	}
 }
-
-WC_Coupon_Restrictions_Admin::init();

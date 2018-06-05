@@ -13,6 +13,7 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 	public $coupon;
 	public $customer;
 	public $order;
+	public $validation;
 
 	public function setUp() {
 
@@ -35,14 +36,15 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 	public function test_is_returning_customer() {
 
 		// Test should return false because customer hasn't purchased.
-		$this->assertFalse( WC_Coupon_Restrictions_Validation::is_returning_customer( 'not@woo.com' ) );
+		$validation = new WC_Coupon_Restrictions_Validation();
+		$this->assertFalse( $validation->is_returning_customer( 'not@woo.com' ) );
 
 		// Get data from setup.
 		$customer = $this->customer;
 		wp_set_current_user( $customer->get_id() );
 
 		// Test should return true because customer has a completed order.
-		$this->assertTrue( WC_Coupon_Restrictions_Validation::is_returning_customer( $customer->get_email() ) );
+		$this->assertTrue( $validation->is_returning_customer( $customer->get_email() ) );
 
 	}
 
