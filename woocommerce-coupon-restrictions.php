@@ -227,3 +227,4 @@ endif;
 function WC_Coupon_Restrictions() {
 	return WC_Coupon_Restrictions::get_instance();
 }
+add_action( 'plugins_loaded', 'WC_Coupon_Restrictions' );

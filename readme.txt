@@ -44,7 +44,8 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 
 * Enhancement: Coupon validation now uses stored session data.
 * Enhancement: Checkout validation now uses $posted data.
-* Enhancement: Additional unit and integration tests.
+* Update: Additional unit and integration tests.
+* Update: Returns a main instance of the class to avoid the need for globals.
 
 = 1.5.0 (05.17.18)=
 
