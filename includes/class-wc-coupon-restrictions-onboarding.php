@@ -32,12 +32,9 @@ class WC_Coupon_Restrictions_Onboarding {
 		}
 
 		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
-
-			// Displays the onboarding notice.
-			add_action( 'admin_notices', array( $this, 'admin_installed_notice' ) );
-
-			// Inline script deletes the transient when notice is dismissed.
-			add_action( 'admin_footer', array( $this, 'admin_notice_dismiss' ), 100 );
+			
+			// Loads the notice script and dismiss notice script.
+			add_action( 'admin_enqueue_scripts', array( $this, 'init_install_notice' ) );
 
 			// Deletes the transient via query string (when user clicks to start onboarding).
 			add_action( 'init', array( $this, 'dismiss_notice_via_query' ) );
@@ -49,6 +46,30 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		// Initialize the pointers for onboarding flow.
 		add_action( 'admin_enqueue_scripts', array( $this, 'init_pointers_for_screen' ) );
+
+	}
+	
+	/**
+	 * Loads everything required to display and dismiss the install notice.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return void
+	 */
+	public static function init_install_notice() {
+
+		if ( current_user_can( 'manage_options' ) ) :
+
+			// Display the onboarding notice.
+			add_action( 'admin_notices', array( $this, 'install_notice' ) );
+
+			// Loads jQuery if not already available.
+			wp_enqueue_script( 'jquery-core' );
+
+			// Inline script deletes the transient when notice is dismissed.
+			wp_add_inline_script( 'jquery-core', $this->install_notice_dismiss() );
+
+		endif;
 
 	}
 
@@ -125,7 +146,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @since 1.5.0
 	 */
-	public static function admin_installed_notice() {
+	public static function install_notice() {
 		if ( current_user_can( 'manage_options' ) ) :
 			$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
 			?>
@@ -146,35 +167,28 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @since  1.5.0
 	 * @return void
 	 */
-	public static function admin_notice_dismiss() {
-		if ( current_user_can( 'manage_options' ) ) :
-			// Loads jQuery if not already available
-			wp_enqueue_script( 'jquery' );
-			?>
-			<script>
+	public static function install_notice_dismiss() {
+		return "
 			( function ( window, $ ) {
 				'use strict';
-
-				$( '.notice' ).on( 'click', '.notice-dismiss', function( event ) {
-					var notice = event.delegateTarget.getAttribute( 'data-woocommerce-coupon-restrictions' );
-
-					if ( ! notice ) {
-						return;
-					}
-
-					$.ajax( {
-						method: 'post',
-						data: {
-							nonce: '<?php echo wp_create_nonce( 'wc_customer_coupons_nonce' ); ?>',
-							action: 'wc_customer_coupons_dismiss_notice'
-						},
-						url: ajaxurl
+				$( document ).ready( function() {
+					$( '.notice' ).on( 'click', '.notice-dismiss', function( event ) {
+						var notice = event.delegateTarget.getAttribute( 'data-woocommerce-coupon-restrictions' );
+						if ( ! notice ) {
+							return;
+						}
+						$.ajax( {
+							method: 'post',
+							data: {
+								nonce: '" . wp_create_nonce( 'wc_customer_coupons_nonce' ) . "',
+								action: 'wc_customer_coupons_dismiss_notice'
+							},
+							url: ajaxurl
+						} );
 					} );
 				} );
 			} )( window, jQuery );
-			</script>
-		<?php
-		endif;
+		";
 	}
 
 	/**
@@ -325,9 +339,9 @@ class WC_Coupon_Restrictions_Onboarding {
 							}
 						},
 						buttons: function( event, t ) {
-							var close   = '" . esc_js( __( 'Dismiss', 'woocommerce-customer-coupons' ) ) . "',
-								next    = '" . esc_js( __( 'Next', 'woocommerce-customer-coupons' ) ) . "',
-								enjoy    = '" . esc_js( __( 'Enjoy!', 'woocommerce-customer-coupons' ) ) . "',
+							var close = '" . esc_js( __( 'Dismiss', 'woocommerce-customer-coupons' ) ) . "',
+								next = '" . esc_js( __( 'Next', 'woocommerce-customer-coupons' ) ) . "',
+								enjoy = '" . esc_js( __( 'Enjoy!', 'woocommerce-customer-coupons' ) ) . "',
 								btn_close  = $( '<a class=\"close\" href=\"#\">' + close + '</a>' ),
 								btn_next = $( '<a class=\"button button-primary\" href=\"#\">' + next + '</a>' ),
 								btn_complete = $( '<a class=\"button button-primary\" href=\"#\">' + enjoy + '</a>' ),
@@ -335,6 +349,11 @@ class WC_Coupon_Restrictions_Onboarding {
 							btn_close.bind( 'click.pointer', function(e) {
 								e.preventDefault();
 								t.element.pointer('destroy');
+								
+								// Updates the URL so pointers won't show on page refresh.
+								var url = window.location.href;
+								url = url.replace('&woocommerce-coupon-restriction-pointers=1', '');
+								window.history.pushState(null, null, url);
 							});
 							btn_next.bind( 'click.pointer', function(e) {
 								e.preventDefault();
