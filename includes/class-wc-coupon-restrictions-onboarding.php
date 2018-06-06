@@ -67,8 +67,7 @@ class WC_Coupon_Restrictions_Onboarding {
 			wp_enqueue_script( 'jquery-core' );
 
 			// Inline script deletes the transient when notice is dismissed.
-			$script = $this->install_notice_dismiss();
-			wp_add_inline_script( 'jquery-core', $script );
+			wp_add_inline_script( 'jquery-core', $this->install_notice_dismiss() );
 
 		endif;
 
