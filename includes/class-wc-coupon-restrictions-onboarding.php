@@ -32,7 +32,7 @@ class WC_Coupon_Restrictions_Onboarding {
 		}
 
 		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
-			
+
 			// Loads the notice script and dismiss notice script.
 			add_action( 'admin_enqueue_scripts', array( $this, 'init_install_notice' ) );
 
@@ -48,7 +48,7 @@ class WC_Coupon_Restrictions_Onboarding {
 		add_action( 'admin_enqueue_scripts', array( $this, 'init_pointers_for_screen' ) );
 
 	}
-	
+
 	/**
 	 * Loads everything required to display and dismiss the install notice.
 	 *
@@ -67,7 +67,8 @@ class WC_Coupon_Restrictions_Onboarding {
 			wp_enqueue_script( 'jquery-core' );
 
 			// Inline script deletes the transient when notice is dismissed.
-			wp_add_inline_script( 'jquery-core', $this->install_notice_dismiss() );
+			$notice_dismiss_script = $this->install_notice_dismiss();
+			wp_add_inline_script( 'jquery-core',  $notice_dismiss_script );
 
 		endif;
 
@@ -349,7 +350,7 @@ class WC_Coupon_Restrictions_Onboarding {
 							btn_close.bind( 'click.pointer', function(e) {
 								e.preventDefault();
 								t.element.pointer('destroy');
-								
+
 								// Updates the URL so pointers won't show on page refresh.
 								var url = window.location.href;
 								url = url.replace('&woocommerce-coupon-restriction-pointers=1', '');

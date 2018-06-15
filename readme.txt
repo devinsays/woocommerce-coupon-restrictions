@@ -9,6 +9,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 WC requires at least: 3.3.0
 WC tested up to: 3.3.5
+Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
 
 == Description ==
 
