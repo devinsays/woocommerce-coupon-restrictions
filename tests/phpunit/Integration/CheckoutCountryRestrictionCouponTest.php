@@ -1,6 +1,6 @@
 <?php
 
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Unit;
+namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;

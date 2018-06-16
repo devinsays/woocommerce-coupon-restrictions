@@ -4,11 +4,11 @@
 * Tags: woocommerce, coupon
 * Requires at least: 4.7.0
 * Tested up to: 4.9.4
-* Stable tag: 1.5.0
+* Stable tag: 1.6.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 * WC requires at least: 3.3.0
-* WC tested up to: 3.3.5
+* WC tested up to: 3.4.2
 
 ## Description
 
@@ -47,7 +47,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**Development**
+**1.6.0 (06.15.18)**
 
 * Enhancement: Coupon validation now uses stored session data.
 * Enhancement: Checkout validation now uses $posted data.
