@@ -119,7 +119,8 @@ class WC_Coupon_Restrictions_Admin {
 			asort( $countries );
 
 			// An array of countries the shop sells to.
-			$shop_countries = $this->shop_countries();
+			// Calls the global instance for PHP5.6 compatibility.
+			$shop_countries = WC_Coupon_Restrictions()->admin->shop_countries();
 			?>
 			<label for="<?php echo esc_attr( $id ); ?>">
 				<?php echo esc_html( $title ); ?>
@@ -162,7 +163,11 @@ class WC_Coupon_Restrictions_Admin {
 		echo '</div>'; // .woocommerce-coupon-restrictions-locations
 		echo '</div>'; // .options-group
 
-		wc_enqueue_js( $this->location_restrictions_admin_js() );
+		// Calls the global instance for PHP5.6 compatibility.
+		$js = WC_Coupon_Restrictions()->admin->location_restrictions_admin_js();
+
+		// Enqueue the inline script.
+		wc_enqueue_js( $js );
 
 	}
 
