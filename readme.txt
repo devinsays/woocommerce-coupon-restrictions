@@ -15,7 +15,7 @@ Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
 
 This extension allows you to create coupons with addition restriction options:
 
-New customer restriction: If a customer is logged in, the plugin will verify that they haven't purchased anything from the site before allowing the coupon to be applied. For customers that aren't logged in, the coupon verification runs right before checkout once the e-mail address has been entered.
+New customer restriction: If a customer is logged in, the plugin will verify that they haven't completed an order from the site before allowing the coupon to be applied. For customers that aren't logged in, the coupon verification runs after an email address has been added during checkout.
 
 Existing customer restrictions: Validates that the customer has made a purchase on the site previously before allowing the coupon to be applied.
 
@@ -27,7 +27,11 @@ The plugin is fully translatable. Developers can also use filters to modify any 
 
 == Additional Notes ==
 
-Customers are considered "new customers" if they have not yet spent money on the site and/or do not have an order that has been marked complete or processing. This can lead to some edge cases where a customer could use the coupon several times before an order is marked complete. Avoid this by setting the "Usage limit per user" to 1.
+Customers are considered “new customers” if they have not yet completed an order on the site.
+
+Customers are still considered “new customers” while their first order is “processing”. To ensure a new customer can only use a specific coupon coupon once, set the “Usage limit per user” on the coupon to 1.
+
+Users who have an account on the site, but no completed purchases, are still considered new customers.
 
 E-mail addresses restrictions are not case sensitive, but otherwise require an exact match.
 
