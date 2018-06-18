@@ -538,6 +538,9 @@ class WC_Coupon_Restrictions_Validation {
 			if ( $customer->get_is_paying_customer() ) {
 				return true;
 			}
+
+			// User exists but hasn't completed an order.
+			return false;
 		endif;
 
 		// If there isn't a user account, we can check against orders.
