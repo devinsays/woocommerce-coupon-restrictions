@@ -176,22 +176,30 @@ class WC_Coupon_Restrictions_Validation {
 
 		if ( 'shipping' === $address && isset( $session['shipping_country'] ) ) {
 			$country = esc_textarea( $session['shipping_country'] );
-			$country_validation = $this->validate_country_restriction( $coupon, $country );
+			if ( '' !== $country ) {
+				$country_validation = $this->validate_country_restriction( $coupon, $country );
+			}
 		}
 
 		if ( 'shipping' === $address && isset( $session['shipping_postcode'] ) ) {
 			$zipcode = esc_textarea( $session['shipping_postcode'] );
-			$zipcode_validation = $this->validate_postcode_restriction( $coupon, $zipcode );
+			if ( '' !== $zipcode ) {
+				$zipcode_validation = $this->validate_postcode_restriction( $coupon, $zipcode );
+			}
 		}
 
 		if ( 'billing' === $address && isset( $session['country'] ) ) {
 			$country = esc_textarea( $session['country'] );
-			$country_validation = $this->validate_country_restriction( $coupon, $country );
+			if ( '' !== $country ) {
+				$country_validation = $this->validate_country_restriction( $coupon, $country );
+			}
 		}
 
 		if ( 'billing' === $address && isset( $session['postcode'] ) ) {
 			$zipcode = esc_textarea( $session['postcode'] );
-			$zipcode_validation = $this->validate_postcode_restriction( $coupon, $zipcode );
+			if ( '' !== $zipcode ) {
+				$zipcode_validation = $this->validate_postcode_restriction( $coupon, $zipcode );
+			}
 		}
 
 		if ( false === $country_validation ) {

@@ -48,6 +48,7 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 = Development =
 
 * Fix: Display onboarding notice on initial activation.
+* Fix: If the session data is blank for country or zipcode, a coupon with location restrictions will stay applied until session or checkout has data to validate it.
 
 = 1.6.0 (06.15.18) =
 

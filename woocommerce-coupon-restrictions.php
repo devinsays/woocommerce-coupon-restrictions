@@ -194,7 +194,7 @@ class WC_Coupon_Restrictions {
 		}
 
 		// Sets the plugin version number in database.
-		if ( false === $options || $this->version !== $options['version'] ) {
+		if ( false === $option || $this->version !== $option['version'] ) {
 			update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 		}
 	}
