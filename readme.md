@@ -47,6 +47,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
+**Development**
+
+* Fix: Ensure onboarding message is displayed.
+
 **1.6.0 (06.15.18)**
 
 * Enhancement: Coupon validation now uses stored session data.

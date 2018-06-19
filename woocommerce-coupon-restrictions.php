@@ -163,18 +163,18 @@ class WC_Coupon_Restrictions {
 			dirname( plugin_basename(__FILE__) ) . '/languages/'
 		);
 
-		// Upgrade routine.
-		$options = get_option( 'woocommerce-coupon-restrictions', false );
-		if ( false === $options || $this->version !== $options['version'] ) {
-			$this->upgrade_routine();
-		}
-
 		// Inits classes.
 		if ( is_admin() ) {
 			$this->onboarding->init();
 			$this->admin->init();
 		} else {
 			$this->validation->init();
+		}
+
+		// Upgrade routine.
+		$options = get_option( 'woocommerce-coupon-restrictions', false );
+		if ( false === $options || $this->version !== $options['version'] ) {
+			$this->upgrade_routine();
 		}
 	}
 
