@@ -49,7 +49,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 **Development**
 
-* Fix: Ensure onboarding message is displayed.
+* Fix: Display onboarding notice on initial activation.
 
 **1.6.0 (06.15.18)**
 

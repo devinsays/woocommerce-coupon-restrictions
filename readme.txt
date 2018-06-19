@@ -47,7 +47,7 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 
 = Development =
 
-* Fix: Ensure onboarding message is displayed.
+* Fix: Display onboarding notice on initial activation.
 
 = 1.6.0 (06.15.18) =
 

@@ -163,6 +163,9 @@ class WC_Coupon_Restrictions {
 			dirname( plugin_basename(__FILE__) ) . '/languages/'
 		);
 
+		// Upgrade routine.
+		$this->upgrade_routine();
+
 		// Inits classes.
 		if ( is_admin() ) {
 			$this->onboarding->init();
@@ -171,11 +174,6 @@ class WC_Coupon_Restrictions {
 			$this->validation->init();
 		}
 
-		// Upgrade routine.
-		$options = get_option( 'woocommerce-coupon-restrictions', false );
-		if ( false === $options || $this->version !== $options['version'] ) {
-			$this->upgrade_routine();
-		}
 	}
 
 	/**
@@ -186,7 +184,19 @@ class WC_Coupon_Restrictions {
 	 * @return void
 	 */
 	public function upgrade_routine() {
-		update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
+
+		$option = get_option( 'woocommerce-coupon-restrictions', false );
+
+		// Sets a transient that triggers the onboarding notice.
+		// Notice expires after one week.
+		if ( false === $option ) {
+			set_transient( 'woocommerce-coupon-restrictions-activated', 1, 60 * 60 * 24 * 7 );
+		}
+
+		// Sets the plugin version number in database.
+		if ( false === $options || $this->version !== $options['version'] ) {
+			update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
+		}
 	}
 
 	/**

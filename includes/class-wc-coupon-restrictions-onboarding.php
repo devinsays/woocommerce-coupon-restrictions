@@ -26,11 +26,8 @@ class WC_Coupon_Restrictions_Onboarding {
 		// Adds links for plugin on the plugin admin screen.
 		add_filter( 'plugin_action_links_' . $base, array( $this, 'plugin_action_links' ) );
 
-		$options = get_option( 'woocommerce-coupon-restrictions', false );
-		if ( false === $options ) {
-			$this->onboard_routine();
-		}
-
+		// Transient is set in WC_Coupon_Restrictions->upgrade_routine()
+		// when plugin is activated for the first time.
 		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
 
 			// Loads the notice script and dismiss notice script.
@@ -129,17 +126,6 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		wp_send_json_error();
 		exit;
-	}
-
-	/**
-	 * Sets a transient that triggers our onboarding routine.
-	 *
-	 * @access public
-	 * @since  1.5.0
-	 * @return void
-	 */
-	public static function onboard_routine() {
-		set_transient( 'woocommerce-coupon-restrictions-activated', true, 60 * 60 * 24 * 7 );
 	}
 
 	/**

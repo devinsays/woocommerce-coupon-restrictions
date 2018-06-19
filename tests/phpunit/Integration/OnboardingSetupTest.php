@@ -15,4 +15,12 @@ class Onboarding_Setup_Test extends WP_UnitTestCase {
 		$this->assertEquals( $plugin->version, $option['version'] );
 	}
 
+	/**
+	 * Checks that onboarding transient is set.
+	 */
+	public function test_onboarding_transient_set() {
+		$transient = get_transient( 'woocommerce-coupon-restrictions-activated' );
+		$this->assertEquals( 1, $transient );
+	}
+
 }
