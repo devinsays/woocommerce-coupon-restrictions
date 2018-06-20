@@ -163,7 +163,7 @@ class WC_Coupon_Restrictions_Validation {
 	public function session_validate_location_restrictions( $coupon, $session ) {
 
 		// If location restrictions aren't set, coupon is valid.
-		if ( 'yes' != $coupon->get_meta( 'location_restrictions' ) ) {
+		if ( 'yes' !== $coupon->get_meta( 'location_restrictions' ) ) {
 			return true;
 		}
 
@@ -416,7 +416,7 @@ class WC_Coupon_Restrictions_Validation {
 	public function checkout_validate_location_restrictions( $coupon, $code, $posted ) {
 
 		// If location restrictions aren't set, coupon is valid.
-		if ( 'yes' != $coupon->get_meta( 'location_restrictions' ) ) {
+		if ( 'yes' !== $coupon->get_meta( 'location_restrictions' ) ) {
 			return true;
 		}
 
