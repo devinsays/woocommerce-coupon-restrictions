@@ -118,8 +118,7 @@ class WC_Coupon_Restrictions_Admin {
 			}
 
 			// An array of all countries.
-			$countries = WC()->countries->countries;
-			asort( $countries );
+			$countries = WC()->countries->get_countries();
 
 			// An array of countries the shop sells to.
 			// Calls the global instance for PHP5.6 compatibility.
@@ -182,7 +181,7 @@ class WC_Coupon_Restrictions_Admin {
 	public static function shop_countries() {
 
 		// An array of all countries.
-		$countries = WC()->countries->countries;
+		$countries = WC()->countries->get_countries();
 
 		// We just need the array keys.
 		$countries = array_keys( $countries );
