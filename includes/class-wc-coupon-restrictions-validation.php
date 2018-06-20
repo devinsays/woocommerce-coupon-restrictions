@@ -488,6 +488,10 @@ class WC_Coupon_Restrictions_Validation {
 			$i8n_address_type = $i8n_address[$address_type];
 			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
+		
+		// The $key should always find a match.
+		// But we'll return a default message just in case.
+		return sprintf( __( 'Sorry, coupon code "%s" is not valid.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 
 	}
 
