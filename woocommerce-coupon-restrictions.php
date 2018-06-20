@@ -201,7 +201,7 @@ class WC_Coupon_Restrictions {
 		// Sets a transient that triggers the onboarding notice.
 		// Notice expires after one week.
 		if ( false === $option ) {
-			set_transient( 'woocommerce-coupon-restrictions-activated', 1, 60 * 60 * 24 * 7 );
+			set_transient( 'woocommerce-coupon-restrictions-activated', 1, WEEK_IN_SECONDS );
 		}
 
 		// Sets the plugin version number in database.
