@@ -220,15 +220,15 @@ class WC_Coupon_Restrictions {
 	public function includes() {
 
 		// Onboarding actions when plugin is first installed.
-		include_once( $this->plugin_path() . '/includes/class-wc-coupon-restrictions-onboarding.php' );
+		require_once $this->plugin_path() . '/includes/class-wc-coupon-restrictions-onboarding.php';
 		$this->onboarding = new WC_Coupon_Restrictions_Onboarding();
 
 		// Adds fields and metadata for coupons in admin screen.
-		include_once( $this->plugin_path() . '/includes/class-wc-coupon-restrictions-admin.php' );
+		require_once $this->plugin_path() . '/includes/class-wc-coupon-restrictions-admin.php';
 		$this->admin = new WC_Coupon_Restrictions_Admin();
 
 		// Validates coupons.
-		include_once( $this->plugin_path() . '/includes/class-wc-coupon-restrictions-validation.php' );
+		require_once $this->plugin_path() . '/includes/class-wc-coupon-restrictions-validation.php';
 		$this->validation = new WC_Coupon_Restrictions_Validation();
 
 	}
