@@ -42,7 +42,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		echo '<div class="options_group">';
 
-		$value = $coupon->get_meta( 'customer_restriction_type', true );
+		$value = esc_attr( $coupon->get_meta( 'customer_restriction_type', true ) );
 
 		// Default to none if no value has been saved.
 		$value = $value ? $value : 'none';
@@ -141,13 +141,13 @@ class WC_Coupon_Restrictions_Admin {
 
 							// Output the options.
 							if ( $selected ||  $allowed ) {
-								echo '<option value="' . esc_attr( $key ) . '" ' . selected( $selected, true, false ) . '>' . $val . '</option>';
+								echo '<option value="' . esc_attr( $key ) . '" ' . selected( $selected, true, false ) . '>' . esc_html( $val ) . '</option>';
 							}
 						}
 					}
 				?>
 			</select>
-			<span class="woocommerce-help-tip" data-tip="<?php _e( "Select any country that your store currently sells to.", 'woocommerce-coupon-restrictions' ); ?>">
+			<span class="woocommerce-help-tip" data-tip="<?php esc_attr_e( 'Select any country that your store currently sells to.', 'woocommerce-coupon-restrictions' ); ?>">
 			<?php
 		echo '</p>';
 

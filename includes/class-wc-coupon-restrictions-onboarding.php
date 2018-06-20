@@ -85,8 +85,8 @@ class WC_Coupon_Restrictions_Onboarding {
 		$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
 
 		$custom = array(
-			'<a href="' . esc_url( $url ) . '">' . __( 'New Coupon', 'woocommerce-coupon-restrictions' ) . '</a>',
-			'<a href="https://devpress.com/products/woocommerce-coupon-restrictions/">' . __( 'Docs', 'woocommerce-coupon-restrictions' ) . '</a>'
+			'<a href="' . esc_url( $url ) . '">' . esc_html__( 'New Coupon', 'woocommerce-coupon-restrictions' ) . '</a>',
+			'<a href="https://devpress.com/products/woocommerce-coupon-restrictions/">' . esc_html__( 'Docs', 'woocommerce-coupon-restrictions' ) . '</a>'
 		);
 		$links = array_merge( $custom, $links );
 		return $links;
@@ -139,7 +139,7 @@ class WC_Coupon_Restrictions_Onboarding {
 			?>
 			<div class="updated notice is-dismissible woocommerce-message" data-woocommerce-coupon-restrictions="true" style="border-left-color: #cc99c2">
 				<p>
-					<?php _e( 'WooCommerce Coupon Restrictions plugin activated.', 'woocommerce-coupon-restrictions' ); ?>
+					<?php esc_html_e( 'WooCommerce Coupon Restrictions plugin activated.', 'woocommerce-coupon-restrictions' ); ?>
 					<a href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'See how it works.', 'woocommerce-coupon-restrictions' ); ?></a>
 				</p>
 			</div>
