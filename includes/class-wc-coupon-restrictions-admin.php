@@ -21,11 +21,11 @@ class WC_Coupon_Restrictions_Admin {
 	public function init() {
 
 		// Adds metabox to usage restriction fields.
-		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ) );
-		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ) );
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ), 10, 2 );
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ), 10, 2 );
 
 		// Saves the metabox.
-		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save'  ) );
+		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save'  ), 10, 2 );
 
 	}
 
@@ -33,14 +33,16 @@ class WC_Coupon_Restrictions_Admin {
 	 * Adds "new customer" and "existing customer" restriction checkboxes.
 	 *
 	 * @since  1.3.0
+	 *
+	 * @param int $coupon_id
+	 * @param object $coupon
 	 * @return void
 	 */
-	public static function customer_restrictions() {
+	public static function customer_restrictions( $coupon_id, $coupon ) {
 
 		echo '<div class="options_group">';
 
-		global $post;
-		$value = get_post_meta( $post->ID, 'customer_restriction_type', true );
+		$value = $coupon->get_meta( 'customer_restriction_type', true );
 
 		// Default to none if no value has been saved.
 		$value = $value ? $value : 'none';
@@ -69,11 +71,12 @@ class WC_Coupon_Restrictions_Admin {
 	 * Adds country restriction.
 	 *
 	 * @since  1.3.0
+	 *
+	 * @param int $id
+	 * @param object $coupon
 	 * @return void
 	 */
-	public static function location_restrictions() {
-
-		global $post;
+	public static function location_restrictions( $coupon_id, $coupon ) {
 
 		echo '<div class="options_group">';
 
@@ -104,7 +107,7 @@ class WC_Coupon_Restrictions_Admin {
 		// Country restriction.
 		$id = 'country_restriction';
 		$title = __( 'Restrict to specific countries', 'woocommerce-coupon-restrictions' );
-		$values = get_post_meta( $post->ID, $id, true );
+		$values = $coupon->get_meta( $id, true );
 		$description = '';
 
 		echo '<p class="form-field ' . $id . '_only_field">';
@@ -232,10 +235,12 @@ class WC_Coupon_Restrictions_Admin {
 	 * Saves post meta for custom coupon meta.
 	 *
 	 * @since  1.3.0
-	 * @param $post_id Coupon post ID.
+	 * @param int $coupon_id
+	 * @param object $coupon
+	 *
 	 * @return void
 	 */
-	public static function coupon_options_save( $post_id ) {
+	public static function coupon_options_save( $coupon_id, $coupon ) {
 
 		// Sanitize customer restriction type meta.
 		$id = 'customer_restriction_type';
@@ -274,11 +279,12 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		// Save meta.
-		update_post_meta( $post_id, 'customer_restriction_type', $customer_restriction_type );
-		update_post_meta( $post_id, 'location_restrictions', $location_restrictions );
-		update_post_meta( $post_id, 'address_for_location_restrictions', $address_for_location_restrictions );
-		update_post_meta( $post_id, 'country_restriction', $country_restriction );
-		update_post_meta( $post_id, 'postcode_restriction', $postcode_restriction );
+		$coupon->update_meta_data( 'customer_restriction_type', $customer_restriction_type );
+		$coupon->update_meta_data( 'location_restrictions', $location_restrictions );
+		$coupon->update_meta_data( 'address_for_location_restrictions', $address_for_location_restrictions );
+		$coupon->update_meta_data( 'country_restriction', $country_restriction );
+		$coupon->update_meta_data( 'postcode_restriction', $postcode_restriction );
+		$coupon->save();
 
 	}
 }
