@@ -284,7 +284,7 @@ class WC_Coupon_Restrictions_Admin {
 		$coupon->update_meta_data( 'address_for_location_restrictions', $address_for_location_restrictions );
 		$coupon->update_meta_data( 'country_restriction', $country_restriction );
 		$coupon->update_meta_data( 'postcode_restriction', $postcode_restriction );
-		$coupon->save();
+		$coupon->save_meta_data();
 
 	}
 }
