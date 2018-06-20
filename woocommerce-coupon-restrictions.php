@@ -37,7 +37,7 @@ class WC_Coupon_Restrictions {
 	protected static $_instance = null;
 
 	/**
-	 * Plugin Version
+	 * Plugin Version.
 	 *
 	 * @access public
 	 * @static
@@ -46,7 +46,7 @@ class WC_Coupon_Restrictions {
 	public $version = '1.6.0';
 
 	/**
-	 * Required WooCommerce Version
+	 * Required WooCommerce Version.
 	 *
 	 * @access public
 	 * @since  1.4.0
@@ -59,8 +59,19 @@ class WC_Coupon_Restrictions {
 	 * @var WC_Coupon_Restrictions_Validation
 	 */
 	public $validation = null;
-
+	
+	/**
+	 * Instance of WC_Coupon_Restrictions_Onboarding.
+	 *
+	 * @var WC_Coupon_Restrictions_Validation
+	 */
 	public $onboarding = null;
+	
+	/**
+	 * Instance of WC_Coupon_Restrictions_Admin.
+	 *
+	 * @var WC_Coupon_Restrictions_Validation
+	 */
 	public $admin = null;
 
 	/**
