@@ -129,21 +129,19 @@ class WC_Coupon_Restrictions_Admin {
 			</label>
 			<select multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
 				<?php
-					if ( ! empty( $countries ) ) {
-						foreach ( $countries as $key => $val ) {
+				foreach ( $countries as $key => $val ) {
 
-							// If country has been saved, it will display even if shop doesn't currently sell there.
-							$selected = in_array( $key, $selections );
+					// If country has been saved, it will display even if shop doesn't currently sell there.
+					$selected = in_array( $key, $selections );
 
-							// Any country that shop sells to should appear as a selectable option.
-							$allowed = in_array( $key, $shop_countries );
+					// Any country that shop sells to should appear as a selectable option.
+					$allowed = in_array( $key, $shop_countries );
 
-							// Output the options.
-							if ( $selected ||  $allowed ) {
-								echo '<option value="' . esc_attr( $key ) . '" ' . selected( $selected, true, false ) . '>' . esc_html( $val ) . '</option>';
-							}
-						}
+					// Output the options.
+					if ( $selected ||  $allowed ) {
+						echo '<option value="' . esc_attr( $key ) . '" ' . selected( $selected, true, false ) . '>' . esc_html( $val ) . '</option>';
 					}
+				}
 				?>
 			</select>
 			<span class="woocommerce-help-tip" data-tip="<?php esc_attr_e( 'Select any country that your store currently sells to.', 'woocommerce-coupon-restrictions' ); ?>">
