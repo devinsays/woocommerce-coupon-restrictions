@@ -28,15 +28,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 class WC_Coupon_Restrictions {
 
 	/**
-	 * @var WC_Coupon_Restrictions - The single instance of the class.
-	 *
-	 * @access protected
-	 * @static
-	 * @since 1.0.0
-	 */
-	protected static $_instance = null;
-
-	/**
 	 * Plugin Version.
 	 *
 	 * @access public
@@ -78,7 +69,6 @@ class WC_Coupon_Restrictions {
 	 * Plugin path.
 	 *
 	 * @access public
-	 * @static
 	 * @since  1.3.0
 	 */
 	public static function plugin_path() {
@@ -90,29 +80,10 @@ class WC_Coupon_Restrictions {
 	 * Used for activation hook and plugin links.
 	 *
 	 * @access public
-	 * @static
 	 * @since  1.5.0
 	 */
 	public static function plugin_base() {
 		return plugin_basename( __FILE__ );
-	}
-
-	/**
-	 * Main WC_Coupon_Restrictions Instance.
-	 *
-	 * Ensures only one instance of WC_Coupon_Restrictions is loaded or can be loaded.
-	 *
-	 * @access public
-	 * @static
-	 * @since  1.0.0
-	 * @see    WC_Coupon_Restrictions()
-	 * @return WC_Coupon_Restrictions - Main instance.
-	 */
-	public static function get_instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
 	}
 
 	/**
@@ -237,15 +208,33 @@ class WC_Coupon_Restrictions {
 endif;
 
 /**
- * Main instance of WooCommerce Coupon Restrictions.
+ * Returns a shared instance of WC_Coupon_Restrictions.
  *
- * Returns the main instance of WooCommerce Coupon Restrictions
- * to prevent the need to use globals.
+ * @since  1.6.0
+ * @return class WC_Coupon_Restrictions
+ */
+class WC_Coupon_Restrictions_Factory {
+
+	public static function create() {
+		// Will only be declared once per session, if it hasn't been declared before.
+		static $plugin = null;
+
+		if ( null === $plugin ) {
+			$plugin = new WC_Coupon_Restrictions();
+		}
+
+		return $plugin;
+	}
+
+}
+
+/**
+ * Public function to access the shared instance of WC_Coupon_Restrictions.
  *
  * @since  1.5.0
- * @return WC_Coupon_Restrictions
+ * @return class WC_Coupon_Restrictions_Factory
  */
 function WC_Coupon_Restrictions() {
-	return WC_Coupon_Restrictions::get_instance();
+	return WC_Coupon_Restrictions_Factory::create();
 }
 add_action( 'plugins_loaded', 'WC_Coupon_Restrictions' );
