@@ -4,7 +4,7 @@ Contributors: @downstairsdev
 Tags: woocommerce, coupon
 Requires at least: 4.7.0
 Tested up to: 4.9.4
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 WC requires at least: 3.3.0
@@ -45,11 +45,12 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 
 == Changelog ==
 
-= Development =
+= 1.6.1 (06.21.18) =
 
-* Update: Use CRUD methods for saving and reading coupon meta.
+* Update: Use WooCommerce data store methods for saving and reading coupon meta.
+* Update: WC_Coupon_Restrictions() now returns shared instance of class rather than singleton.
 * Fix: Display onboarding notice on initial activation.
-* Fix: If the session data is blank for country or zipcode, a coupon with location restrictions will stay applied until session or checkout has data to validate it.
+* Fix: If the session data is blank for country or zipcode, a coupon with location restrictions will now apply until session or checkout has data to validate it.
 
 
 = 1.6.0 (06.15.18) =
