@@ -225,7 +225,10 @@ class WC_Coupon_Restrictions_Admin {
 				}
 			});
 		";
-		return $js;
+
+		// Strip line breaks and extra whitespace before returning.
+		$js = preg_replace( "/\s+/", " ", $js );
+		return trim( $js );
 	}
 
 	/**
