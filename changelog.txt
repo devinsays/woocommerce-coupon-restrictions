@@ -2,7 +2,7 @@
 
 2018-07-17 - version 1.6.2
 
-* Fix: Fatal errors caused by onboarding script in PHP 5.6.
+* Fix: PHP5.6 compatibility fixes for onboarding script.
 
 2018-06-21 - version 1.6.1
 

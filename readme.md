@@ -50,7 +50,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 **1.6.2 (07.17.18)**
 
-* Fix: Fatal errors caused by onboarding script in PHP 5.6.
+* Fix: PHP5.6 compatibility fixes for onboarding script.
 
 **1.6.1 (06.21.18)**
 
