@@ -53,7 +53,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @return void
 	 */
-	public static function init_install_notice() {
+	public function init_install_notice() {
 
 		if ( current_user_can( 'manage_options' ) ) :
 
@@ -64,7 +64,7 @@ class WC_Coupon_Restrictions_Onboarding {
 			wp_enqueue_script( 'jquery-core' );
 
 			// Inline script deletes the transient when notice is dismissed.
-			$notice_dismiss_script = $this->install_notice_dismiss();
+			$notice_dismiss_script = self::install_notice_dismiss();
 			wp_add_inline_script( 'jquery-core',  $notice_dismiss_script );
 
 		endif;
@@ -79,7 +79,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @param  array $links List of existing plugin action links.
 	 * @return array List of modified plugin action links.
 	 */
-	public static function plugin_action_links( $links ) {
+	public function plugin_action_links( $links ) {
 
 		// URL for coupon screen onboarding
 		$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
@@ -97,7 +97,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @since 1.5.0
 	 */
-	public static function dismiss_notice_via_query() {
+	public function dismiss_notice_via_query() {
 		if (
 			current_user_can( 'manage_options' ) &&
 			isset( $_GET['woocommerce-coupon-restriction-pointers'] ) )
@@ -111,7 +111,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @since 1.5.0
 	 */
-	public static function dismiss_notice_via_ajax() {
+	public function dismiss_notice_via_ajax() {
 
 		if ( ! check_ajax_referer( 'wc_customer_coupons_nonce', 'nonce', false ) ) {
 			wp_send_json_error();
@@ -133,7 +133,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @since 1.5.0
 	 */
-	public static function install_notice() {
+	public function install_notice() {
 		if ( current_user_can( 'manage_options' ) ) :
 			$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
 			?>
@@ -154,7 +154,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @since  1.5.0
 	 * @return void
 	 */
-	public static function install_notice_dismiss() {
+	public function install_notice_dismiss() {
 		return "
 			( function ( window, $ ) {
 				'use strict';
@@ -183,7 +183,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @since 1.5.0
 	 */
-	public static function init_pointers_for_screen() {
+	public function init_pointers_for_screen() {
 
 		if (
 			! isset( $_GET['woocommerce-coupon-restriction-pointers'] ) ||
@@ -194,8 +194,8 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		$screen = get_current_screen();
 		if ( 'shop_coupon' === $screen->id ) {
-			$pointers = $this->get_pointers();
-			$this->display_pointers( $pointers );
+			$pointers = self::get_pointers();
+			self::display_pointers( $pointers );
 		}
 	}
 
@@ -204,7 +204,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @since 1.5.0
 	 */
-	public static function get_pointers() {
+	public function get_pointers() {
 		$pointers = array(
 			'pointers' => array(
 				'coupon-restrictions-panel' => array(
@@ -299,7 +299,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 *
 	 * @since 1.5.0
 	 */
-	public static function display_pointers( $pointers ) {
+	public function display_pointers( $pointers ) {
 		$pointers = wp_json_encode( $pointers );
 		wp_enqueue_style( 'wp-pointer' );
 		wp_enqueue_script( 'wp-pointer' );
