@@ -150,6 +150,10 @@ class WC_Coupon_Restrictions {
 			require_once $this->plugin_path() . '/includes/class-wc-coupon-restrictions-admin.php';
 			$this->admin = new WC_Coupon_Restrictions_Admin();
 
+			// Adds global coupon settings.
+			require_once $this->plugin_path() . '/includes/class-wc-coupon-restrictions-settings.php';
+			$this->admin = new WC_Coupon_Restrictions_Settings();
+
 		} else {
 
 			// Validates coupons.
