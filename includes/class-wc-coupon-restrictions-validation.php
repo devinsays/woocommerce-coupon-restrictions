@@ -488,7 +488,7 @@ class WC_Coupon_Restrictions_Validation {
 			$i8n_address_type = $i8n_address[$address_type];
 			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
-		
+
 		// The $key should always find a match.
 		// But we'll return a default message just in case.
 		return sprintf( __( 'Sorry, coupon code "%s" is not valid.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
@@ -556,15 +556,22 @@ class WC_Coupon_Restrictions_Validation {
 		endif;
 
 		// If there isn't a user account, we can check against orders.
-		$customer_orders = wc_get_orders( array(
-			'status' => array( 'wc-processing', 'wc-completed' ),
-			'email'  => $email,
-			'limit'  => 1
-		) );
+		// Store admin must opt-in to this because of performance concerns.
+		$option = get_option( 'coupon_restrictions_customer_query', 'account' );
+		if ( 'account-orders' === $option ) {
 
-		// If there is at least one order, customer is returning.
-		if ( 1 === count( $customer_orders ) ) {
-			return true;
+			// This query can be slow on sites with a lot of orders.
+			$customer_orders = wc_get_orders( array(
+				'status' => array( 'wc-processing', 'wc-completed' ),
+				'email'  => $email,
+				'limit'  => 1
+			) );
+
+			// If there is at least one order, customer is returning.
+			if ( 1 === count( $customer_orders ) ) {
+				return true;
+			}
+
 		}
 
 		// If we've gotten to this point, the customer must be new.
