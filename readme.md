@@ -5,7 +5,7 @@
 * Requires at least: 4.7.0
 * Requires PHP: 5.6
 * Tested up to: 4.9.7
-* Stable tag: 1.6.2
+* Stable tag: 1.7.0
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 * WC requires at least: 3.3.0
@@ -47,6 +47,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 * Requires WooCommerce 3.3.0 or later.
 
 ## Changelog
+
+**1.7.0 (08.14.18)**
+
+* Update: New setting for new/existing customer verification method. Defaults to account check.
 
 **1.6.2 (07.17.18)**
 
