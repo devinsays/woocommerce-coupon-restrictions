@@ -37,8 +37,8 @@ class WC_Coupon_Restrictions_Settings {
 			'type'     => 'radio',
 			'desc_tip' => __( 'If you\'re restricting any coupons to new customers, we recommend requiring a user account for each customer. Checking against orders can be slow for sites with more than 10,000 orders.', 'woocommerce' ),
 			'options'  => array(
-				'accounts' => __( 'Check user accounts to determine if customer is new or existing.', 'woocommerce' ),
-				'account-orders'  => __( 'Check user accounts and orders to determine if customer is new or existing.', 'woocommerce' ),
+				'accounts' => __( 'Verify new customers by checking against user accounts.', 'woocommerce' ),
+				'accounts-orders'  => __( 'Verify new customers by checking against user accounts and all guest orders.', 'woocommerce' ),
 			),
 		);
 

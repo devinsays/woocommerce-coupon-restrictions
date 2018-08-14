@@ -557,14 +557,15 @@ class WC_Coupon_Restrictions_Validation {
 
 		// If there isn't a user account, we can check against orders.
 		// Store admin must opt-in to this because of performance concerns.
-		$option = get_option( 'coupon_restrictions_customer_query', 'account' );
-		if ( 'account-orders' === $option ) {
+		$option = get_option( 'coupon_restrictions_customer_query', 'accounts' );
+		if ( 'accounts-orders' === $option ) {
 
 			// This query can be slow on sites with a lot of orders.
 			$customer_orders = wc_get_orders( array(
 				'status' => array( 'wc-processing', 'wc-completed' ),
 				'email'  => $email,
-				'limit'  => 1
+				'limit'  => 1,
+				'return' => 'ids',
 			) );
 
 			// If there is at least one order, customer is returning.
