@@ -202,6 +202,16 @@ class WC_Coupon_Restrictions {
 	public function upgrade_routine() {
 
 		$option = get_option( 'woocommerce-coupon-restrictions', false );
+		
+		// If a previous version was installed, run any required updates.
+		if ( isset( $option['version'] ) ) {
+			if ( version_compare( $option['version'], '1.6.2', '<=' ) ) {
+				// This setting determines how to verify new/existing customers.
+				// In v1.6.2 and before the default was to check against accounts and orders.
+				// In new installs, the default is to check against accounts only.
+				update_option( 'coupon_restrictions_customer_query', 'accounts-orders' );
+			}
+		}
 
 		// Sets a transient that triggers the onboarding notice.
 		// Notice expires after one week.
