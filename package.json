@@ -1,6 +1,6 @@
 {
 	"name": "woocommerce-coupon-restrictions",
-	"version": "1.6.2",
+	"version": "1.7.0",
 	"repository": "https://github.com/devinsays/woocommerce-coupon-restrictions",
 	"license": "GPL-2.0",
 	"devDependencies": {

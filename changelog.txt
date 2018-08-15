@@ -1,5 +1,9 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2018-08-14 - version 1.7.0
+
+* Update: New setting for new/existing customer verification method. Defaults to account check.
+
 2018-07-17 - version 1.6.2
 
 * Fix: PHP5.6 compatibility fixes for onboarding script.

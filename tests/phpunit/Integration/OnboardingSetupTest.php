@@ -22,5 +22,19 @@ class Onboarding_Setup_Test extends WP_UnitTestCase {
 		$transient = get_transient( 'woocommerce-coupon-restrictions-activated' );
 		$this->assertEquals( 1, $transient );
 	}
+	
+	/**
+	 * Checks upgrade routine from <= 1.6.2 to current.
+	 */
+	public function test_upgrade_routine() {
+		$option['version'] = '1.6.2';
+		update_option( 'woocommerce-coupon-restrictions', $option );
+		
+		// This will kick off the upgrade routine.
+		$plugin = WC_Coupon_Restrictions();
+		
+		$query_type = get_option( 'coupon_restrictions_customer_query', 'account' );
+		$this->assertEquals( $query_type, 'accounts-orders' );
+	}
 
 }

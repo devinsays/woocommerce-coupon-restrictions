@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://woocommerce.com/products/woocommerce-coupon-restrictions/
  * Description: Adds additional coupon restrictions. Coupons can be restricted to new customers, existing customers, by country or by zipcode.
- * Version: 1.6.2
+ * Version: 1.7.0
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Developer: Devin Price
@@ -35,7 +35,7 @@ class WC_Coupon_Restrictions {
 	 * @static
 	 * @since  1.4.0
 	 */
-	public $version = '1.6.2';
+	public $version = '1.7.0';
 
 	/**
 	 * Required WooCommerce Version.
@@ -150,6 +150,10 @@ class WC_Coupon_Restrictions {
 			require_once $this->plugin_path() . '/includes/class-wc-coupon-restrictions-admin.php';
 			$this->admin = new WC_Coupon_Restrictions_Admin();
 
+			// Adds global coupon settings.
+			require_once $this->plugin_path() . '/includes/class-wc-coupon-restrictions-settings.php';
+			$this->admin = new WC_Coupon_Restrictions_Settings();
+
 		} else {
 
 			// Validates coupons.
@@ -198,6 +202,16 @@ class WC_Coupon_Restrictions {
 	public function upgrade_routine() {
 
 		$option = get_option( 'woocommerce-coupon-restrictions', false );
+		
+		// If a previous version was installed, run any required updates.
+		if ( isset( $option['version'] ) ) {
+			if ( version_compare( $option['version'], '1.6.2', '<=' ) ) {
+				// This setting determines how to verify new/existing customers.
+				// In v1.6.2 and before the default was to check against accounts and orders.
+				// In new installs, the default is to check against accounts only.
+				update_option( 'coupon_restrictions_customer_query', 'accounts-orders' );
+			}
+		}
 
 		// Sets a transient that triggers the onboarding notice.
 		// Notice expires after one week.
