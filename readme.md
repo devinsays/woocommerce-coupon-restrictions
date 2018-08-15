@@ -9,15 +9,15 @@
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 * WC requires at least: 3.3.0
-* WC tested up to: 3.4.3
+* WC tested up to: 3.4.4
 
 ## Description
 
 This extension allows you to create coupons with addition restriction options:
 
-**New customer restriction**: If a customer is logged in, the plugin will verify that they haven't purchased anything from the site before allowing the coupon to be applied. For customers that aren't logged in, the coupon verification runs after an email address has been added during checkout.
+**New customer restriction**: Verifies that the customer does not have an account with completed purchases before applying the coupon. The extension can also verify that a customer doesn't have completed guest orders if when that setting is selected.
 
-**Existing customer restrictions**: Validates that the customer has made a purchase on the site previously before allowing the coupon to be applied.
+**Existing customer restrictions**: Verifies that the custom does have an account with completed purchases before applying a coupon.
 
 **Country restriction**: Allows you to restrict a coupon to specific countries. Restriction can be applied to shipping or billing country.
 
@@ -27,7 +27,9 @@ The plugin is fully translatable. Developers can also use filters to modify any 
 
 ## Additional Notes
 
-Customers are considered "new customers" if they have not yet spent money on the site and/or do not have an order that has been marked complete or processing. This can lead to some edge cases where a customer could use the coupon several times before an order is marked complete. Avoid this by setting the "Usage limit per user" to 1.
+Customers are considered "new customers" if they do not have a user account with completed purchases.
+
+If your site allows guest checkouts, you can also verify if a customer has completed a guest checkout order previously. To enable this, select "Verify new customers by checking against user accounts and all guest orders" under "WooCommerce > Settings > General". However, this setting is not recommended for sites with more than 10,000 orders as this verification query takes additional time to run. Instead, it's recommended to create customer accounts in the background during checkout.
 
 E-mail addresses restrictions are not case sensitive, but otherwise require an exact match.
 

@@ -13,7 +13,7 @@
  *
  * Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
  * WC requires at least: 3.3.0
- * WC tested up to: 3.4.3
+ * WC tested up to: 3.4.4
  *
  * Copyright: © 20015-2018 DevPress.
  * License: GNU General Public License v3.0
@@ -202,7 +202,7 @@ class WC_Coupon_Restrictions {
 	public function upgrade_routine() {
 
 		$option = get_option( 'woocommerce-coupon-restrictions', false );
-		
+
 		// If a previous version was installed, run any required updates.
 		if ( isset( $option['version'] ) ) {
 			if ( version_compare( $option['version'], '1.6.2', '<=' ) ) {
