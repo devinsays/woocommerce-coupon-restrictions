@@ -216,7 +216,7 @@ class WC_Coupon_Restrictions_Onboarding {
 					),
 					'options' => array(
 						'content'  => '<h3>' . esc_html__( 'Usage Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
-						'<p>' . esc_html__( 'The new coupon restrictions can be found in this panel.', 'woocommerce-coupon-restrictions' ) . '</p>',
+						'<p>' . esc_html__( 'Coupon restrictions can be found in this panel.', 'woocommerce-coupon-restrictions' ) . '</p>',
 						'position' => array(
 							'edge'  => 'top',
 							'align' => 'left',

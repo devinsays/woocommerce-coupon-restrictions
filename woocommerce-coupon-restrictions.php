@@ -67,6 +67,13 @@ class WC_Coupon_Restrictions {
 	public $admin = null;
 
 	/**
+	 * Instance of WC_Coupon_Restrictions_Settings.
+	 *
+	 * @var WC_Coupon_Restrictions_Settings
+	 */
+	public $settings = null;
+
+	/**
 	 * Plugin path.
 	 *
 	 * @access public
@@ -152,7 +159,7 @@ class WC_Coupon_Restrictions {
 
 			// Adds global coupon settings.
 			require_once $this->plugin_path() . '/includes/class-wc-coupon-restrictions-settings.php';
-			$this->admin = new WC_Coupon_Restrictions_Settings();
+			$this->settings = new WC_Coupon_Restrictions_Settings();
 
 		} else {
 
