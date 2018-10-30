@@ -82,11 +82,13 @@ class WC_Coupon_Restrictions_Onboarding {
 	public function plugin_action_links( $links ) {
 
 		// URL for coupon screen onboarding
-		$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
+		$coupon_url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
+		$setting_url = admin_url( 'admin.php?page=wc-settings' );
 
 		$custom = array(
-			'<a href="' . esc_url( $url ) . '">' . esc_html__( 'New Coupon', 'woocommerce-coupon-restrictions' ) . '</a>',
-			'<a href="https://devpress.com/products/woocommerce-coupon-restrictions/">' . esc_html__( 'Docs', 'woocommerce-coupon-restrictions' ) . '</a>'
+			'<a href="' . esc_url( $coupon_url ) . '">' . esc_html__( 'New Coupon', 'woocommerce-coupon-restrictions' ) . '</a>',
+			'<a href="' . esc_url( $setting_url ) . '">' . esc_html__( 'Settings', 'woocommerce-coupon-restrictions' ) . '</a>',
+			'<a href="https://devpress.com/products/woocommerce-coupon-restrictions/">' . esc_html__( 'Docs', 'woocommerce-coupon-restrictions' ) . '</a>',
 		);
 		$links = array_merge( $custom, $links );
 		return $links;
