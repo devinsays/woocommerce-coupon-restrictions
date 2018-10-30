@@ -43,13 +43,11 @@ class WC_Coupon_Restrictions_Settings {
 		);
 
 		$filtered_settings = array();
-		$setting_added = false;
 
 		foreach ( $settings as $setting ) {
 			$filtered_settings[] = $setting;
 			if ( 'woocommerce_calc_discounts_sequentially' === $setting['id'] ) {
 				$filtered_settings[] = $coupon_restrictions;
-				$setting_added = true;
 			}
 		}
 
