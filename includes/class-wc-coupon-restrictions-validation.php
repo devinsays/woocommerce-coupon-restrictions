@@ -37,17 +37,20 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public function validate_coupons_before_checkout( $valid, $coupon ) {
 
-		// If coupon already marked invalid, no sense in moving forward.
+		// If coupon is already marked invalid, no need for further validation.
 		if ( ! $valid ) {
 			return false;
 		}
-
-		// Get the customer data from the session.
-		$session = WC()->session->get( 'customer' );
-
-		// If session data is not available, the coupon should remain valid.
-		// We do additional validation at checkout.
-		if ( ! $session ) {
+		
+		// During subscription renewals there may not be a valid session.
+		// If so, we'll do validation at checkout instead.
+		if ( ! WC()->session ) {
+			return true;
+		}
+		
+		// Customer information may not be available yet when coupon is applied.
+		// If so, coupon will remain activate and we'll validate at checkout.
+		if ( ! WC()->session->get( 'customer' ) ) {
 			return true;
 		}
 

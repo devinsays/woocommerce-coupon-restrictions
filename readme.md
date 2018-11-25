@@ -50,9 +50,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**1.7.0 (08.14.18)**
+**1.7.0 (Unreleased)**
 
 * Update: New setting for new/existing customer verification method. Defaults to account check.
+* Fix: Resolves bug applying coupon when there is no session (subscription renewals). Props @giantpeach.
 
 **1.6.2 (07.17.18)**
 
