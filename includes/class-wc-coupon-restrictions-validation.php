@@ -48,9 +48,12 @@ class WC_Coupon_Restrictions_Validation {
 			return true;
 		}
 		
+		// Get customer session information.
+		$session = WC()->session->get( 'customer' );
+		
 		// Customer information may not be available yet when coupon is applied.
 		// If so, coupon will remain activate and we'll validate at checkout.
-		if ( ! WC()->session->get( 'customer' ) ) {
+		if ( ! $session ) {
 			return true;
 		}
 
