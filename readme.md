@@ -4,12 +4,12 @@
 * Tags: woocommerce, coupon
 * Requires at least: 4.7.0
 * Requires PHP: 5.6
-* Tested up to: 4.9.8
+* Tested up to: 5.0.3
 * Stable tag: 1.7.0
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 * WC requires at least: 3.3.0
-* WC tested up to: 3.5.0
+* WC tested up to: 3.5.4
 
 ## Description
 
@@ -50,7 +50,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**1.7.0 (Unreleased)**
+**1.7.0 (02.11.19)**
 
 * Update: New setting for new/existing customer verification method. Defaults to account check.
 * Fix: Resolves bug applying coupon when there is no session (subscription renewals). Props @giantpeach.
