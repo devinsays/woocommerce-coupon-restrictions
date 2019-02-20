@@ -21,6 +21,8 @@ This extension allows you to create coupons with addition restriction options:
 
 **Country restriction**: Allows you to restrict a coupon to specific countries. Restriction can be applied to shipping or billing country.
 
+**State restriction**: Allows you to restrict a coupon to specific states. Restriction can be applied to shipping or billing country.
+
 **Zip code restriction**: Allows you to restrict a coupon to specific zip codes or postal codes. Can be applied to the shipping or the billing address.
 
 The plugin is fully translatable. Developers can also use filters to modify any notices displayed during coupon validation.
@@ -31,9 +33,7 @@ Customers are considered "new customers" if they do not have a user account with
 
 If your site allows guest checkouts, you can also verify if a customer has completed a guest checkout order previously. To enable this, select "Verify new customers by checking against user accounts and all guest orders" under "WooCommerce > Settings > General". However, this setting is not recommended for sites with more than 10,000 orders as this verification query takes additional time to run. Instead, it's recommended to create customer accounts in the background during checkout.
 
-E-mail addresses restrictions are not case sensitive, but otherwise require an exact match.
-
-Zip code or postcode restrictions are not case sensitive.
+E-mail addresses, zip code, and restrictions are not case sensitive.
 
 A customer must meet all requirements if multiple restrictions are set. For instance, if a "New Customer" and "Country Restriction" are set, a customer must meet both restrictions in order to checkout with the coupon.
 
@@ -49,6 +49,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 * Requires WooCommerce 3.3.0 or later.
 
 ## Changelog
+
+**1.7.1 (Beta)**
+
+* Enhancement: Adds ability to restrict by state.
 
 **1.7.0 (02.11.19)**
 
