@@ -147,6 +147,17 @@ class WC_Coupon_Restrictions_Admin {
 			<span class="woocommerce-help-tip" data-tip="<?php esc_attr_e( 'Select any country that your store currently sells to.', 'woocommerce-coupon-restrictions' ); ?>">
 			<?php
 		echo '</p>';
+		
+		// State restrictions
+		woocommerce_wp_textarea_input(
+			array(
+				'label'   => __( 'Restrict to specific states', 'woocommerce-coupon-restrictions' ),
+				'description'    => __( 'Use the two digit state codes. Comma seperate to specify multiple states.', 'woocommerce-coupon-restrictions' ),
+				'desc_tip' => true,
+				'id'      => 'state_restriction',
+				'type'    => 'textarea',
+			)
+		);
 
 		// Postcode / Zip Code restrictions
 		woocommerce_wp_textarea_input(
@@ -264,27 +275,49 @@ class WC_Coupon_Restrictions_Admin {
 		$id = 'country_restriction';
 		$country_restriction_select = isset( $_POST[$id] ) ? $_POST[$id] : array();
 		$country_restriction = array_filter( array_map( 'wc_clean', $country_restriction_select ) );
+		
+		// Sanitize state restriction meta.
+		$id = 'state_restriction';
+		$state_restriction = isset( $_POST[$id] ) ? $_POST[$id] : '';
+		$state_restriction = $this->sanitize_comma_seperated_textarea( $state_restriction );
 
 		// Sanitize postcode restriction meta.
 		$id = 'postcode_restriction';
 		$postcode_restriction = isset( $_POST[$id] ) ? $_POST[$id] : '';
-		if ( '' !== $postcode_restriction ) {
-			// Trim whitespace.
-			$postcode_restriction = trim( $postcode_restriction );
-			// Convert comma separated list into array for sanitization.
-			$postcode_array = explode( ',', $postcode_restriction );
-			$postcode_array = array_unique( array_map( 'trim', $postcode_array ) ); // Trim whitespace
-			$postcode_array = array_unique( array_map( 'esc_textarea', $postcode_array ) ); // Sanitize values
-			$postcode_restriction = implode(', ', $postcode_array ); // Convert back to comma separated string
-		}
+		$postcode_restriction = $this->sanitize_comma_seperated_textarea( $postcode_restriction );
 
 		// Save meta.
 		$coupon->update_meta_data( 'customer_restriction_type', $customer_restriction_type );
 		$coupon->update_meta_data( 'location_restrictions', $location_restrictions );
 		$coupon->update_meta_data( 'address_for_location_restrictions', $address_for_location_restrictions );
 		$coupon->update_meta_data( 'country_restriction', $country_restriction );
+		$coupon->update_meta_data( 'state_restriction', $state_restriction );
 		$coupon->update_meta_data( 'postcode_restriction', $postcode_restriction );
 		$coupon->save_meta_data();
-
 	}
+	
+	/**
+	 * Sanitizes comma seperated textarea.
+	 *
+	 * @since  1.7.1
+	 * @param string $textarea
+	 *
+	 * @return string
+	 */
+	public static function sanitize_comma_seperated_textarea( $textarea ) {
+		
+		// Trim whitespace.
+		$textarea = trim( $textarea );
+
+		if ( '' !== $textarea ) {
+			// Convert comma separated list into array for sanitization.
+			$items = explode( ',', $textarea );
+			$items = array_unique( array_map( 'trim', $items ) ); // Trim whitespace
+			$items = array_unique( array_map( 'esc_textarea', $items ) ); // Sanitize values
+			$textarea = implode(', ', $items ); // Convert back to comma separated string
+		}
+		
+		return $textarea;
+	}
+
 }

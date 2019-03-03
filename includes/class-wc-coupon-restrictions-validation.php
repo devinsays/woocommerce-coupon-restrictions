@@ -175,6 +175,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Defaults in case no conditions are met.
 		$country_validation = true;
+		$state_validation = true;
 		$zipcode_validation = true;
 
 		// Get the address type used for location restrictions (billing or shipping).
@@ -184,6 +185,13 @@ class WC_Coupon_Restrictions_Validation {
 			$country = esc_textarea( $session['shipping_country'] );
 			if ( '' !== $country ) {
 				$country_validation = $this->validate_country_restriction( $coupon, $country );
+			}
+		}
+		
+		if ( 'shipping' === $address && isset( $session['shipping_state'] ) ) {
+			$state = esc_textarea( $session['shipping_state'] );
+			if ( '' !== $state ) {
+				$state_validation = $this->validate_state_restriction( $coupon, $state );
 			}
 		}
 
@@ -200,6 +208,13 @@ class WC_Coupon_Restrictions_Validation {
 				$country_validation = $this->validate_country_restriction( $coupon, $country );
 			}
 		}
+		
+		if ( 'billing' === $address && isset( $session['postcode'] ) ) {
+			$state = esc_textarea( $session['state'] );
+			if ( '' !== $state ) {
+				$state_validation = $this->validate_state_restriction( $coupon, $state );
+			}
+		}
 
 		if ( 'billing' === $address && isset( $session['postcode'] ) ) {
 			$zipcode = esc_textarea( $session['postcode'] );
@@ -211,19 +226,22 @@ class WC_Coupon_Restrictions_Validation {
 		if ( false === $country_validation ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_country_restriction' ) , 10, 3 );
 		}
+		
+		if ( false === $state_validation ) {
+			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_state_restriction' ), 10, 3 );
+		}
 
 		if ( false === $zipcode_validation ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_zipcode_restriction' ), 10, 3 );
 		}
 
-		// Coupon is not valid if country or zipcode validation failed.
-		if ( false === $country_validation || false === $zipcode_validation ) {
+		// Coupon is not valid if country, state or zipcode validation failed.
+		if ( in_array( false, [$country_validation, $state_validation, $zipcode_validation] ) ) {
 			return false;
 		}
 
 		// Coupon passed all validation, return true.
 		return true;
-
 	}
 
 	/**
@@ -251,13 +269,40 @@ class WC_Coupon_Restrictions_Validation {
 
 		return true;
 	}
+	
+	/**
+	 * Validates state restriction.
+	 * Returns true if customer meets $coupon criteria.
+	 *
+	 * @param object $coupon
+	 * @param string $state
+	 * @return boolean
+	 */
+	public function validate_state_restriction( $coupon, $state ) {
+
+		// Get the allowed states from coupon meta.
+		$state_restriction = $coupon->get_meta( 'state_restriction', true );
+
+		// If $state_restriction has not been set, coupon remains valid.
+		if ( ! $state_restriction ) {
+			return true;
+		}
+		
+		$state_array = $this->comma_seperated_string_to_array( $state_restriction );
+
+		if ( ! in_array( strtoupper( $state ), $state_array ) ) {
+			return false;
+		}
+
+		return true;
+	}
 
 	/**
 	 * Validates postcode restriction.
 	 * Returns true if customer meets $coupon criteria.
 	 *
 	 * @param object $coupon
-	 * @param string $country
+	 * @param string $postcode
 	 * @return boolean
 	 */
 	public function validate_postcode_restriction( $coupon, $postcode ) {
@@ -269,21 +314,33 @@ class WC_Coupon_Restrictions_Validation {
 		if ( ! $postcode_restriction ) {
 			return true;
 		}
-
-		$postcode_array = explode( ',', $postcode_restriction );
-		$postcode_array = array_map( 'trim', $postcode_array );
-
-		// Converting the string to uppercase so postcode comparison is not case sensitive.
-		$postcode_array = array_map( 'strtoupper', $postcode_array );
+		
+		$postcode_array = $this->comma_seperated_string_to_array( $postcode_restriction );
 
 		if ( ! in_array( strtoupper( $postcode ), $postcode_array ) ) {
 			return false;
 		}
 
 		return true;
-
 	}
-
+	
+	/**
+	 * Convert string textarea to normalized array with uppercase.
+	 *
+	 * @param string $string
+	 * @return array $values
+	 */
+	public function comma_seperated_string_to_array( $string ) {
+		// Converts string to array.
+		$values = explode( ',', $string );
+		$values = array_map( 'trim', $values );
+		
+		// Converts values to uppercase so comparison is not case sensitive.
+		$values = array_map( 'strtoupper', $values );
+		
+		return $values;
+	}
+	
 	/**
 	 * Applies new customer coupon error message.
 	 *
@@ -313,6 +370,16 @@ class WC_Coupon_Restrictions_Validation {
 		$err = $this->coupon_error_message( 'country', $err, $err_code, $coupon );
 		return $err;
 	}
+	
+	/**
+	 * Applies state code restriction error message.
+	 *
+	 * @return string $err
+	 */
+	public function validation_message_state_restriction($err, $err_code, $coupon ) {
+		$err = $this->coupon_error_message( 'state', $err, $err_code, $coupon );
+		return $err;
+	}
 
 	/**
 	 * Applies zip code restriction error message.
@@ -339,7 +406,6 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Return validation message.
 		return $err;
-
 	}
 
 	/**
@@ -431,18 +497,27 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Defaults in case no conditions are met.
 		$country_validation = true;
+		$state_validation = true;
 		$zipcode_validation = true;
 
 		if ( 'shipping' === $address && isset( $posted['shipping_country'] ) ) {
 			$country_validation = $this->validate_country_restriction( $coupon, $posted['shipping_country'] );
 		} else
 
+		if ( 'shipping' === $address && isset( $posted['shipping_state'] ) ) {
+			$state_validation = $this->validate_state_restriction( $coupon, $posted['shipping_state'] );
+		}
+		
 		if ( 'shipping' === $address && isset( $posted['shipping_postcode'] ) ) {
 			$zipcode_validation = $this->validate_postcode_restriction( $coupon, $posted['shipping_postcode'] );
 		}
 
 		if ( 'billing' === $address && isset( $posted['billing_country'] ) ) {
 			$country_validation = $this->validate_country_restriction( $coupon, $posted['billing_country'] );
+		}
+		
+		if ( 'billing' === $address && isset( $posted['billing_state'] ) ) {
+			$state_validation = $this->validate_state_restriction( $coupon, $posted['billing_state'] );
 		}
 
 		if ( 'billing' === $address && isset( $posted['billing_postcode'] ) ) {
@@ -451,6 +526,11 @@ class WC_Coupon_Restrictions_Validation {
 
 		if ( false === $country_validation ) {
 			$msg = $this->get_validation_message( 'country', $coupon );
+			$this->remove_coupon( $coupon, $code, $msg );
+		}
+		
+		if ( false === $state_validation ) {
+			$msg = $this->get_validation_message( 'state', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
 
@@ -488,6 +568,12 @@ class WC_Coupon_Restrictions_Validation {
 			$i8n_address_type = $i8n_address[$address_type];
 			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s country.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
+		
+		if ( $key === 'state' ) {
+			$address_type = $this->get_address_type_for_restriction( $coupon );
+			$i8n_address_type = $i8n_address[$address_type];
+			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s state.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
+		}
 
 		if ( $key === 'zipcode' ) {
 			$address_type = $this->get_address_type_for_restriction( $coupon );
@@ -498,7 +584,6 @@ class WC_Coupon_Restrictions_Validation {
 		// The $key should always find a match.
 		// But we'll return a default message just in case.
 		return sprintf( __( 'Sorry, coupon code "%s" is not valid.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
-
 	}
 
 	/**
@@ -536,7 +621,6 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Flag totals for refresh.
 		WC()->session->set( 'refresh_totals', true );
-
 	}
 
 	/**
