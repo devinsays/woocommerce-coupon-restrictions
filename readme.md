@@ -4,12 +4,12 @@
 * Tags: woocommerce, coupon
 * Requires at least: 4.7.0
 * Requires PHP: 5.6
-* Tested up to: 5.0.3
+* Tested up to: 5.1
 * Stable tag: 1.7.0
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 * WC requires at least: 3.3.0
-* WC tested up to: 3.5.4
+* WC tested up to: 3.5.5
 
 ## Description
 
@@ -50,9 +50,9 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**1.7.1 (Beta)**
+**1.7.1 (03.03.19)**
 
-* Enhancement: Adds ability to restrict by state.
+* Enhancement: Adds ability to restrict coupon by state.
 
 **1.7.0 (02.11.19)**
 

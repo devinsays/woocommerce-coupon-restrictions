@@ -1,5 +1,9 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2019-03-03 - version 1.7.1
+
+* Enhancement: Adds ability to restrict coupon by state.
+
 2019-02-11 - version 1.7.0
 
 * Update: New setting for new/existing customer verification method. Defaults to account check.
