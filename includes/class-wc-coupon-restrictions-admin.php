@@ -279,12 +279,12 @@ class WC_Coupon_Restrictions_Admin {
 		// Sanitize state restriction meta.
 		$id = 'state_restriction';
 		$state_restriction = isset( $_POST[$id] ) ? $_POST[$id] : '';
-		$state_restriction = $this->sanitize_comma_seperated_textarea( $state_restriction );
+		$state_restriction = self::sanitize_comma_seperated_textarea( $state_restriction );
 
 		// Sanitize postcode restriction meta.
 		$id = 'postcode_restriction';
 		$postcode_restriction = isset( $_POST[$id] ) ? $_POST[$id] : '';
-		$postcode_restriction = $this->sanitize_comma_seperated_textarea( $postcode_restriction );
+		$postcode_restriction = self::sanitize_comma_seperated_textarea( $postcode_restriction );
 
 		// Save meta.
 		$coupon->update_meta_data( 'customer_restriction_type', $customer_restriction_type );

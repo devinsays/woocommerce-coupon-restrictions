@@ -50,6 +50,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
+**Development**
+
+* Bugfix: Fixes issue when saving coupons with specific PHP versions.
+
 **1.7.1 (03.03.19)**
 
 * Enhancement: Adds ability to restrict coupon by state.
