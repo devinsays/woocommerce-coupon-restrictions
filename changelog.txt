@@ -1,5 +1,9 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2019-03-12 - version 1.7.2
+
+* Bugfix: Fixes 500 when saving coupons in specific server environments.
+
 2019-03-03 - version 1.7.1
 
 * Enhancement: Adds ability to restrict coupon by state.

@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://woocommerce.com/products/woocommerce-coupon-restrictions/
  * Description: Adds additional coupon restrictions. Coupons can be restricted to new customers, existing customers, or specific locations.
- * Version: 1.7.1
+ * Version: 1.7.2
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Developer: Devin Price
