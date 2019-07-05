@@ -86,15 +86,28 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 	 */
 	public function test_customer_has_previous_guest_order() {
 		
+		// Get data from setup.
+		$coupon = $this->coupon;
+		
+		// Email to use for this test.
+		$email = 'customer@woo.com';
+		
 		// Creates a new guest order.
-		$order = WC_Helper_Order::create_order( 'customer@woo.com' );
-		$order->set_billing_email( $customer->get_email() );
+		$order = WC_Helper_Order::create_order();
+		$order->set_billing_email( $email );
 		$order->set_status( 'completed' );
 		$order->save();
 		
+		// Create a customer.
+		$customer = WC_Helper_Customer::create_customer( 'customer', 'password', $email );
+		
+		// Adds a coupon restricted to new customers.
+		// This should return true because customer doesn't have any purchases applied to their account.
+		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
+		
 		// Mock the posted data.
 		$posted = array(
-			'billing_email' => 'customer@woo.com'
+			'billing_email' => $email
 		);
 		
 		// Run the post checkout validation.
@@ -114,6 +127,7 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$validation = new WC_Coupon_Restrictions_Validation();
 		$validation->validate_coupons_after_checkout( $posted );
 		
+		delete_option( 'coupon_restrictions_customer_query' );
 		$order->delete();
 	}
 

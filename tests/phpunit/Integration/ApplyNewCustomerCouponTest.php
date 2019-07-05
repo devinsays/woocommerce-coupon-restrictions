@@ -23,7 +23,7 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		
 		// Create a customer.
 		$customer = WC_Helper_Customer::create_customer(
-			'username',
+			'customer',
 			'password',
 			'customer@woo.com'
 		);
@@ -133,6 +133,8 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
+		
+		delete_option( 'coupon_restrictions_customer_query' );
 
 	}
 

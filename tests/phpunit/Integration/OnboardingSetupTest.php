@@ -19,6 +19,7 @@ class Onboarding_Setup_Test extends WP_UnitTestCase {
 	 * Checks that onboarding transient is set.
 	 */
 	public function test_onboarding_transient_set() {
+		$plugin = WC_Coupon_Restrictions();
 		$transient = get_transient( 'woocommerce-coupon-restrictions-activated' );
 		$this->assertEquals( 1, $transient );
 	}
@@ -32,9 +33,12 @@ class Onboarding_Setup_Test extends WP_UnitTestCase {
 		
 		// This will kick off the upgrade routine.
 		$plugin = WC_Coupon_Restrictions();
+		$plugin->init_plugin();
 		
 		$query_type = get_option( 'coupon_restrictions_customer_query', 'account' );
 		$this->assertEquals( $query_type, 'accounts-orders' );
+		
+		delete_option( 'woocommerce-coupon-restrictions' );
 	}
 
 }
