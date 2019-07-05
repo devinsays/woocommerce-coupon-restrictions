@@ -79,6 +79,43 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 
 	}
+	
+	/**
+	 * If customer has previous guest order and coupon_restrictions_customer_query
+	 * is set to 'accounts-orders', checkout should fail.
+	 */
+	public function test_customer_has_previous_guest_order() {
+		
+		// Creates a new guest order.
+		$order = WC_Helper_Order::create_order( 'customer@woo.com' );
+		$order->set_billing_email( $customer->get_email() );
+		$order->set_status( 'completed' );
+		$order->save();
+		
+		// Mock the posted data.
+		$posted = array(
+			'billing_email' => 'customer@woo.com'
+		);
+		
+		// Run the post checkout validation.
+		// Coupon will not be removed because coupon_restrictions_customer_query
+		// is set to 'acccounts' by default.
+		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation->validate_coupons_after_checkout( $posted );
+
+		// Verifies 1 coupons have been applied to cart.
+		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
+		
+		update_option( 'coupon_restrictions_customer_query', 'accounts-orders' );
+		
+		// Run the post checkout validation now with
+		// coupon_restrictions_customer_query set to 'accounts-orders'.
+		// Coupon will be removed this time.
+		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation->validate_coupons_after_checkout( $posted );
+		
+		$order->delete();
+	}
 
 
 	public function tearDown() {

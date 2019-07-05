@@ -640,17 +640,16 @@ class WC_Coupon_Restrictions_Validation {
 			if ( $customer->get_is_paying_customer() ) {
 				return true;
 			}
-
-			// User exists but hasn't completed an order.
-			return false;
 		endif;
 
-		// If there isn't a user account, we can check against orders.
+		// If there isn't a user account or user account ! is_paying_customer
+		// we can check against previous guest orders.
 		// Store admin must opt-in to this because of performance concerns.
 		$option = get_option( 'coupon_restrictions_customer_query', 'accounts' );
 		if ( 'accounts-orders' === $option ) {
 
 			// This query can be slow on sites with a lot of orders.
+			// @todo Check if 'customer' => '' improves performance.
 			$customer_orders = wc_get_orders( array(
 				'status' => array( 'wc-processing', 'wc-completed' ),
 				'email'  => $email,

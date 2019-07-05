@@ -77,7 +77,8 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
+		
+		$order->delete();
 	}
 
 

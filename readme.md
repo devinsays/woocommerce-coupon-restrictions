@@ -4,12 +4,12 @@
 * Tags: woocommerce, coupon
 * Requires at least: 4.7.0
 * Requires PHP: 5.6
-* Tested up to: 5.1
+* Tested up to: 5.2.2
 * Stable tag: 1.7.2
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 * WC requires at least: 3.3.0
-* WC tested up to: 3.5.5
+* WC tested up to: 3.6.5
 
 ## Description
 
@@ -49,6 +49,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 * Requires WooCommerce 3.3.0 or later.
 
 ## Changelog
+
+**Development**
+
+* Bugfix: If user is logged in and has no orders associated with their account but does have previous guest orders, those guest orders will now be checked to verify if customer is a new customer when "check guest orders" is selected.
 
 **1.7.2 (03.12.19)**
 
