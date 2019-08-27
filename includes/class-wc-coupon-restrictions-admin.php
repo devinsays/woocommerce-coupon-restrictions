@@ -81,7 +81,6 @@ class WC_Coupon_Restrictions_Admin {
 
 		echo '<div class="options_group">';
 
-		// Country restriction.
 		$id = 'role_restriction';
 		$title = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );
