@@ -22,6 +22,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Adds metabox to usage restriction fields.
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ), 10, 2 );
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'role_restrictions' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ), 10, 2 );
 
 		// Saves the metabox.
@@ -65,6 +66,54 @@ class WC_Coupon_Restrictions_Admin {
 
 		echo '</div>';
 
+	}
+	
+	/**
+	 * Adds role restriction select box.
+	 *
+	 * @since  1.7.3
+	 *
+	 * @param int $coupon_id
+	 * @param object $coupon
+	 * @return void
+	 */
+	public static function role_restrictions( $coupon_id, $coupon ) {
+
+		echo '<div class="options_group">';
+
+		// Country restriction.
+		$id = 'role_restriction';
+		$title = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
+		$values = $coupon->get_meta( $id, true );
+		$description = '';
+
+		echo '<p class="form-field ' . $id . '_only_field">';
+
+			$selections = array();
+			if ( ! empty( $values ) ) {
+				$selections = $values;
+			}
+
+			// An array of all roles.
+			$roles = array_reverse( get_editable_roles() );
+			?>
+			<label for="<?php echo esc_attr( $id ); ?>">
+				<?php echo esc_html( $title ); ?>
+			</label>
+			<select multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose roles&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Role', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
+				<?php
+				foreach ( $roles as $id => $role ) {
+					$selected = in_array( $id, $selections );
+					$role_name = translate_user_role( $role['name'] );
+
+					echo '<option value="' . esc_attr( $id ) . '" ' . selected( $selected, true, false ) . '>' . esc_html( $role_name ) . '</option>';
+				}
+				?>
+			</select>
+			<?php
+		echo '</p>';
+
+		echo '</div>';
 	}
 
 	/**
@@ -259,6 +308,11 @@ class WC_Coupon_Restrictions_Admin {
 		if ( ! in_array( $customer_restriction_type, array( 'new', 'existing', 'none' ) ) ) {
 			$customer_restriction_type = 'none';
 		}
+		
+		// Sanitize role restriction meta.
+		$id = 'role_restriction';
+		$role_restriction_select = isset( $_POST[$id] ) ? $_POST[$id] : array();
+		$role_restriction = array_filter( array_map( 'wc_clean', $role_restriction_select ) );
 
 		// Sanitize location restrictions checkbox.
 		$id = 'location_restrictions';
@@ -288,6 +342,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Save meta.
 		$coupon->update_meta_data( 'customer_restriction_type', $customer_restriction_type );
+		$coupon->update_meta_data( 'role_restriction', $role_restriction );
 		$coupon->update_meta_data( 'location_restrictions', $location_restrictions );
 		$coupon->update_meta_data( 'address_for_location_restrictions', $address_for_location_restrictions );
 		$coupon->update_meta_data( 'country_restriction', $country_restriction );
