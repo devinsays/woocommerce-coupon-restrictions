@@ -62,6 +62,12 @@ class WC_Coupon_Restrictions_Validation {
 		if ( false === $customer ) {
 			return false;
 		}
+		
+		// Validate role restrictions.
+		$role = $this->session_validate_role_restrictions( $coupon, $session );
+		if ( false === $role ) {
+			return false;
+		}
 
 		// Validate location restrictions.
 		$location = $this->session_validate_location_restrictions( $coupon, $session );
@@ -100,6 +106,41 @@ class WC_Coupon_Restrictions_Validation {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_existing_customer_restriction' ), 10, 3 );
 			return false;
 		}
+
+		return true;
+	}
+	
+	/**
+	 * Validates role restrictions.
+	 * Returns true if customer meets $coupon criteria.
+	 *
+	 * @param object $coupon
+	 * @param object $session
+	 * @return boolean
+	 */
+	public function session_validate_role_restrictions( $coupon, $session ) {
+		
+		// Returns an array with all the restricted roles.
+		$restricted_roles = $coupon->get_meta( 'role_restriction', true );
+		
+		// If there are no restricted roles, coupon is valid.
+		if ( ! count( $restricted_roles) ) {
+			return true;
+		}
+		
+		// If email address isn't available, coupon remains valid.
+		if ( ! isset( $session['email'] ) ) {
+			return true;
+		}
+
+		$email = esc_textarea( strtolower( $session['email'] ) );
+		
+		// TODO:
+		// Get user from email.
+		// Get role from user.
+		// Return false if role is in restricted roles.
+		
+		error_log( print_r($restricted_roles, true ) );
 
 		return true;
 	}
