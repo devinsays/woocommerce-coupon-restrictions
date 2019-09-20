@@ -244,7 +244,7 @@ class WC_Coupon_Restrictions_Onboarding {
 				),
 				'usage-limit' => array(
 					'target' => '#usage_limit_coupon_data .usage_limit_per_user_field .woocommerce-help-tip',
-					'next' => 'location-restrictions',
+					'next' => 'role-restriction',
 					'next_trigger' => array(
 						'target' => '#title',
 						'event'  => 'input',
@@ -256,6 +256,22 @@ class WC_Coupon_Restrictions_Onboarding {
 						'position' => array(
 							'edge'  => 'left',
 							'align' => 'left',
+						)
+					)
+				),
+				'role-restriction' => array(
+					'target' => '#usage_restriction_coupon_data .role_restriction_only_field',
+					'next' => 'location-restrictions',
+					'next_trigger' => array(
+						'target' => '#title',
+						'event'  => 'input',
+					),
+					'options'      => array(
+						'content'  => '<h3>' . esc_html__( 'Role Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
+						'<p>' . esc_html__( 'Coupons can be restricted to specific user roles. Customer must have an account for the coupon to apply.', 'woocommerce-coupon-restrictions' ) . '</p>',
+						'position' => array(
+							'edge'  => 'right',
+							'align' => 'right',
 						)
 					)
 				),
@@ -379,8 +395,10 @@ class WC_Coupon_Restrictions_Onboarding {
 					if ( 'usage-limit' === pointer ) {
 						$('#woocommerce-coupon-data .usage_limit_tab a').trigger('click');
 					}
-					if ( 'location-restrictions' === pointer ) {
+					if ( 'role-restriction' === pointer ) {
 						$('#woocommerce-coupon-data .usage_restriction_tab a').trigger('click');
+					}
+					if ( 'location-restrictions' === pointer ) {
 						$('#usage_restriction_coupon_data .checkbox').trigger('click');
 					}
 				}

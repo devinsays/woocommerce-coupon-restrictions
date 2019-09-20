@@ -20,7 +20,7 @@ class WC_Coupon_Restrictions_Validation {
 	*/
 	public function init() {
 
-		// Validates coupons before checkout if customer is logged in.
+		// Validates coupons before checkout if customer session exists.
 		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupons_before_checkout'), 10, 2 );
 
 		// Validates coupons again during checkout validation.
@@ -56,12 +56,24 @@ class WC_Coupon_Restrictions_Validation {
 		if ( ! $session ) {
 			return true;
 		}
-
-		// Validate customer restrictions.
-		$customer = $this->session_validate_customer_restrictions( $coupon, $session );
-		if ( false === $customer ) {
-			return false;
-		}
+		
+		// Gets the email if it is in the session and valid.
+		$email = $this->get_email_from_session( $session );
+		
+		if ( $email ) :
+			// Validate customer restrictions.
+			$customer = $this->session_validate_customer_restrictions( $coupon, $email );
+			if ( false === $customer ) {
+				return false;
+			}
+			
+			// Validate role restrictions.
+			$role = $this->validate_role_restriction( $coupon, $email );
+			if ( false === $role ) {
+				add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_role_restriction' ), 10, 3 );
+				return false;
+			}
+		endif;
 
 		// Validate location restrictions.
 		$location = $this->session_validate_location_restrictions( $coupon, $session );
@@ -73,21 +85,34 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
+	 * Gets the user email from session.
+	 *
+	 * @param object $session
+	 * @return string | null
+	 */
+	public function get_email_from_session( $session ) {
+		if ( ! isset( $session['email'] ) ) {
+			return null;
+		}
+		
+		$email = esc_textarea( strtolower( $session['email'] ) );
+		
+		if ( ! is_email( $email ) ) {
+			return null;
+		}
+
+		return $email;
+	}
+
+	/**
 	 * Validates customer restrictions.
 	 * Returns true if customer meets $coupon criteria.
 	 *
 	 * @param object $coupon
-	 * @param object $session
+	 * @param string $email
 	 * @return boolean
 	 */
-	public function session_validate_customer_restrictions( $coupon, $session ) {
-
-		// If email address isn't available, coupon remains valid.
-		if ( ! isset( $session['email'] ) ) {
-			return true;
-		}
-
-		$email = esc_textarea( strtolower( $session['email'] ) );
+	public function session_validate_customer_restrictions( $coupon, $email ) {
 
 		// Validate new customer restriction.
 		if ( false === $this->validate_new_customer_restriction( $coupon, $email ) ) {
@@ -114,11 +139,6 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public function validate_new_customer_restriction( $coupon, $email ) {
 
-		// If email address isn't valid, we'll wait to run the coupon validation.
-		if ( ! is_email( $email ) ) {
-			return true;
-		}
-
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 
 		if ( 'new' === $customer_restriction_type ) :
@@ -140,11 +160,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_existing_customer_restriction( $coupon, $email ) {
-
-		// If email address isn't valid, we'll wait to run the coupon validation.
-		if ( ! is_email( $email ) ) {
-			return true;
-		}
 
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 
@@ -342,6 +357,43 @@ class WC_Coupon_Restrictions_Validation {
 	}
 	
 	/**
+	 * Validates role restrictions.
+	 * Returns true if customer meets $coupon criteria.
+	 *
+	 * @param object $coupon
+	 * @param string $email
+	 * @return boolean
+	 */
+	public function validate_role_restriction( $coupon, $email ) {
+		
+		// Returns an array with all the restricted roles.
+		$restricted_roles = $coupon->get_meta( 'role_restriction', true );
+		
+		// If there are no restricted roles, coupon is valid.
+		if ( ! $restricted_roles ) {
+			return true;
+		}
+		
+		// Checks if there is an account associated with the $email.
+		$user = get_user_by( 'email', $email );
+		
+		// If user account does not exist, coupon is invalid.
+		if ( ! $user ) {
+			return false;
+		}
+		
+		$user_meta = get_userdata( $user->ID );
+		$user_roles = $user_meta->roles;
+		
+		// If any the user roles do not match the restricted roles, coupon is invalid.
+		if ( ! array_intersect( $user_roles, $restricted_roles ) ) {
+			return false;
+		}
+
+		return true;
+	}
+	
+	/**
 	 * Applies new customer coupon error message.
 	 *
 	 * @return string $err
@@ -358,6 +410,16 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public function validation_message_existing_customer_restriction( $err, $err_code, $coupon ) {
 		$err = $this->coupon_error_message( 'existing-customer', $err, $err_code, $coupon );
+		return $err;
+	}
+	
+	/**
+	 * Applies role restriction coupon error message.
+	 *
+	 * @return string $err
+	 */
+	public function validation_message_role_restriction( $err, $err_code, $coupon ) {
+		$err = $this->coupon_error_message( 'role-restriction', $err, $err_code, $coupon );
 		return $err;
 	}
 
@@ -431,6 +493,7 @@ class WC_Coupon_Restrictions_Validation {
 					$this->checkout_validate_new_customer_restriction( $coupon, $code, $posted );
 					$this->checkout_validate_existing_customer_restriction( $coupon, $code, $posted );
 					$this->checkout_validate_location_restrictions( $coupon, $code, $posted );
+					$this->checkout_validate_role_restriction( $coupon, $code, $posted );
 				endif;
 
 			endforeach;
@@ -471,6 +534,25 @@ class WC_Coupon_Restrictions_Validation {
 
 		if ( false === $valid ) {
 			$msg = $this->get_validation_message( 'existing-customer', $coupon );
+			$this->remove_coupon( $coupon, $code, $msg );
+		}
+
+	}
+	
+	/**
+	 * Validates new customer coupon on checkout.
+	 *
+	 * @param object $coupon
+	 * @param string $code
+	 * @return void
+	 */
+	public function checkout_validate_role_restriction( $coupon, $code, $posted ) {
+
+		$email = strtolower( $posted['billing_email'] );
+		$valid = $this->validate_role_restriction( $coupon, $email );
+
+		if ( false === $valid ) {
+			$msg = $this->get_validation_message( 'role-restriction', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
 
@@ -561,6 +643,10 @@ class WC_Coupon_Restrictions_Validation {
 
 		if ( $key === 'existing-customer' ) {
 			return sprintf( __( 'Sorry, coupon code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+		}
+		
+		if ( $key === 'role-restriction' ) {
+			return sprintf( __( 'Sorry, coupon code "%s" is not valid with your customer role.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'country' ) {
