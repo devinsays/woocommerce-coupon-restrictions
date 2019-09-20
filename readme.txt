@@ -3,13 +3,13 @@
 Contributors: @downstairsdev
 Tags: woocommerce, coupon
 Requires at least: 4.7.0
-Tested up to: 5.1
+Tested up to: 5.2.3
 Requires PHP: 5.6
 Stable tag: 1.7.2
 License: GPLv3 or later License
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 3.3.0
-WC tested up to: 3.5.5
+WC tested up to: 3.7.0
 Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
 
 == Description ==
@@ -19,6 +19,8 @@ This extension allows you to create coupons with addition restriction options:
 New customer restriction: Verifies that the customer does not have an account with completed purchases before applying the coupon. The extension can also verify that a customer doesn't have completed guest orders if when that setting is selected.
 
 Existing customer restrictions: Verifies that the custom does have an account with completed purchases before applying a coupon.
+
+User Role Restrictions: Limits a coupon to specific user roles. So if you have custom roles for wholesalers, affiliates, or vips, you can provide coupons that will only work for them.
 
 Country restriction: Allows you to restrict a coupon to specific countries. Restriction can be applied to shipping or billing country.
 

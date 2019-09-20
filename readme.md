@@ -4,12 +4,12 @@
 * Tags: woocommerce, coupon
 * Requires at least: 4.7.0
 * Requires PHP: 5.6
-* Tested up to: 5.2.2
+* Tested up to: 5.2.3
 * Stable tag: 1.7.2
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 * WC requires at least: 3.3.0
-* WC tested up to: 3.6.5
+* WC tested up to: 3.7.0
 
 ## Description
 
@@ -18,6 +18,8 @@ This extension allows you to create coupons with addition restriction options:
 **New customer restriction**: Verifies that the customer does not have an account with completed purchases before applying the coupon. The extension can also verify that a customer doesn't have completed guest orders if when that setting is selected.
 
 **Existing customer restrictions**: Verifies that the custom does have an account with completed purchases before applying a coupon.
+
+**User Role Restrictions**: Limits a coupon to specific user roles. So if you have custom roles for wholesalers, affiliates, or vips, you can provide coupons that will only work for them.
 
 **Country restriction**: Allows you to restrict a coupon to specific countries. Restriction can be applied to shipping or billing country.
 
@@ -52,6 +54,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 **Development**
 
+* Enhancement: Adds feature to restrict coupon by user role.
 * Bugfix: If user is logged in and has no orders associated with their account but does have previous guest orders, those guest orders will now be checked to verify if customer is a new customer when "check guest orders" is selected.
 
 **1.7.2 (03.12.19)**
@@ -60,7 +63,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 **1.7.1 (03.03.19)**
 
-* Enhancement: Adds ability to restrict coupon by state.
+* Enhancement: Adds feature to restrict coupon by state.
 
 **1.7.0 (02.11.19)**
 

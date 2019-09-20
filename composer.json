@@ -30,7 +30,7 @@
     }
   },
   "scripts": {
-    "install-woocommerce": "bin/install-woocommerce.sh 3.6.5",
+    "install-woocommerce": "bin/install-woocommerce.sh 3.7.0",
     "pre-install-cmd": "@install-woocommerce",
     "pre-update-cmd": "@install-woocommerce"
   }
