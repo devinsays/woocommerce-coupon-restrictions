@@ -5,7 +5,6 @@ namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
-use WC_Helper_Order;
 
 class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 

@@ -68,7 +68,7 @@ class WC_Coupon_Restrictions_Validation {
 			}
 			
 			// Validate role restrictions.
-			$role = $this->validate_role_restrictions( $coupon, $email );
+			$role = $this->validate_role_restriction( $coupon, $email );
 			if ( false === $role ) {
 				add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_role_restriction' ), 10, 3 );
 				return false;
@@ -364,7 +364,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * @param string $email
 	 * @return boolean
 	 */
-	public function validate_role_restrictions( $coupon, $email ) {
+	public function validate_role_restriction( $coupon, $email ) {
 		
 		// Returns an array with all the restricted roles.
 		$restricted_roles = $coupon->get_meta( 'role_restriction', true );
@@ -493,6 +493,7 @@ class WC_Coupon_Restrictions_Validation {
 					$this->checkout_validate_new_customer_restriction( $coupon, $code, $posted );
 					$this->checkout_validate_existing_customer_restriction( $coupon, $code, $posted );
 					$this->checkout_validate_location_restrictions( $coupon, $code, $posted );
+					$this->checkout_validate_role_restriction( $coupon, $code, $posted );
 				endif;
 
 			endforeach;
