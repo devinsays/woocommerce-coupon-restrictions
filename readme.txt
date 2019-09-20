@@ -18,9 +18,9 @@ This extension allows you to create coupons with addition restriction options:
 
 New customer restriction: Verifies that the customer does not have an account with completed purchases before applying the coupon. The extension can also verify that a customer doesn't have completed guest orders if when that setting is selected.
 
-Existing customer restrictions: Verifies that the custom does have an account with completed purchases before applying a coupon.
+Existing customer restriction: Verifies that the custom does have an account with completed purchases before applying a coupon.
 
-User Role Restrictions: Limits a coupon to specific user roles. So if you have custom roles for wholesalers, affiliates, or vips, you can provide coupons that will only work for them.
+User role restriction: Limits a coupon to specific user roles. So if you have custom roles for wholesalers, affiliates, or vips, you can provide coupons that will only work for them.
 
 Country restriction: Allows you to restrict a coupon to specific countries. Restriction can be applied to shipping or billing country.
 
@@ -36,7 +36,7 @@ Customers are considered "new customers" if they do not have a user account with
 
 If your site allows guest checkouts, you can also verify if a customer has completed a guest checkout order previously. To enable this, select "Verify new customers by checking against user accounts and all guest orders" under "WooCommerce > Settings > General". However, this setting is not recommended for sites with more than 10,000 orders as this verification query takes additional time to run. Instead, it's recommended to create customer accounts in the background during checkout.
 
-E-mail addresses, zip code, and restrictions are not case sensitive.
+E-mail addresses, zip code, and state restrictions are not case sensitive.
 
 A customer must meet all requirements if multiple restrictions are set. For instance, if a "New Customer" and "Country Restriction" are set, a customer must meet both restrictions in order to checkout with the coupon.
 
