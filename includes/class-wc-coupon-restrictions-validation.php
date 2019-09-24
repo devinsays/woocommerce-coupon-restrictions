@@ -336,10 +336,7 @@ class WC_Coupon_Restrictions_Validation {
 		if ( strpos( $postcode_restriction, '*') !== false ) {
 			foreach ( $postcode_array as $restricted_postcode ) {
 				if ( strpos( $restricted_postcode, '*') !== false ) {
-					error_log('Restricted postcode.');
-					error_log( $restricted_postcode );
 					if ( fnmatch( $restricted_postcode, $postcode ) ) {
-						error_log('There is a wildcard match');
 						return true;
 					}
 				}
