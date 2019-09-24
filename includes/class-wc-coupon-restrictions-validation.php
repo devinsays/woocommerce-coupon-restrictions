@@ -331,7 +331,19 @@ class WC_Coupon_Restrictions_Validation {
 		}
 		
 		$postcode_array = $this->comma_seperated_string_to_array( $postcode_restriction );
+		
+		// Wildcard check.
+		if ( strpos( $postcode_restriction, '*') !== false ) {
+			foreach ( $postcode_array as $restricted_postcode ) {
+				if ( strpos( $restricted_postcode, '*') !== false ) {
+					if ( fnmatch( $restricted_postcode, $postcode ) ) {
+						return true;
+					}
+				}
+			}
+		}
 
+		// Standard check.
 		if ( ! in_array( strtoupper( $postcode ), $postcode_array ) ) {
 			return false;
 		}

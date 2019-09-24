@@ -200,7 +200,7 @@ class WC_Coupon_Restrictions_Admin {
 		woocommerce_wp_textarea_input(
 			array(
 				'label'   => __( 'Restrict to specific states', 'woocommerce-coupon-restrictions' ),
-				'description'    => __( 'Use the two digit state codes. Comma seperate to specify multiple states.', 'woocommerce-coupon-restrictions' ),
+				'description'    => __( 'Use the two digit state codes. Comma separate to specify multiple states.', 'woocommerce-coupon-restrictions' ),
 				'desc_tip' => true,
 				'id'      => 'state_restriction',
 				'type'    => 'textarea',
@@ -211,7 +211,7 @@ class WC_Coupon_Restrictions_Admin {
 		woocommerce_wp_textarea_input(
 			array(
 				'label'   => __( 'Restrict to specific zip codes', 'woocommerce-coupon-restrictions' ),
-				'description'    => __( 'You can list multiple zip codes or postcodes (comma separated).', 'woocommerce-coupon-restrictions' ),
+				'description'    => __( 'Comma separate to list multiple zip codes. Wildcards (*) can be used to match portions of zip codes.', 'woocommerce-coupon-restrictions' ),
 				'desc_tip' => true,
 				'id'      => 'postcode_restriction',
 				'type'    => 'textarea',
