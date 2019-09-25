@@ -36,6 +36,12 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_coupons_before_checkout( $valid, $coupon ) {
+		
+		// Pre-checkout validation can be disabled using this filter.
+		$validate = apply_filters( 'woocommerce_coupon_restrictions_validate_before_checkout', true );
+		if ( false === $validate ) {
+			return true;
+		}
 
 		// If coupon is already marked invalid, no need for further validation.
 		if ( ! $valid ) {

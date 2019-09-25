@@ -56,6 +56,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 * Enhancement: Adds feature to restrict coupon by user role.
 * Enhancement: Zip code restrictions now allow wildcard matches.
+* Enhancement: Filter to skip pre-checkout validation.
 * Bugfix: If user is logged in and has no orders associated with their account but does have previous guest orders, those guest orders will now be checked to verify if customer is a new customer when "check guest orders" is selected.
 
 **1.7.2 (03.12.19)**
