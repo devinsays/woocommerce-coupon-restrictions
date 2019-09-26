@@ -71,7 +71,7 @@ class WC_Coupon_Restrictions_Admin {
 	/**
 	 * Adds role restriction select box.
 	 *
-	 * @since  1.7.3
+	 * @since  1.8.0
 	 *
 	 * @param int $coupon_id
 	 * @param object $coupon

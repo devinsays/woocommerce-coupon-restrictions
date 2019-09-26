@@ -1,5 +1,11 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2019-09-25 - version 1.8.0
+
+* Enhancement: Zip code restrictions now allow wildcard matches.
+* Enhancement: Filter to skip pre-checkout validation.
+* Bugfix: If user is logged in and has no orders associated with their account but does have previous guest orders, those guest orders will now be checked to verify if customer is a new customer when "check guest orders" is selected.
+
 2019-03-12 - version 1.7.2
 
 * Bugfix: Fixes 500 when saving coupons in specific server environments.

@@ -5,7 +5,7 @@
 * Requires at least: 4.7.0
 * Requires PHP: 5.6
 * Tested up to: 5.2.3
-* Stable tag: 1.7.2
+* Stable tag: 1.8.0
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 * WC requires at least: 3.3.0
@@ -52,7 +52,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**Development**
+**1.8.0 (09.25.19)**
 
 * Enhancement: Adds feature to restrict coupon by user role.
 * Enhancement: Zip code restrictions now allow wildcard matches.
