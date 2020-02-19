@@ -67,7 +67,7 @@ class WooCommerce_Coupon_Restrictions_Tests_Bootstrap {
 	public function get_test_suite() {
 		$suite = '';
 
-		$opts = PHPUnit_Util_Getopt::getopt(
+		$opts = WP_PHPUnit_Util_Getopt::getopt(
 			$GLOBALS['argv'],
 			'd:c:hv',
 			array( 'filter=', 'testsuite=' )
