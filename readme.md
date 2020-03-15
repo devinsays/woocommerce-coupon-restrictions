@@ -54,7 +54,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 **Development**
 
-* Update: Bumped tested to requirements.
+* Update: Tested to WooCommerce 4.0.
 
 **1.8.0 (09.25.19)**
 
