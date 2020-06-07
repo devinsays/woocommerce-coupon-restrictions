@@ -156,7 +156,6 @@ class WC_Coupon_Restrictions_Admin {
 		$id = 'country_restriction';
 		$title = __( 'Restrict to specific countries', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );
-		$description = '';
 
 		echo '<p class="form-field ' . $id . '_only_field">';
 
@@ -192,7 +191,10 @@ class WC_Coupon_Restrictions_Admin {
 				}
 				?>
 			</select>
-			<span class="woocommerce-help-tip" data-tip="<?php esc_attr_e( 'Select any country that your store currently sells to.', 'woocommerce-coupon-restrictions' ); ?>">
+			<span class="woocommerce-help-tip" data-tip="<?php esc_attr_e( 'Select any country that your store currently sells to.', 'woocommerce-coupon-restrictions' ); ?>"></span>
+			<div class="wcr-field-options" style="margin-left: 162px;">
+			<button type="button" class="button button-secondary" aria-label="Adds all the countries that the store sells to in the restricted field.">Add All</button>
+			</div>
 			<?php
 		echo '</p>';
 		
