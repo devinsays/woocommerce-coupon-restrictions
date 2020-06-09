@@ -19,12 +19,10 @@
     "composer/installers": "^1.0"
   },
   "require-dev": {
+    "assertwell/wp-core-test-framework": "^0.1.1",
     "phpunit/phpunit": "^5.7"
   },
   "autoload-dev": {
-    "classmap": [
-      "vendor/woocommerce/woocommerce/tests/framework"
-    ],
     "psr-4": {
       "DevPress\\WooCommerce\\CouponRestrictions\\Test\\": "tests/phpunit/"
     }
