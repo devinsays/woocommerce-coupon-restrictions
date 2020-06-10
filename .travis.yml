@@ -58,7 +58,7 @@ before_install:
 
 install:
   - |
-    if [[ ${TRAVIS_PHP_VERSION:0:3} <= 7.0 ]]; then
+    if [[ ${TRAVIS_PHP_VERSION:0:3} < '7.1' ]]; then
       composer update --prefer-source --prefer-lowest --no-interaction --no-ansi
     else
       composer install --prefer-source --no-interaction --no-ansi
