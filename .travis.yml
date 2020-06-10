@@ -29,7 +29,7 @@ matrix:
     # Test select combinations of older dependencies.
     - php: 7.2
       env: WP_VERSION=latest WC_VERSION=3.9
-      - php: 7.2
+    - php: 7.2
       env: WP_VERSION=latest WC_VERSION=3.8
     - php: 7.2
       env: WP_VERSION=latest WC_VERSION=3.7
