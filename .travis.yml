@@ -27,14 +27,17 @@ matrix:
   fast_finish: true
   include:
     # Test select combinations of older dependencies.
+    #
+    # Some versions (3.9, 3.5) don't have explicit major.minor tags, so specific versions
+    # are required.
     - php: 7.2
-      env: WP_VERSION=latest WC_VERSION=3.9
+      env: WP_VERSION=latest WC_VERSION=3.9.3
     - php: 7.2
       env: WP_VERSION=latest WC_VERSION=3.8
     - php: 7.2
       env: WP_VERSION=latest WC_VERSION=3.7
     - php: 7.2
-      env: WP_VERSION=latest WC_VERSION=3.5
+      env: WP_VERSION=latest WC_VERSION=3.5.8
 
     # WooCommerce 3.8 was the last version to support PHP 5.6
     - php: 5.6
