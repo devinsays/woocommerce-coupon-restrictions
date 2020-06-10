@@ -1,25 +1,70 @@
 language: php
+dist: xenial
+
+services:
+    - mysql
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change
 
 cache:
   directories:
     - $HOME/.composer/cache
 
 php:
-  - 5.6
-# Unit tests fail in 7.2 due to environment.
-# Needs to fix.
-#  - 7.2
-  
-services:
-  - mysql
+  - 7.4
+  - 7.3
+  - 7.2
 
 env:
-  - WP_VERSION=latest WP_MULTISITE=0
+  - WP_VERSION=latest WC_VERSION=4.2
+  - WP_VERSION=latest WC_VERSION=4.1
+  - WP_VERSION=latest WC_VERSION=4.0
+
+matrix:
+  fast_finish: true
+  include:
+    # Test select combinations of older dependencies.
+    - php: 7.2
+      env: WP_VERSION=latest WC_VERSION=3.9
+      - php: 7.2
+      env: WP_VERSION=latest WC_VERSION=3.8
+    - php: 7.2
+      env: WP_VERSION=latest WC_VERSION=3.7
+    - php: 7.2
+      env: WP_VERSION=latest WC_VERSION=3.5
+
+    # WooCommerce 3.8 was the last version to support PHP 5.6
+    - php: 5.6
+      env: WP_VERSION=latest WC_VERSION=3.8
+
+    # Explicitly test the lowest version we support.
+    - name: Minimum requirements
+      php: 5.6
+      env: WP_VERSION=4.7.0 WC_VERSION=3.3.0
+
+    # Test against WordPress trunk and the latest version of WooCommerce
+    - name: Bleeding Edge
+      php: 7.4
+      env: WP_VERSION=trunk WC_VERSION=latest
+  allow_failures:
+    - name: Bleeding Edge
+
+before_install:
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - phpenv config-rm xdebug.ini || true
 
 install:
-  - composer install --prefer-dist
+  - |
+    if [[ ${TRAVIS_PHP_VERSION:0:3} <= 7.0 ]]; then
+      composer update --prefer-source --prefer-lowest --no-interaction --no-ansi
+    else
+      composer install --prefer-source --no-interaction --no-ansi
+    fi
+  - bash vendor/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+  - bash tests/bin/install-woocommerce.sh $WC_VERSION
 
-before_script:
-  - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-
-script: phpunit
+script:
+  - ./vendor/bin/phpunit
