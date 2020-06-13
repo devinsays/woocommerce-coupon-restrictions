@@ -36,7 +36,7 @@ matrix:
       env: WP_VERSION=latest WC_VERSION=3.8
     - php: 7.2
       env: WP_VERSION=latest WC_VERSION=3.7
-    - php: 7.2
+    - php: 7.0
       env: WP_VERSION=latest WC_VERSION=3.5.8
 
     # WooCommerce 3.8 was the last version to support PHP 5.6
@@ -61,7 +61,7 @@ before_install:
 
 install:
   - |
-    if [[ ${TRAVIS_PHP_VERSION:0:3} < '7.1' || "$WC_VERSION" < '3.7' ]]; then
+    if [[ ${TRAVIS_PHP_VERSION:0:3} < '7.1' ]]; then
       composer update --prefer-source --prefer-lowest --no-interaction --no-ansi
     else
       composer install --prefer-source --no-interaction --no-ansi
