@@ -17,7 +17,7 @@
     },
     "require-dev": {
         "assertwell/wp-core-test-framework": "^0.1.1",
-        "phpunit/phpunit": "^5.7|^6.5|^7.5"
+        "phpunit/phpunit": ">=5.7 <8.0"
     },
     "autoload-dev": {
         "psr-4": {
