@@ -46,7 +46,7 @@ matrix:
     # Explicitly test the lowest version we support.
     - name: Minimum requirements
       php: 5.6
-      env: WP_VERSION=4.7.0 WC_VERSION=3.3.0
+      env: WP_VERSION=4.7.0 WC_VERSION=3.7.0
 
     # Test against WordPress trunk and the latest version of WooCommerce
     - name: Bleeding Edge
