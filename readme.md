@@ -52,7 +52,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**1.8.1**
+**1.8.1 (06.14.20)**
 
 * Enhancement: Add all countries easily for country restriction.
 * Enhancement: Improved automated testing suite.
