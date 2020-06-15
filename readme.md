@@ -5,7 +5,7 @@
 * Requires at least: 4.9.0
 * Tested up to: 5.4.2
 * Requires PHP: 5.6
-* Stable tag: 1.8.0
+* Stable tag: 1.8.1
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 * WC requires at least: 3.7.0
@@ -52,8 +52,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**Development**
+**1.8.1**
 
+* Enhancement: Add all countries easily for country restriction.
+* Enhancement: Improved automated testing suite.
 * Update: Tested to WooCommerce 4.2.0.
 
 **1.8.0 (09.25.19)**
