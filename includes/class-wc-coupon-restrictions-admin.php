@@ -21,6 +21,7 @@ class WC_Coupon_Restrictions_Admin {
 	public function init() {
 
 		// Adds metabox to usage restriction fields.
+		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'blocked_emails' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'role_restrictions' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ), 10, 2 );
@@ -28,6 +29,41 @@ class WC_Coupon_Restrictions_Admin {
 		// Saves the metabox.
 		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save'  ), 10, 2 );
 
+	}
+
+	/**
+	 * Allows specific email addresses to be prevented from using coupon.
+	 *
+	 * @since  1.9.0
+	 *
+	 * @param int $coupon_id
+	 * @param object $coupon
+	 * @return void
+	 */
+	public static function blocked_emails( $coupon_id, $coupon ) {
+
+		$emails = (array) $coupon->get_meta( 'email_blocked', true );
+		?>
+		<div class="options_group">
+				<?php
+				woocommerce_wp_text_input(
+					array(
+						'id'                => 'email_blocked',
+						'label'             => __( 'Blocked emails', 'woocommerce' ),
+						'placeholder'       => __( 'No blocked emails', 'woocommerce' ),
+						'description'       => __( 'List of blocked billing emails to check against when an order is placed. Separate email addresses with commas. You can also use an asterisk (*) to match parts of an email. For example "*@gmail.com" would match all gmail addresses.', 'woocommerce-coupon-restrictions' ),
+						'value'             => implode( ', ', $emails ),
+						'desc_tip'          => true,
+						'type'              => 'email',
+						'class'             => '',
+						'custom_attributes' => array(
+							'multiple' => 'multiple',
+						),
+					)
+				);
+				?>
+			</div>
+		<?php
 	}
 
 	/**
@@ -84,7 +120,6 @@ class WC_Coupon_Restrictions_Admin {
 		$id = 'role_restriction';
 		$title = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );
-		$description = '';
 
 		echo '<p class="form-field ' . $id . '_only_field">';
 
@@ -318,6 +353,11 @@ class WC_Coupon_Restrictions_Admin {
 	 */
 	public static function coupon_options_save( $coupon_id, $coupon ) {
 
+		// Sanitize blocked emails.
+		$id = 'email_blocked';
+		$emails = isset( $_POST[$id] ) ? $_POST[$id] : array();
+		$blocked_emails = self::sanitize_blocked_emails( $emails );
+
 		// Sanitize customer restriction type meta.
 		$id = 'customer_restriction_type';
 		$customer_restriction_type = isset( $_POST[$id] ) ? $_POST[$id] : 'none';
@@ -357,6 +397,7 @@ class WC_Coupon_Restrictions_Admin {
 		$postcode_restriction = self::sanitize_comma_seperated_textarea( $postcode_restriction );
 
 		// Save meta.
+		$coupon->update_meta_data( 'email_blocked', $blocked_emails );
 		$coupon->update_meta_data( 'customer_restriction_type', $customer_restriction_type );
 		$coupon->update_meta_data( 'role_restriction', $role_restriction );
 		$coupon->update_meta_data( 'location_restrictions', $location_restrictions );
@@ -389,6 +430,19 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		return $textarea;
+	}
+
+	/**
+	 * Set blocked emails.
+	 *
+	 * @since 1.9.0
+	 * @param array $emails List of emails.
+	 */
+	public static function sanitize_blocked_emails( $emails = array() ) {
+		$emails = explode( ',', trim( $emails ) );
+		$emails = array_unique( array_map( 'trim', $emails ) );
+		$emails = array_filter( array_map( 'sanitize_email', array_map( 'strtolower', (array) $emails ) ) );
+		return $emails;
 	}
 
 }
