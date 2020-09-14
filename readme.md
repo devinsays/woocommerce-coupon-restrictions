@@ -27,6 +27,8 @@ This extension allows you to create coupons with addition restriction options:
 
 **Zip code restriction**: Allows you to restrict a coupon to specific zip codes or postal codes. Can be applied to the shipping or the billing address.
 
+**Blocked Emails**: Allows you to prevent specific billing email addresses from using a coupon.
+
 The plugin is fully translatable. Developers can also use filters to modify any notices displayed during coupon validation.
 
 ## Additional Notes
@@ -51,6 +53,10 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 * Requires WooCommerce 3.7.0 or later.
 
 ## Changelog
+
+**Development**
+
+* Enhancement: Allows specific emails to be blocked from use with coupon.
 
 **1.8.1 (06.14.20)**
 
