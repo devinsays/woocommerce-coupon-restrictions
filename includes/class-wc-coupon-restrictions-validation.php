@@ -36,7 +36,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_coupons_before_checkout( $valid, $coupon ) {
-		
+
 		// Pre-checkout validation can be disabled using this filter.
 		$validate = apply_filters( 'woocommerce_coupon_restrictions_validate_before_checkout', true );
 		if ( false === $validate ) {
@@ -47,32 +47,39 @@ class WC_Coupon_Restrictions_Validation {
 		if ( ! $valid ) {
 			return false;
 		}
-		
+
 		// During subscription renewals there may not be a valid session.
 		// If so, we'll do validation at checkout instead.
 		if ( ! WC()->session ) {
 			return true;
 		}
-		
+
 		// Get customer session information.
 		$session = WC()->session->get( 'customer' );
-		
+
 		// Customer information may not be available yet when coupon is applied.
 		// If so, coupon will remain activate and we'll validate at checkout.
 		if ( ! $session ) {
 			return true;
 		}
-		
+
 		// Gets the email if it is in the session and valid.
 		$email = $this->get_email_from_session( $session );
-		
+
 		if ( $email ) :
+
+			// Validate customer restrictions.
+			$blocked = $this->session_validate_email_blocked( $coupon, $email );
+			if ( false === $blocked ) {
+				return false;
+			}
+
 			// Validate customer restrictions.
 			$customer = $this->session_validate_customer_restrictions( $coupon, $email );
 			if ( false === $customer ) {
 				return false;
 			}
-			
+
 			// Validate role restrictions.
 			$role = $this->validate_role_restriction( $coupon, $email );
 			if ( false === $role ) {
@@ -100,14 +107,33 @@ class WC_Coupon_Restrictions_Validation {
 		if ( ! isset( $session['email'] ) ) {
 			return null;
 		}
-		
+
 		$email = esc_textarea( strtolower( $session['email'] ) );
-		
+
 		if ( ! is_email( $email ) ) {
 			return null;
 		}
 
 		return $email;
+	}
+
+	/**
+	 * Validates that billing email is not blocked.
+	 * Returns true if customer meets $coupon criteria.
+	 *
+	 * @param object $coupon
+	 * @param string $email
+	 * @return boolean
+	 */
+	public function session_validate_email_blocked( $coupon, $email ) {
+
+		// Validate new customer restriction.
+		if ( false === $this->validate_email_blocked_restriction( $coupon, $email ) ) {
+			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_email_blocked_restriction'), 10, 3 );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -129,6 +155,32 @@ class WC_Coupon_Restrictions_Validation {
 		// Validate existing customer restriction.
 		if ( false === $this->validate_existing_customer_restriction( $coupon, $email ) ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_existing_customer_restriction' ), 10, 3 );
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validates email blocked restriction.
+	 * Returns true if customer meets $coupon criteria.
+	 *
+	 * @param object $coupon
+	 * @param string $email
+	 * @return boolean
+	 */
+	public function validate_email_blocked_restriction( $coupon, $email ) {
+
+		$blocked_emails = $coupon->get_meta( 'email_blocked', true );
+
+		if ( ! is_array( $blocked_emails ) && ! ( 0 < count( $blocked_emails ) ) ) {
+			return true;
+		}
+
+		// We're using the same validation method as the allowed emails, just in reverse.
+		$match = WC()->cart->is_coupon_emails_allowed( $blocked_emails, $email );
+
+		if ( ! $match ) {
 			return false;
 		}
 
@@ -208,7 +260,7 @@ class WC_Coupon_Restrictions_Validation {
 				$country_validation = $this->validate_country_restriction( $coupon, $country );
 			}
 		}
-		
+
 		if ( 'shipping' === $address && isset( $session['shipping_state'] ) ) {
 			$state = esc_textarea( $session['shipping_state'] );
 			if ( '' !== $state ) {
@@ -229,7 +281,7 @@ class WC_Coupon_Restrictions_Validation {
 				$country_validation = $this->validate_country_restriction( $coupon, $country );
 			}
 		}
-		
+
 		if ( 'billing' === $address && isset( $session['postcode'] ) ) {
 			$state = esc_textarea( $session['state'] );
 			if ( '' !== $state ) {
@@ -247,7 +299,7 @@ class WC_Coupon_Restrictions_Validation {
 		if ( false === $country_validation ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_country_restriction' ) , 10, 3 );
 		}
-		
+
 		if ( false === $state_validation ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_state_restriction' ), 10, 3 );
 		}
@@ -290,7 +342,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		return true;
 	}
-	
+
 	/**
 	 * Validates state restriction.
 	 * Returns true if customer meets $coupon criteria.
@@ -308,7 +360,7 @@ class WC_Coupon_Restrictions_Validation {
 		if ( ! $state_restriction ) {
 			return true;
 		}
-		
+
 		$state_array = $this->comma_seperated_string_to_array( $state_restriction );
 
 		if ( ! in_array( strtoupper( $state ), $state_array ) ) {
@@ -335,9 +387,9 @@ class WC_Coupon_Restrictions_Validation {
 		if ( ! $postcode_restriction ) {
 			return true;
 		}
-		
+
 		$postcode_array = $this->comma_seperated_string_to_array( $postcode_restriction );
-		
+
 		// Wildcard check.
 		if ( strpos( $postcode_restriction, '*') !== false ) {
 			foreach ( $postcode_array as $restricted_postcode ) {
@@ -356,7 +408,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		return true;
 	}
-	
+
 	/**
 	 * Convert string textarea to normalized array with uppercase.
 	 *
@@ -367,13 +419,13 @@ class WC_Coupon_Restrictions_Validation {
 		// Converts string to array.
 		$values = explode( ',', $string );
 		$values = array_map( 'trim', $values );
-		
+
 		// Converts values to uppercase so comparison is not case sensitive.
 		$values = array_map( 'strtoupper', $values );
-		
+
 		return $values;
 	}
-	
+
 	/**
 	 * Validates role restrictions.
 	 * Returns true if customer meets $coupon criteria.
@@ -383,26 +435,26 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_role_restriction( $coupon, $email ) {
-		
+
 		// Returns an array with all the restricted roles.
 		$restricted_roles = $coupon->get_meta( 'role_restriction', true );
-		
+
 		// If there are no restricted roles, coupon is valid.
 		if ( ! $restricted_roles ) {
 			return true;
 		}
-		
+
 		// Checks if there is an account associated with the $email.
 		$user = get_user_by( 'email', $email );
-		
+
 		// If user account does not exist, coupon is invalid.
 		if ( ! $user ) {
 			return false;
 		}
-		
+
 		$user_meta = get_userdata( $user->ID );
 		$user_roles = $user_meta->roles;
-		
+
 		// If any the user roles do not match the restricted roles, coupon is invalid.
 		if ( ! array_intersect( $user_roles, $restricted_roles ) ) {
 			return false;
@@ -410,7 +462,18 @@ class WC_Coupon_Restrictions_Validation {
 
 		return true;
 	}
-	
+
+	/**
+	 * Applies email blocked error message.
+	 *
+	 * @return string $err
+	 */
+	public function validation_message_email_blocked_restriction( $err, $err_code, $coupon ) {
+		$err = $this->coupon_error_message( 'email-blocked', $err, $err_code, $coupon );
+		return $err;
+	}
+
+
 	/**
 	 * Applies new customer coupon error message.
 	 *
@@ -430,7 +493,7 @@ class WC_Coupon_Restrictions_Validation {
 		$err = $this->coupon_error_message( 'existing-customer', $err, $err_code, $coupon );
 		return $err;
 	}
-	
+
 	/**
 	 * Applies role restriction coupon error message.
 	 *
@@ -450,7 +513,7 @@ class WC_Coupon_Restrictions_Validation {
 		$err = $this->coupon_error_message( 'country', $err, $err_code, $coupon );
 		return $err;
 	}
-	
+
 	/**
 	 * Applies state code restriction error message.
 	 *
@@ -507,7 +570,10 @@ class WC_Coupon_Restrictions_Validation {
 
 				$coupon = new WC_Coupon( $code );
 
-				if ( $coupon->is_valid() ) :
+				$discounts = new WC_Discounts( WC()->cart );
+				$valid = $discounts->is_coupon_valid( $coupon );
+
+				if ( ! is_wp_error( $valid ) ) :
 					$this->checkout_validate_new_customer_restriction( $coupon, $code, $posted );
 					$this->checkout_validate_existing_customer_restriction( $coupon, $code, $posted );
 					$this->checkout_validate_location_restrictions( $coupon, $code, $posted );
@@ -556,7 +622,7 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 	}
-	
+
 	/**
 	 * Validates new customer coupon on checkout.
 	 *
@@ -607,7 +673,7 @@ class WC_Coupon_Restrictions_Validation {
 		if ( 'shipping' === $address && isset( $posted['shipping_state'] ) ) {
 			$state_validation = $this->validate_state_restriction( $coupon, $posted['shipping_state'] );
 		}
-		
+
 		if ( 'shipping' === $address && isset( $posted['shipping_postcode'] ) ) {
 			$zipcode_validation = $this->validate_postcode_restriction( $coupon, $posted['shipping_postcode'] );
 		}
@@ -615,7 +681,7 @@ class WC_Coupon_Restrictions_Validation {
 		if ( 'billing' === $address && isset( $posted['billing_country'] ) ) {
 			$country_validation = $this->validate_country_restriction( $coupon, $posted['billing_country'] );
 		}
-		
+
 		if ( 'billing' === $address && isset( $posted['billing_state'] ) ) {
 			$state_validation = $this->validate_state_restriction( $coupon, $posted['billing_state'] );
 		}
@@ -628,7 +694,7 @@ class WC_Coupon_Restrictions_Validation {
 			$msg = $this->get_validation_message( 'country', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
-		
+
 		if ( false === $state_validation ) {
 			$msg = $this->get_validation_message( 'state', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
@@ -655,6 +721,10 @@ class WC_Coupon_Restrictions_Validation {
 			'billing' => __( 'billing', 'woocommerce-coupon-restrictions' )
 		);
 
+		if ( $key === 'email-blocked' ) {
+			return sprintf( __( 'Sorry, coupon code "%s" cannot be used with this email address.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+		}
+
 		if ( $key === 'new-customer' ) {
 			return sprintf( __( 'Sorry, coupon code "%s" is only valid for new customers.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
@@ -662,7 +732,7 @@ class WC_Coupon_Restrictions_Validation {
 		if ( $key === 'existing-customer' ) {
 			return sprintf( __( 'Sorry, coupon code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
-		
+
 		if ( $key === 'role-restriction' ) {
 			return sprintf( __( 'Sorry, coupon code "%s" is not valid with your customer role.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
@@ -672,7 +742,7 @@ class WC_Coupon_Restrictions_Validation {
 			$i8n_address_type = $i8n_address[$address_type];
 			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s country.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
-		
+
 		if ( $key === 'state' ) {
 			$address_type = $this->get_address_type_for_restriction( $coupon );
 			$i8n_address_type = $i8n_address[$address_type];
