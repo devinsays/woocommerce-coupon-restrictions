@@ -71,7 +71,7 @@ class WC_Coupon_Restrictions_Validation {
 			// Validate customer restrictions.
 			$blocked = $this->session_validate_email_blocked( $coupon, $email );
 			if ( false === $blocked ) {
-				return false;
+			 	return false;
 			}
 
 			// Validate customer restrictions.
@@ -173,7 +173,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		$blocked_emails = $coupon->get_meta( 'email_blocked', true );
 
-		if ( ! is_array( $blocked_emails ) && ! ( 0 < count( $blocked_emails ) ) ) {
+		if ( ! is_array( $blocked_emails ) || ! ( count( $blocked_emails ) > 0 ) ) {
 			return true;
 		}
 
