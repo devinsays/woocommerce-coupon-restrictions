@@ -173,6 +173,8 @@ class WC_Coupon_Restrictions_Validation {
 
 		$blocked_emails = $coupon->get_meta( 'email_blocked', true );
 
+		error_log("Debugging needed here.");
+
 		if ( ! is_array( $blocked_emails ) || ! ( count( $blocked_emails ) > 0 ) ) {
 			return true;
 		}
