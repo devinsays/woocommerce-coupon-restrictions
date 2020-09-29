@@ -173,20 +173,23 @@ class WC_Coupon_Restrictions_Validation {
 
 		$blocked_emails = $coupon->get_meta( 'email_blocked', true );
 
-		error_log("Debugging needed here.");
+		// $blocked_emails should always be an array if it has been saved.
+		if ( ! is_array( $blocked_emails ) ) {
+			return true;
+		}
 
-		if ( ! is_array( $blocked_emails ) || ! ( count( $blocked_emails ) > 0 ) ) {
+		if ( ! ( count( $blocked_emails ) > 0 ) ) {
 			return true;
 		}
 
 		// We're using the same validation method as the allowed emails, just in reverse.
-		$match = WC()->cart->is_coupon_emails_allowed( $blocked_emails, $email );
+		$match = WC()->cart->is_coupon_emails_allowed( array( $email ), $blocked_emails );
 
 		if ( ! $match ) {
-			return false;
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
