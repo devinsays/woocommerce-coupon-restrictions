@@ -6,22 +6,17 @@ use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 
-class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
+class Apply_Blocked_Email_Coupon_Test extends WP_UnitTestCase {
 
 	public $coupon;
-	public $customer;
 
 	public function setUp() {
 
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		$coupon->add_meta_data( 'role_restriction', ['administrator'], true );
+		$coupon->add_meta_data( 'email_blocked', ['blocked@test.com'], true );
 		$coupon->save();
 		$this->coupon = $coupon;
-
-		// Creates a customer.
-		$customer = WC_Helper_Customer::create_customer();
-		$this->customer = $customer;
 	}
 
 	/**
@@ -32,7 +27,6 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		// Get data from setup.
 		$coupon = $this->coupon;
 
-		// Adds a role restricted coupon.
 		// This should apply because no session has been set.
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
@@ -42,50 +36,40 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Coupon will fail if restriction does not match.
+	 * Coupon will fail if customer matches blocked email.
 	 */
-	public function test_coupon_fails_if_restrictions_do_not_match() {
+	public function test_coupon_fails_if_email_is_blocked() {
 
 		// Get data from setup.
 		$coupon = $this->coupon;
-		$customer = $this->customer;
-
-		// Set role that does not match coupon.
-		$user = new \WP_User( $customer->get_id() );
-		$user->set_role('subscriber');
 
 		// Create a mock customer session.
 		$session = array(
-			'email' => $customer->get_email()
+			'email' => 'blocked@test.com'
 		);
 		WC_Helper_Customer::set_customer_details( $session );
 
-		// Coupon should not apply because custom role and restriction do not match.
+		// Coupon should not apply because email is blocked.
 		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 
 	}
 
 	/**
-	 * Coupon will apply if restrictions match.
+	 * Coupon will apply if email is not blocked.
 	 */
-	public function test_coupon_success_if_restrictions_match() {
+	public function test_coupon_success_if_email_is_not_blocked() {
 
 		// Get data from setup.
 		$coupon = $this->coupon;
-		$customer = $this->customer;
-
-		// Set role that does match coupon.
-		$user = new \WP_User( $customer->get_id() );
-		$user->set_role('administrator');
 
 		// Create a mock customer session.
 		$session = array(
-			'email' => $customer->get_email()
+			'email' => 'notblocked@test.com'
 		);
 		WC_Helper_Customer::set_customer_details( $session );
 
-		// Coupon should apply because customer role and restriction match.
+		// Coupon should apply because email is not blocked.
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 	}
@@ -102,7 +86,6 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Deletes objects.
 		$this->coupon->delete();
-		$this->customer->delete();
 	}
 
 }
