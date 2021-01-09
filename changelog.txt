@@ -1,9 +1,5 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
-Current - version 1.9.0
-
-* Enhancement: Allows specific emails to be blocked from use with coupon.
-
 2020-06-14 - version 1.8.1
 
 * Enhancement: Add all countries easily for country restriction.

@@ -10,15 +10,15 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 	public $coupon;
 	public $customer;
+	public $session;
 
 	public function setUp() {
 
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		$coupon->add_meta_data( 'role_restriction', ['administrator'], true );
-		$coupon->save();
+		update_post_meta( $coupon->get_id(), 'role_restriction', ['administrator'] );
 		$this->coupon = $coupon;
-
+		
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$this->customer = $customer;
@@ -53,7 +53,7 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		// Set role that does not match coupon.
 		$user = new \WP_User( $customer->get_id() );
 		$user->set_role('subscriber');
-
+		
 		// Create a mock customer session.
 		$session = array(
 			'email' => $customer->get_email()
@@ -65,7 +65,7 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 
 	}
-
+	
 	/**
 	 * Coupon will apply if restrictions match.
 	 */
@@ -78,13 +78,13 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		// Set role that does match coupon.
 		$user = new \WP_User( $customer->get_id() );
 		$user->set_role('administrator');
-
+		
 		// Create a mock customer session.
 		$session = array(
 			'email' => $customer->get_email()
 		);
 		WC_Helper_Customer::set_customer_details( $session );
-
+		
 		// Coupon should apply because customer role and restriction match.
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -92,10 +92,10 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 
 	public function tearDown() {
-
+		
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
-
+		
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();

@@ -28,8 +28,6 @@ State restriction: Allows you to restrict a coupon to specific states. Restricti
 
 Zip code restriction: Allows you to restrict a coupon to specific zip codes or postal codes. Can be applied to the shipping or the billing address.
 
-Blocked Emails: Allows you to prevent specific billing email addresses from using a coupon.
-
 The plugin is fully translatable. Developers can also use filters to modify any notices displayed during coupon validation.
 
 == Additional Notes ==
