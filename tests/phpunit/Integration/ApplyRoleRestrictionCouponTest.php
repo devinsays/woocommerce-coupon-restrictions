@@ -16,9 +16,9 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'role_restriction', ['administrator'] );
-
+		$coupon->update_meta_data( 'role_restriction', ['administrator'] );
 		$coupon->save();
+
 		$this->coupon = $coupon;
 
 		// Creates a customer.
