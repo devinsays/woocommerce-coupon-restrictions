@@ -19,34 +19,21 @@ php:
   - 7.2
 
 env:
+  - WP_VERSION=latest WC_VERSION=4.8
   - WP_VERSION=latest WC_VERSION=4.2
-  - WP_VERSION=latest WC_VERSION=4.1
   - WP_VERSION=latest WC_VERSION=4.0
 
 matrix:
   fast_finish: true
   include:
     # Test select combinations of older dependencies.
-    #
-    # Some versions (3.9, 3.5) don't have explicit major.minor tags, so specific versions
-    # are required.
     - php: 7.2
       env: WP_VERSION=latest WC_VERSION=3.9.3
-    - php: 7.2
-      env: WP_VERSION=latest WC_VERSION=3.8
-    - php: 7.2
-      env: WP_VERSION=latest WC_VERSION=3.7
-    - php: 7.0
-      env: WP_VERSION=latest WC_VERSION=3.5.8
-
-    # WooCommerce 3.8 was the last version to support PHP 5.6
-    - php: 5.6
-      env: WP_VERSION=latest WC_VERSION=3.8
 
     # Explicitly test the lowest version we support.
     - name: Minimum requirements
-      php: 5.6
-      env: WP_VERSION=4.7.0 WC_VERSION=3.7.0
+      php: 7.0
+      env: WP_VERSION=4.9.0 WC_VERSION=3.9.3
 
     # Test against WordPress trunk and the latest version of WooCommerce
     - name: Bleeding Edge
