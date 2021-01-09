@@ -3,22 +3,20 @@
 namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
 use WP_UnitTestCase;
-use WC_Helper_Customer;
 use WC_Helper_Coupon;
-use WC_Helper_Order;
 
 class Checkout_State_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 	public $coupon;
 
 	public function setUp() {
-
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
-		update_post_meta( $coupon->get_id(), 'address_for_location_restrictions', 'billing' );
-		$this->coupon = $coupon;
+		$coupon->update_meta_data( 'location_restrictions', 'yes' );
+		$coupon->update_meta_data( 'address_for_location_restrictions', 'billing' );
+		$coupon->save();
 
+		$this->coupon = $coupon;
 	}
 
 	/**
@@ -26,11 +24,11 @@ class Checkout_State_Restriction_Coupon_Test extends WP_UnitTestCase {
 	 * and customer billing_state is TX.
 	 */
 	public function test_checkout_state_restriction_with_valid_customer() {
-
 		$coupon = $this->coupon;
 
 		// Apply state restriction to single state "US"
-		update_post_meta( $coupon->get_id(), 'state_restriction', 'TX' );
+		$coupon->update_meta_data( 'state_restriction', 'TX' );
+		$coupon->save();
 
 		// Mock post data.
 		$posted = array(
@@ -46,7 +44,6 @@ class Checkout_State_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon is still in cart after checkout validation.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
@@ -54,11 +51,11 @@ class Checkout_State_Restriction_Coupon_Test extends WP_UnitTestCase {
 	 * and customer billing_state is CA.
 	 */
 	public function test_checkout_state_restriction_with_not_valid_customer() {
-
 		$coupon = $this->coupon;
 
 		// Apply state restriction to single state "TX"
-		update_post_meta( $coupon->get_id(), 'state_restriction', 'TX' );
+		$coupon->update_meta_data( 'state_restriction', 'TX' );
+		$coupon->save();
 
 		// Mock post data.
 		$posted = array(
@@ -75,18 +72,15 @@ class Checkout_State_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons are still in cart after checkout validation.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	public function tearDown() {
-
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
 
 		// Deletes the coupon.
 		$this->coupon->delete();
-
 	}
 
 }
