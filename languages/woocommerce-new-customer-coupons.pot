@@ -1,14 +1,14 @@
-# Copyright (C) 2020 WooCommerce
+# Copyright (C) 2021 WooCommerce
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce Coupon Restrictions 1.8.1\n"
 "Report-Msgid-Bugs-To: https://devpress.com/\n"
-"POT-Creation-Date: 2020-06-15 01:58:32+00:00\n"
+"POT-Creation-Date: 2021-01-09 04:15:48+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2020-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2021-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: en_US\n"
@@ -24,51 +24,51 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Generator: grunt-wp-i18n 1.0.3\n"
 
-#: includes/class-wc-coupon-restrictions-admin.php:54
+#: includes/class-wc-coupon-restrictions-admin.php:51
 msgid "Customer restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:55
+#: includes/class-wc-coupon-restrictions-admin.php:52
 msgid "Restricts coupon to specific customers based on purchase history."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:59
+#: includes/class-wc-coupon-restrictions-admin.php:56
 msgid "Default (no restriction)"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:60
+#: includes/class-wc-coupon-restrictions-admin.php:57
 msgid "New customers only"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:61
+#: includes/class-wc-coupon-restrictions-admin.php:58
 msgid "Existing customers only"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:85
+#: includes/class-wc-coupon-restrictions-admin.php:80
 msgid "User role restriction"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:102
+#: includes/class-wc-coupon-restrictions-admin.php:96
 msgid "Choose roles&hellip;"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:102
+#: includes/class-wc-coupon-restrictions-admin.php:96
 msgid "Role"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:134
+#: includes/class-wc-coupon-restrictions-admin.php:127
 msgid "Use location restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:135
+#: includes/class-wc-coupon-restrictions-admin.php:128
 msgid "Displays and enables location restriction options."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:146
+#: includes/class-wc-coupon-restrictions-admin.php:139
 msgid "Address for location restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:149
+#: includes/class-wc-coupon-restrictions-admin.php:142
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/class-wc-admin-setup-wizard.php:284
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/class-wc-admin-setup-wizard.php:1086
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/meta-boxes/class-wc-meta-box-order-data.php:430
@@ -86,69 +86,69 @@ msgstr ""
 msgid "Shipping"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:150
+#: includes/class-wc-coupon-restrictions-admin.php:143
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/list-tables/class-wc-admin-list-table-orders.php:124
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/meta-boxes/class-wc-meta-box-order-data.php:314
 msgid "Billing"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:157
+#: includes/class-wc-coupon-restrictions-admin.php:150
 msgid "Restrict to specific countries"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:177
+#: includes/class-wc-coupon-restrictions-admin.php:170
 msgid "Choose countries&hellip;"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:177
+#: includes/class-wc-coupon-restrictions-admin.php:170
 msgid "Country"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:194
+#: includes/class-wc-coupon-restrictions-admin.php:187
 msgid "Select any country that your store currently sells to."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:196
+#: includes/class-wc-coupon-restrictions-admin.php:189
 msgid "Adds all the countries that the store sells to in the restricted field."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:197
+#: includes/class-wc-coupon-restrictions-admin.php:190
 msgid "Add All Countries"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:199
+#: includes/class-wc-coupon-restrictions-admin.php:192
 msgid "Clears all restricted country selections."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:200
+#: includes/class-wc-coupon-restrictions-admin.php:193
 #: vendor/woocommerce/woocommerce-src-latest/packages/woocommerce-rest-api/src/Controllers/Version2/class-wc-rest-system-status-tools-v2-controller.php:163
 #: vendor/woocommerce/woocommerce-src-latest/templates/single-product/add-to-cart/variable.php:48
 msgid "Clear"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:209
+#: includes/class-wc-coupon-restrictions-admin.php:202
 msgid "Restrict to specific states"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:210
+#: includes/class-wc-coupon-restrictions-admin.php:203
 msgid "Use the two digit state codes. Comma separate to specify multiple states."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:220
+#: includes/class-wc-coupon-restrictions-admin.php:213
 msgid "Restrict to specific zip codes"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-admin.php:221
+#: includes/class-wc-coupon-restrictions-admin.php:214
 msgid ""
 "Comma separate to list multiple zip codes. Wildcards (*) can be used to "
 "match portions of zip codes."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:89
+#: includes/class-wc-coupon-restrictions-onboarding.php:84
 msgid "New Coupon"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:90
+#: includes/class-wc-coupon-restrictions-onboarding.php:85
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/class-wc-admin-menus.php:82
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/views/html-admin-page-status-report.php:728
 #: vendor/woocommerce/woocommerce-src-latest/includes/class-wc-install.php:1332
@@ -158,87 +158,87 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:91
+#: includes/class-wc-coupon-restrictions-onboarding.php:86
 #: vendor/woocommerce/woocommerce-src-latest/includes/class-wc-install.php:1349
 msgid "Docs"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:144
+#: includes/class-wc-coupon-restrictions-onboarding.php:138
 msgid "WooCommerce Coupon Restrictions plugin activated."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:145
+#: includes/class-wc-coupon-restrictions-onboarding.php:139
 msgid "See how it works."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:220
+#: includes/class-wc-coupon-restrictions-onboarding.php:212
 msgid "Usage Restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:221
+#: includes/class-wc-coupon-restrictions-onboarding.php:213
 msgid "Coupon restrictions can be found in this panel."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:236
+#: includes/class-wc-coupon-restrictions-onboarding.php:228
 msgid "Customer Restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:237
+#: includes/class-wc-coupon-restrictions-onboarding.php:229
 msgid ""
 "You now have the option to restrict coupons to new customers or existing "
 "customers."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:238
+#: includes/class-wc-coupon-restrictions-onboarding.php:230
 msgid "Customers are considered \"new\" until they complete a purchase."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:253
+#: includes/class-wc-coupon-restrictions-onboarding.php:245
 msgid "Limit User Tip"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:254
+#: includes/class-wc-coupon-restrictions-onboarding.php:246
 msgid ""
 "If you are using a new customer restriction, you may also want to limit the "
 "coupon to 1 use."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:255
+#: includes/class-wc-coupon-restrictions-onboarding.php:247
 msgid ""
 "Payments can take a few minutes to process, and it is possible for a "
 "customer to place multiple orders in that time if a coupon does not have a "
 "1 use limit."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:270
+#: includes/class-wc-coupon-restrictions-onboarding.php:262
 msgid "Role Restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:271
+#: includes/class-wc-coupon-restrictions-onboarding.php:263
 msgid ""
 "Coupons can be restricted to specific user roles. Customer must have an "
 "account for the coupon to apply."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:286
+#: includes/class-wc-coupon-restrictions-onboarding.php:278
 msgid "Location Restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:287
+#: includes/class-wc-coupon-restrictions-onboarding.php:279
 msgid "Checking this box displays options for country and/or zip code restrictions."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:297
+#: includes/class-wc-coupon-restrictions-onboarding.php:289
 msgid "Multiple Restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:298
+#: includes/class-wc-coupon-restrictions-onboarding.php:290
 msgid ""
 "If multiple coupon restrictions are set, the customer must meet all "
 "restrictions."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:347
+#: includes/class-wc-coupon-restrictions-onboarding.php:339
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/class-wc-admin-pointers.php:250
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/views/html-notice-base-table-missing.php:13
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/views/html-notice-custom.php:12
@@ -256,32 +256,32 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:348
+#: includes/class-wc-coupon-restrictions-onboarding.php:340
 #: vendor/woocommerce/woocommerce-src-latest/includes/admin/class-wc-admin-pointers.php:251
 #: vendor/woocommerce/woocommerce-src-latest/templates/myaccount/orders.php:93
 msgid "Next"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-onboarding.php:349
+#: includes/class-wc-coupon-restrictions-onboarding.php:341
 msgid "Enjoy!"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-settings.php:34
+#: includes/class-wc-coupon-restrictions-settings.php:32
 msgid "Coupon Restrictions"
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-settings.php:38
+#: includes/class-wc-coupon-restrictions-settings.php:36
 msgid ""
 "If you're restricting any coupons to new customers, we recommend requiring "
 "a user account for each customer. Checking against orders can be slow for "
 "sites with more than 10,000 orders."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-settings.php:40
+#: includes/class-wc-coupon-restrictions-settings.php:38
 msgid "Verify new customers by checking against user accounts."
 msgstr ""
 
-#: includes/class-wc-coupon-restrictions-settings.php:41
+#: includes/class-wc-coupon-restrictions-settings.php:39
 msgid "Verify new customers by checking against user accounts and all guest orders."
 msgstr ""
 

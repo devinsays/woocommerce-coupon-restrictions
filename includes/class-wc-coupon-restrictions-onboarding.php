@@ -14,7 +14,6 @@ if ( ! defined('ABSPATH') ) {
 }
 
 class WC_Coupon_Restrictions_Onboarding {
-
 	/**
 	* Init the class.
 	*/
@@ -43,7 +42,6 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		// Initialize the pointers for onboarding flow.
 		add_action( 'admin_enqueue_scripts', array( $this, 'init_pointers_for_screen' ) );
-
 	}
 
 	/**
@@ -54,7 +52,6 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @return void
 	 */
 	public function init_install_notice() {
-
 		if ( current_user_can( 'manage_options' ) ) :
 
 			// Display the onboarding notice.
@@ -64,11 +61,10 @@ class WC_Coupon_Restrictions_Onboarding {
 			wp_enqueue_script( 'jquery-core' );
 
 			// Inline script deletes the transient when notice is dismissed.
-			$notice_dismiss_script = self::install_notice_dismiss();
+			$notice_dismiss_script = $this->install_notice_dismiss();
 			wp_add_inline_script( 'jquery-core',  $notice_dismiss_script );
 
 		endif;
-
 	}
 
 	/**
@@ -80,7 +76,6 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @return array List of modified plugin action links.
 	 */
 	public function plugin_action_links( $links ) {
-
 		// URL for coupon screen onboarding
 		$coupon_url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
 		$setting_url = admin_url( 'admin.php?page=wc-settings' );
@@ -114,7 +109,6 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @since 1.5.0
 	 */
 	public function dismiss_notice_via_ajax() {
-
 		if ( ! check_ajax_referer( 'wc_customer_coupons_nonce', 'nonce', false ) ) {
 			wp_send_json_error();
 			exit;
@@ -186,7 +180,6 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @since 1.5.0
 	 */
 	public function init_pointers_for_screen() {
-
 		if (
 			! isset( $_GET['woocommerce-coupon-restriction-pointers'] ) ||
 			! current_user_can( 'manage_options' )
@@ -196,8 +189,7 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		$screen = get_current_screen();
 		if ( 'shop_coupon' === $screen->id ) {
-			$pointers = self::get_pointers();
-			self::display_pointers( $pointers );
+			$this->display_pointers( $this->get_pointers() );
 		}
 	}
 

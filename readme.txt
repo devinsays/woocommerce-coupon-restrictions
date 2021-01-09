@@ -4,12 +4,12 @@ Contributors: @downstairsdev
 Tags: woocommerce, coupon
 Requires at least: 4.9.0
 Tested up to: 5.4.2
-Requires PHP: 5.6
-Stable tag: 1.8.1
+Requires PHP: 7.0
+Stable tag: 1.8.2
 License: GPLv3 or later License
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-WC requires at least: 3.7.0
-WC tested up to: 4.2.0
+WC requires at least: 3.9.0
+WC tested up to: 4.8.0
 Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
 
 == Description ==
@@ -42,4 +42,4 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 
 == Compatibility ==
 
-* Requires WooCommerce 3.7.0 or later.
+* Requires WooCommerce 3.9.0 or later.
