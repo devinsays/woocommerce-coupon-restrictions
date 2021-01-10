@@ -20,16 +20,11 @@ php:
 
 env:
   - WP_VERSION=latest WC_VERSION=4.8
-  - WP_VERSION=latest WC_VERSION=4.2
   - WP_VERSION=latest WC_VERSION=4.0
 
 matrix:
   fast_finish: true
   include:
-    # Test select combinations of older dependencies.
-    - php: 7.2
-      env: WP_VERSION=latest WC_VERSION=3.9.3
-
     # Explicitly test the lowest version we support.
     - name: Minimum requirements
       php: 7.0
@@ -48,7 +43,7 @@ before_install:
 
 install:
   - |
-    if [[ ${TRAVIS_PHP_VERSION:0:3} < '7.1' ]]; then
+    if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then
       composer update --prefer-source --prefer-lowest --no-interaction --no-ansi
     else
       composer install --prefer-source --no-interaction --no-ansi
