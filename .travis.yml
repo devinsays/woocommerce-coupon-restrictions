@@ -2,7 +2,7 @@ language: php
 dist: xenial
 
 services:
-    - mysql
+  - mysql
 
 notifications:
   email:
@@ -14,9 +14,10 @@ cache:
     - $HOME/.composer/cache
 
 php:
-  - 7.4
-  - 7.3
-  - 7.2
+  - "7.1"
+  - "7.2"
+  - "7.3"
+  - "7.4"
 
 env:
   - WP_VERSION=latest WC_VERSION=4.8
@@ -37,17 +38,20 @@ matrix:
   allow_failures:
     - name: Bleeding Edge
 
+# Composer 2.0.7 introduced a change that broke the jetpack autoloader in PHP 7.0 - 7.3.
 before_install:
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - phpenv config-rm xdebug.ini || true
+  - composer self-update 2.0.6
 
 install:
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - |
-    if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then
-      composer update --prefer-source --prefer-lowest --no-interaction --no-ansi
+    # Remove Xdebug for a huge performance increase:
+    if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
+      phpenv config-rm xdebug.ini
     else
-      composer install --prefer-source --no-interaction --no-ansi
+      echo "xdebug.ini does not exist"
     fi
+  - composer install
   - bash vendor/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
   - bash tests/bin/install-woocommerce.sh $WC_VERSION
 
