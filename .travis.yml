@@ -41,10 +41,10 @@ matrix:
 # Composer 2.0.7 introduced a change that broke the jetpack autoloader in PHP 7.0 - 7.3.
 before_install:
   - composer self-update 2.0.6
-
-install:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - phpenv config-rm xdebug.ini || true
+
+install:
   - |
     if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then
       composer update --prefer-source --prefer-lowest --no-interaction --no-ansi
