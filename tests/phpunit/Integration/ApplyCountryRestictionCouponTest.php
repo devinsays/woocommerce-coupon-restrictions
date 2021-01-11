@@ -5,16 +5,13 @@ namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
-use WC_Mock_Session_Handler;
 
 class Apply_Country_Restriction_Test extends WP_UnitTestCase {
-
 	public $coupon;
 	public $customer;
 	public $session;
 
 	public function setUp() {
-
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$customer->set_billing_country( 'US' );
@@ -39,25 +36,25 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
-		update_post_meta( $coupon->get_id(), 'address_for_location_restrictions', 'billing' );
+		$coupon->update_meta_data( 'location_restrictions', 'yes' );
+		$coupon->update_meta_data( 'address_for_location_restrictions', 'billing' );
+		$coupon->save();
+
 		$this->coupon = $coupon;
 
 		// Set the current customer.
 		wp_set_current_user( $customer->get_id() );
-
 	}
 
 	/**
 	 * Tests applying a coupon with country restriction and valid customer.
 	 */
 	public function test_coupon_country_restriction_with_valid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		// Apply country restriction to single country "US"
-		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'US' ) );
+		$coupon->update_meta_data( 'country_restriction', array( 'US' ) );
+		$coupon->save();
 
 		// Adds a country restricted coupon.
 		// This should return true because customer billing is in US.
@@ -65,38 +62,34 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Tests applying a coupon with a two country restriction and valid customer.
 	 */
 	public function test_coupon_two_country_restriction_with_valid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		// Apply country restiction to two countries "US" and "CA"
-		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'US', 'CA' ) );
+		$coupon->update_meta_data( 'country_restriction', array( 'US', 'CA' ) );
+		$coupon->save();
 
 		// This should return true because customer billing is in US.
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Tests applying a coupon with a two country restriction and non-valid customer.
 	 */
 	public function test_coupon_country_restriction_with_nonvalid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		// Apply country restriction single country "CA".
-		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'CA' ) );
+		$coupon->update_meta_data( 'country_restriction', array( 'CA' ) );
+		$coupon->save();
 
 		// Adds a country restricted coupon.
 		// This should return false because customer billing is in US.
@@ -115,16 +108,14 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 	 * so coupon should be valid.
 	 */
 	public function test_location_restrictions_should_apply() {
-
-		// Our customer is the US.
-		$customer = $this->customer;
-
 		// Coupon can only be used in CA.
 		$coupon = $this->coupon;
-		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'CA' ) );
+		$coupon->update_meta_data( 'country_restriction', array( 'CA' ) );
 
 		// Location restriction is not checked.
-		update_post_meta( $coupon->get_id(), 'location_restrictions', 'no' );
+		$coupon->update_meta_data( 'location_restrictions', 'no' );
+
+		$coupon->save();
 
 		// Adds a country restricted coupon.
 		// This should be valid since location restrictions are not being checked.
@@ -143,16 +134,12 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 	 * so the coupon should not apply.
 	 */
 	public function test_location_restrictions_should_not_apply() {
-
-		// Our customer is the US.
-		$customer = $this->customer;
-
 		// Coupon can only be used in CA.
 		$coupon = $this->coupon;
-		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'CA' ) );
+		$coupon->update_meta_data( 'country_restriction', array( 'CA' ) );
 
 		// Location restriction is checked.
-		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
+		$coupon->update_meta_data( 'location_restrictions', 'yes' );
 
 		// Adds a country restricted coupon.
 		// This should fail because customer doesn't meet requirements,
@@ -161,11 +148,9 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies the coupon has not been added to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	public function tearDown() {
-
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -175,7 +160,5 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 
 		$this->customer->delete();
 		$this->coupon->delete();
-
 	}
-
 }

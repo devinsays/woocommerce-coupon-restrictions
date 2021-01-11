@@ -49,13 +49,7 @@ before_install:
 
 install:
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - phpenv config-rm xdebug.ini || true
-  - |
-    if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then
-      composer update --prefer-source --prefer-lowest --no-interaction --no-ansi
-    else
-      composer install --prefer-source --no-interaction --no-ansi
-    fi
+  - composer install
   - bash vendor/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
   - bash tests/bin/install-woocommerce.sh $WC_VERSION
 
