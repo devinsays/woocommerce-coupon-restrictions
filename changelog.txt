@@ -1,5 +1,12 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2021-01-12 - version 1.8.2
+
+* Enhancement: Reduces use of coupon meta by only storing non-default values.
+* Update: Tested to WooCommerce  4.8.0.
+* Update: PHP 7.0 or higher required.
+* Update: WooCommerce 3.9.0 or higher required.
+
 2020-06-14 - version 1.8.1
 
 * Enhancement: Add all countries easily for country restriction.

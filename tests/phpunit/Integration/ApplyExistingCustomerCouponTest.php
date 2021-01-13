@@ -8,23 +8,21 @@ use WC_Helper_Coupon;
 use WC_Helper_Order;
 
 class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
-
 	public $coupon;
 
 	public function setUp() {
-
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'customer_restriction_type', 'existing' );
-		$this->coupon = $coupon;
+		$coupon->update_meta_data( 'customer_restriction_type', 'existing' );
+		$coupon->save();
 
+		$this->coupon = $coupon;
 	}
 
 	/**
 	 * Coupon will apply because no session has been set yet.
 	 */
 	public function test_existing_customer_restriction_coupon_applies_with_no_session() {
-
 		// Get data from setup.
 		$coupon = $this->coupon;
 
@@ -34,7 +32,6 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
@@ -42,7 +39,6 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	 * and email does not match existing customer.
 	 */
 	public function test_existing_customer_restriction_with_session_not_valid() {
-
 		// Get data from setup.
 		$coupon = $this->coupon;
 
@@ -58,7 +54,6 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
@@ -66,7 +61,6 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	 * and email does not match existing customer.
 	 */
 	public function test_existing_customer_restriction_with_session_valid() {
-
 		// Get data from setup.
 		$coupon = $this->coupon;
 
@@ -94,12 +88,10 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 
 		$order->delete();
-
 	}
 
 
 	public function tearDown() {
-
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -109,7 +101,5 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Deletes the coupon.
 		$this->coupon->delete();
-
 	}
-
 }

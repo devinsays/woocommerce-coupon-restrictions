@@ -19,7 +19,6 @@ class WC_Coupon_Restrictions_Settings {
 	* Init the class.
 	*/
 	public function init() {
-
 		// Filters the settings in the "General Tab".
 		add_filter( 'woocommerce_general_settings', array( $this, 'coupon_restrictions_settings' ) );
 
@@ -29,7 +28,6 @@ class WC_Coupon_Restrictions_Settings {
 	* Adds our coupon restriction settings.
 	*/
 	public function coupon_restrictions_settings( $settings ) {
-
 		$coupon_restrictions = array(
 			'title'    => __( 'Coupon Restrictions', 'woocommerce' ),
 			'id'       => 'coupon_restrictions_customer_query',
