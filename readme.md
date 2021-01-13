@@ -56,7 +56,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 * Enhancement: Reduces use of coupon meta by only storing non-default values.
 * Update: Tested to WooCommerce  4.8.0.
-* Update: PHP7 or higher required.
+* Update: PHP 7.0 or higher required.
 * Update: WooCommerce 3.9.0 or higher required.
 
 **1.8.1 (06.14.20)**
