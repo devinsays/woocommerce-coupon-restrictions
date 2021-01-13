@@ -74,39 +74,37 @@ class WC_Coupon_Restrictions_Admin {
 	 * @return void
 	 */
 	public static function role_restrictions( $coupon_id, $coupon ) {
-		echo '<div class="options_group">';
 
 		$id = 'role_restriction';
 		$title = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );
 
-		echo '<p class="form-field ' . $id . '_only_field">';
+		$selections = array();
+		if ( ! empty( $values ) ) {
+			$selections = $values;
+		}
 
-			$selections = array();
-			if ( ! empty( $values ) ) {
-				$selections = $values;
-			}
-
-			// An array of all roles.
-			$roles = array_reverse( get_editable_roles() );
-			?>
-			<label for="<?php echo esc_attr( $id ); ?>">
-				<?php echo esc_html( $title ); ?>
-			</label>
-			<select multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose roles&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Role', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
+		// An array of all roles.
+		$roles = array_reverse( get_editable_roles() );
+		?>
+		<div class="options_group">
+			<p class="form-field <?php echo $id; ?>_only_field">
+				<label for="<?php echo esc_attr( $id ); ?>">
+					<?php echo esc_html( $title ); ?>
+				</label>
+				<select multiple="multiple" name="<?php echo $id; ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose roles&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Role', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
 				<?php
 				foreach ( $roles as $id => $role ) {
 					$selected = in_array( $id, $selections );
 					$role_name = translate_user_role( $role['name'] );
 
-					echo '<option value="' . esc_attr( $id ) . '" ' . selected( $selected, true, false ) . '>' . esc_html( $role_name ) . '</option>';
+					echo '<option value="' . $id . '" ' . selected( $selected, true, false ) . '>' . esc_html( $role_name ) . '</option>';
 				}
 				?>
-			</select>
-			<?php
-		echo '</p>';
-
-		echo '</div>';
+				</select>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**
@@ -150,39 +148,38 @@ class WC_Coupon_Restrictions_Admin {
 		$title = __( 'Restrict to specific countries', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );
 
-		echo '<p class="form-field ' . $id . '_only_field">';
+		$selections = array();
+		if ( ! empty( $values ) ) {
+			$selections = $values;
+		}
 
-			$selections = array();
-			if ( ! empty( $values ) ) {
-				$selections = $values;
-			}
+		// An array of all countries.
+		$countries = WC()->countries->get_countries();
 
-			// An array of all countries.
-			$countries = WC()->countries->get_countries();
+		// An array of countries the shop sells to.
+		// Calls the global instance for PHP5.6 compatibility.
+		$shop_countries = WC_Coupon_Restrictions()->admin->shop_countries();
+		?>
+		<p class="form-field <?php echo $id; ?>_only_field">
+		<label for="<?php echo esc_attr( $id ); ?>">
+			<?php echo esc_html( $title ); ?>
+		</label>
+		<select id="wccr-restricted-countries" multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
+			<?php
+			foreach ( $countries as $key => $val ) {
 
-			// An array of countries the shop sells to.
-			// Calls the global instance for PHP5.6 compatibility.
-			$shop_countries = WC_Coupon_Restrictions()->admin->shop_countries();
-			?>
-			<label for="<?php echo esc_attr( $id ); ?>">
-				<?php echo esc_html( $title ); ?>
-			</label>
-			<select id="wccr-restricted-countries" multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
-				<?php
-				foreach ( $countries as $key => $val ) {
+				// If country has been saved, it will display even if shop doesn't currently sell there.
+				$selected = in_array( $key, $selections );
 
-					// If country has been saved, it will display even if shop doesn't currently sell there.
-					$selected = in_array( $key, $selections );
+				// Any country that shop sells to should appear as a selectable option.
+				$allowed = in_array( $key, $shop_countries );
 
-					// Any country that shop sells to should appear as a selectable option.
-					$allowed = in_array( $key, $shop_countries );
-
-					// Output the options.
-					if ( $selected ||  $allowed ) {
-						echo '<option value="' . esc_attr( $key ) . '" ' . selected( $selected, true, false ) . '>' . esc_html( $val ) . '</option>';
-					}
+				// Output the options.
+				if ( $selected ||  $allowed ) {
+					echo '<option value="' . esc_attr( $key ) . '" ' . selected( $selected, true, false ) . '>' . esc_html( $val ) . '</option>';
 				}
-				?>
+			}
+			?>
 			</select>
 			<span class="woocommerce-help-tip" data-tip="<?php esc_attr_e( 'Select any country that your store currently sells to.', 'woocommerce-coupon-restrictions' ); ?>"></span>
 			<div class="wcr-field-options" style="margin-left: 162px;">
@@ -193,8 +190,8 @@ class WC_Coupon_Restrictions_Admin {
 					<?php echo esc_html_e( 'Clear', 'woocommerce-coupon-restrictions' ); ?>
 				</button>
 			</div>
-			<?php
-		echo '</p>';
+		</p>
+		<?php
 
 		// State restrictions
 		woocommerce_wp_textarea_input(
