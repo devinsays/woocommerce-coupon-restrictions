@@ -1,5 +1,9 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2021-03-28 - version 1.8.3
+
+* Enhancement: Adds "Guest (No Account)" option to the roles restriction.
+
 2021-01-12 - version 1.8.2
 
 * Enhancement: Reduces use of coupon meta by only storing non-default values.

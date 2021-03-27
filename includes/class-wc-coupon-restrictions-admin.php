@@ -86,6 +86,11 @@ class WC_Coupon_Restrictions_Admin {
 
 		// An array of all roles.
 		$roles = array_reverse( get_editable_roles() );
+
+		// Adds a fabricated role for "Guest" to allow guest checkouts.
+		$roles['woocommerce-coupon-restrictions-guest'] = array(
+			'name' => __( 'Guest (No User Account)', 'woocommerce-coupon-restrictions' ),
+		);
 		?>
 		<div class="options_group">
 			<p class="form-field <?php echo $id; ?>_only_field">
