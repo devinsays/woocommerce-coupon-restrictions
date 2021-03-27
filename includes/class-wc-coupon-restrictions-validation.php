@@ -395,7 +395,12 @@ class WC_Coupon_Restrictions_Validation {
 		// Checks if there is an account associated with the $email.
 		$user = get_user_by( 'email', $email );
 
-		// If user account does not exist, coupon is invalid.
+		// If user account does not exist and guest role is permitted, return true.
+		if ( ! $user && in_array( 'woocommerce-coupon-restrictions-guest', $restricted_roles ) ) {
+			return true;
+		}
+
+		// If user account does not exist and guest role not permitted, coupon is invalid.
 		if ( ! $user ) {
 			return false;
 		}
