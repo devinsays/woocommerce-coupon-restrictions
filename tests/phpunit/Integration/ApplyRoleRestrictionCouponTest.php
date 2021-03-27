@@ -130,7 +130,7 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		);
 		WC_Helper_Customer::set_customer_details( $session );
 
-		// Coupon not should apply because customer does not have an account
+		// Coupon should not apply because customer does not have an account
 		// and the role restriction does not allow guests.
 		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
