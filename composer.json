@@ -22,7 +22,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DevPress\\WooCommerce\\CouponRestrictions\\Test\\": "tests/phpunit/"
+            "WooCommerceCouponRestrictions\\Test\\": "tests/phpunit/"
         },
         "classmap": [
             "includes/"

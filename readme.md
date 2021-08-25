@@ -8,8 +8,8 @@
 * Stable tag: 1.8.3
 * License: GPLv3 or later License
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
-* WC requires at least: 3.9.3
-* WC tested up to: 5.1.0
+* WC requires at least: 4.8.1
+* WC tested up to: 5.6.0
 
 ## Description
 
@@ -50,7 +50,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Compatibility
 
-* Requires WooCommerce 3.9.0 or later.
+* Requires WooCommerce 4.8.1 or later.
 
 ## Changelog
 
