@@ -13,13 +13,19 @@ jobs:
           - "latest"
         wc_ver:
           - "latest"
-          - "4.7.2"
+          - "4.8.1"
 
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the files
         uses: actions/checkout@v2
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
 
       - name: Install dependencies
         uses: php-actions/composer@v5
