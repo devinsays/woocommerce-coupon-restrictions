@@ -13,6 +13,7 @@ jobs:
           - "latest"
         wc_ver:
           - "latest"
+          - "4.0"
 
     runs-on: ubuntu-latest
 
