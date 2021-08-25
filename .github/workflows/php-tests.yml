@@ -13,6 +13,7 @@ jobs:
           - "latest"
         wc_ver:
           - "latest"
+          - "4.8.1"
 
     runs-on: ubuntu-latest
 

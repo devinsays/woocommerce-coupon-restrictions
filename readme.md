@@ -1,15 +1,12 @@
-# WooCommerce Coupon Restrictions [![Build Status](https://travis-ci.org/devinsays/woocommerce-coupon-restrictions.svg?branch=master)](https://travis-ci.org/devinsays/woocommerce-coupon-restrictions)
+# WooCommerce Coupon Restrictions ![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=master)
 
-* Contributors: @downstairsdev
-* Tags: woocommerce, coupon
-* Requires at least: 4.9.0
-* Tested up to: 5.7
 * Requires PHP: 7.0
+* WP requires at least: 4.9.0
+* WP tested up to: 5.7
+* WC requires at least: 4.8.1
+* WC tested up to: 5.6.0
 * Stable tag: 1.8.3
-* License: GPLv3 or later License
-* License URI: http://www.gnu.org/licenses/gpl-3.0.html
-* WC requires at least: 3.9.3
-* WC tested up to: 5.1.0
+* License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
 
@@ -41,7 +38,7 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 
 ## Unit Tests
 
-![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=github-actions)
+![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=master)
 
 PHPUnit, Composer and WP-CLI are required for running unit tests.
 
@@ -50,9 +47,14 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Compatibility
 
-* Requires WooCommerce 3.9.0 or later.
+* Requires WooCommerce 4.8.1 or later.
 
 ## Changelog
+
+**Development**
+
+* Update: Tested to WooCommerce  5.6.0.
+* Update: WooCommerce 4.8.1 or higher required.
 
 **1.8.3**
 
