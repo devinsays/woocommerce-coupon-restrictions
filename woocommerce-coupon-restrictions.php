@@ -12,10 +12,10 @@
  * Domain Path: /languages
  *
  * Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
- * WC requires at least: 3.9.4
- * WC tested up to: 5.1.0
+ * WC requires at least: 4.8.1
+ * WC tested up to: 6.0.0
  *
- * Copyright: © 2015-2021 DevPress.
+ * Copyright: © 2015-2022 DevPress.
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
