@@ -28,17 +28,11 @@ jobs:
           php-version: '7.4'
           tools: phpunit
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v2
-        with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-
       - name: Install dependencies
         uses: php-actions/composer@v6
         with:
           php_version: ${{ matrix.php_ver }}
-          version: 1
+          version: 2
 
       - name: Start MySQL
         run: sudo /etc/init.d/mysql start
