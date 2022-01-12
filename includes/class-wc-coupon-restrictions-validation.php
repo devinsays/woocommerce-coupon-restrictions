@@ -36,6 +36,10 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_coupons_before_checkout( $valid, $coupon ) {
+		// If checkout validation is running, we skip the before checkout validation.
+		if ( defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
+			return true;
+		}
 
 		// Pre-checkout validation can be disabled using this filter.
 		$validate = apply_filters( 'woocommerce_coupon_restrictions_validate_before_checkout', true );
