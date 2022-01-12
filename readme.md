@@ -5,7 +5,7 @@
 * WP tested up to: 5.7
 * WC requires at least: 4.8.1
 * WC tested up to: 6.0.0
-* Stable tag: 1.8.3
+* Stable tag: 1.8.4
 * License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
@@ -51,12 +51,13 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
 ## Changelog
 
-**Development**
+**1.8.4 (01.11.22)**
 
-* Update: Tested to WooCommerce  5.6.0.
+* Update: Tested to WooCommerce  6.1.0.
 * Update: WooCommerce 4.8.1 or higher required.
+* Bugfix: Display specific coupon validation messages during ajax checkout validation.
 
-**1.8.3**
+**1.8.3 (03.28.21)**
 
 * Enhancement: Adds "Guest (No Account)" option to the roles restriction.
 
