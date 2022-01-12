@@ -1,5 +1,11 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2022-01-12 - version 1.8.4
+
+* Bugfix: Display specific coupon validation messages during ajax checkout validation.
+* Update: Tested to WooCommerce  6.1.0.
+* Update: WooCommerce 4.8.1 or higher required.
+
 2021-03-28 - version 1.8.3
 
 * Enhancement: Adds "Guest (No Account)" option to the roles restriction.
