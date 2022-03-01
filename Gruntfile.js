@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 			target: {
 				options: {
 					domainPath: '/languages/',
-					potFilename: 'woocommerce-new-customer-coupons.pot',
+					potFilename: 'languages/woocommerce-coupon-restrictions.pot',
 					potHeaders: {
 					poedit: true, // Includes common Poedit headers.
 					'x-poedit-keywordslist': true // Include a list of all possible gettext functions.
