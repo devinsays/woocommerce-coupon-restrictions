@@ -5,7 +5,7 @@
 * WP tested up to: 5.7
 * WC requires at least: 4.8.1
 * WC tested up to: 6.1.0
-* Stable tag: 1.8.4
+* Stable tag: 1.8.5
 * License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
@@ -45,15 +45,19 @@ PHPUnit, Composer and WP-CLI are required for running unit tests.
 Local testing set up instructions:
 https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
-## Compatibility
+## Translations
 
-* Requires WooCommerce 4.8.1 or later.
+* Run `composer make-pot` to update the translation file.
 
 ## Changelog
 
+**1.8.5 (03.06.22)**
+
+* Bugfix: Rename translation file.
+
 **1.8.4 (01.11.22)**
 
-* Update: Tested to WooCommerce  6.1.0.
+* Update: Tested to WooCommerce 6.1.0.
 * Update: WooCommerce 4.8.1 or higher required.
 * Bugfix: Display specific coupon validation messages during ajax checkout validation.
 
