@@ -2,27 +2,37 @@
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Coupon Restrictions 1.8.3\n"
-"Report-Msgid-Bugs-To: https://devpress.com/\n"
-"POT-Creation-Date: 2022-01-12 02:27:35+00:00\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"Project-Id-Version: WooCommerce Coupon Restrictions 1.8.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-coupon-restrictions\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: en_US\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Country: United States\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: "
-"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
-"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
-"X-Poedit-Basepath: ../\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-Bookmarks: \n"
-"X-Textdomain-Support: yes\n"
-"X-Generator: grunt-wp-i18n 1.0.3\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2022-03-06T03:39:02+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.6.0\n"
+"X-Domain: woocommerce-coupon-restrictions\n"
+
+#. Plugin Name of the plugin
+msgid "WooCommerce Coupon Restrictions"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "http://woocommerce.com/products/woocommerce-coupon-restrictions/"
+msgstr ""
+
+#. Description of the plugin
+msgid "Adds additional coupon restrictions. Coupons can be restricted to new customers, existing customers, or specific locations."
+msgstr ""
+
+#. Author of the plugin
+msgid "WooCommerce"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://woocommerce.com/"
+msgstr ""
 
 #: includes/class-wc-coupon-restrictions-admin.php:51
 msgid "Customer restrictions"
@@ -125,9 +135,7 @@ msgid "Restrict to specific zip codes"
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-admin.php:216
-msgid ""
-"Comma separate to list multiple zip codes. Wildcards (*) can be used to "
-"match portions of zip codes."
+msgid "Comma separate to list multiple zip codes. Wildcards (*) can be used to match portions of zip codes."
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:84
@@ -163,9 +171,7 @@ msgid "Customer Restrictions"
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:229
-msgid ""
-"You now have the option to restrict coupons to new customers or existing "
-"customers."
+msgid "You now have the option to restrict coupons to new customers or existing customers."
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:230
@@ -177,16 +183,11 @@ msgid "Limit User Tip"
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:246
-msgid ""
-"If you are using a new customer restriction, you may also want to limit the "
-"coupon to 1 use."
+msgid "If you are using a new customer restriction, you may also want to limit the coupon to 1 use."
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:247
-msgid ""
-"Payments can take a few minutes to process, and it is possible for a "
-"customer to place multiple orders in that time if a coupon does not have a "
-"1 use limit."
+msgid "Payments can take a few minutes to process, and it is possible for a customer to place multiple orders in that time if a coupon does not have a 1 use limit."
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:262
@@ -194,9 +195,7 @@ msgid "Role Restrictions"
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:263
-msgid ""
-"Coupons can be restricted to specific user roles. Customer must have an "
-"account for the coupon to apply."
+msgid "Coupons can be restricted to specific user roles. Customer must have an account for the coupon to apply."
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:278
@@ -212,40 +211,7 @@ msgid "Multiple Restrictions"
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-onboarding.php:290
-msgid ""
-"If multiple coupon restrictions are set, the customer must meet all "
-"restrictions."
-msgstr ""
-
-#: includes/class-wc-coupon-restrictions-onboarding.php:339
-msgid "Dismiss"
-msgstr ""
-
-#: includes/class-wc-coupon-restrictions-onboarding.php:340
-msgid "Next"
-msgstr ""
-
-#: includes/class-wc-coupon-restrictions-onboarding.php:341
-msgid "Enjoy!"
-msgstr ""
-
-#: includes/class-wc-coupon-restrictions-settings.php:32
-msgid "Coupon Restrictions"
-msgstr ""
-
-#: includes/class-wc-coupon-restrictions-settings.php:36
-msgid ""
-"If you're restricting any coupons to new customers, we recommend requiring "
-"a user account for each customer. Checking against orders can be slow for "
-"sites with more than 10,000 orders."
-msgstr ""
-
-#: includes/class-wc-coupon-restrictions-settings.php:38
-msgid "Verify new customers by checking against user accounts."
-msgstr ""
-
-#: includes/class-wc-coupon-restrictions-settings.php:39
-msgid "Verify new customers by checking against user accounts and all guest orders."
+msgid "If multiple coupon restrictions are set, the customer must meet all restrictions."
 msgstr ""
 
 #: includes/class-wc-coupon-restrictions-validation.php:663
@@ -284,33 +250,11 @@ msgstr ""
 msgid "Sorry, coupon code \"%s\" is not valid."
 msgstr ""
 
-#: tests/phpunit/bootstrap.php:70
 #. Translators: %1$s is the WooCommerce release being loaded.
+#: tests/phpunit/bootstrap.php:70
 msgid "Using WooCommerce %1$s."
 msgstr ""
 
 #: woocommerce-coupon-restrictions.php:138
 msgid "%1$s requires at least %2$s v%3$s in order to function. Please upgrade %2$s."
-msgstr ""
-
-#. Plugin Name of the plugin/theme
-msgid "WooCommerce Coupon Restrictions"
-msgstr ""
-
-#. Plugin URI of the plugin/theme
-msgid "http://woocommerce.com/products/woocommerce-coupon-restrictions/"
-msgstr ""
-
-#. Description of the plugin/theme
-msgid ""
-"Adds additional coupon restrictions. Coupons can be restricted to new "
-"customers, existing customers, or specific locations."
-msgstr ""
-
-#. Author of the plugin/theme
-msgid "WooCommerce"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "http://woocommerce.com/"
 msgstr ""

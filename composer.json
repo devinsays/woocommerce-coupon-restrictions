@@ -19,7 +19,11 @@
         "assertwell/wp-core-test-framework": "^0.1.1",
         "php": ">=7.4",
         "phpunit/phpunit": "^7",
-        "yoast/phpunit-polyfills": "^1.0"
+        "yoast/phpunit-polyfills": "^1.0",
+        "wp-cli/i18n-command": "^2.2.5"
+    },
+    "scripts": {
+        "make-pot": "wp i18n make-pot . languages/woocommerce-coupon-restrictions.pot"
     },
     "autoload-dev": {
         "psr-4": {
