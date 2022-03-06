@@ -43,7 +43,7 @@ class WC_Coupon_Restrictions {
 	 * @access public
 	 * @since  1.4.0
 	 */
-	public $required_woo = '3.7.0';
+	public $required_woo = '4.8.1';
 
 	/**
 	 * Instance of WC_Coupon_Restrictions_Validation.
