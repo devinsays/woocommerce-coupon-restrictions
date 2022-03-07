@@ -95,6 +95,16 @@ class WC_Coupon_Restrictions {
 	}
 
 	/**
+	 * Plugin asset path.
+	 *
+	 * @access public
+	 * @since  1.8.5
+	 */
+	public static function plugin_asset_path() {
+		return plugin_dir_url( __FILE__ );
+	}
+
+	/**
 	 * Loads the plugin.
 	 *
 	 * @access public
