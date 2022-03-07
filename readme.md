@@ -54,6 +54,7 @@ https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 **1.8.5 (03.06.22)**
 
 * Bugfix: Rename translation file.
+* Update: Migrate inline javascript to file.
 
 **1.8.4 (01.11.22)**
 

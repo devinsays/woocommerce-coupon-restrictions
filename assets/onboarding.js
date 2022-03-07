@@ -1,32 +1,45 @@
 jQuery( function( $ ) {
+	// Displays the pointers once the coupon tabs load.
+	const observer = new MutationObserver((mutations, obs) => {
+		const tabs = document.getElementsByClassName('coupon_data_tabs')[0];
+		if (tabs) {
+			initPointers();
+			obs.disconnect();
+			return;
+		}
+	});
 
-	setTimeout( init_wccr_pointers, 800 );
-	function init_wccr_pointers() {
+	observer.observe(document, {
+		childList: true,
+		subtree: true
+	});
+
+	function initPointers() {
 		$.each( WCCR_POINTERS.pointers, function( i ) {
-			pre_show_wccr_pointer( i );
-			show_wc_pointer( i );
+			revealTab( i );
+			showPointer( i );
 			return false;
 		});
 	}
 
-	function show_wc_pointer( id ) {
+	function showPointer( id ) {
 		var pointer = WCCR_POINTERS.pointers[ id ];
 		var options = $.extend( pointer.options, {
 			pointerClass: 'wp-pointer wc-pointer',
 			close: function() {
-				pre_show_wccr_pointer( pointer.next );
+				revealTab( pointer.next );
 				if ( pointer.next ) {
-					show_wc_pointer( pointer.next );
+					showPointer( pointer.next );
 				}
 			},
 			buttons: function( event, t ) {
-				const btn_close  = $( `<a class="close" href="#">${WCCR_POINTERS.close}</a>` );
-				const btn_next = $( `<a class="button button-primary" href="#">${WCCR_POINTERS.next}</a>` );
-				const btn_complete = $( `<a class="button button-primary" href="#">${WCCR_POINTERS.enjoy}</a>` );
+				const btnClose  = $( `<a class="close" href="#">${WCCR_POINTERS.close}</a>` );
+				const btnNext = $( `<a class="button button-primary" href="#">${WCCR_POINTERS.next}</a>` );
+				const btnComplete = $( `<a class="button button-primary" href="#">${WCCR_POINTERS.enjoy}</a>` );
 
 				let wrapper = $( `<div class="wc-pointer-buttons" />` );
 
-				btn_close.bind( 'click.pointer', function(e) {
+				btnClose.bind( 'click.pointer', function(e) {
 					e.preventDefault();
 					t.element.pointer('destroy');
 
@@ -36,39 +49,40 @@ jQuery( function( $ ) {
 					window.history.pushState(null, null, url);
 				});
 
-				btn_next.bind( 'click.pointer', function(e) {
+				btnNext.bind( 'click.pointer', function(e) {
 					e.preventDefault();
 					t.element.pointer('close');
 				});
 
-				btn_complete.bind( 'click.pointer', function(e) {
+				btnComplete.bind( 'click.pointer', function(e) {
 					e.preventDefault();
 					t.element.pointer('close');
 				});
 
-				wrapper.append( btn_close );
+				wrapper.append( btnClose );
 
 				if ('multiple-restictions' !== id) {
-					wrapper.append( btn_next );
+					wrapper.append( btnNext );
 				} else {
-					wrapper.append( btn_complete );
+					wrapper.append( btnComplete );
 				}
+
 				return wrapper;
 			},
-		} );
+		});
 
-		var this_pointer = $( pointer.target ).pointer( options );
+		const thisPointer = $( pointer.target ).pointer( options );
 		$('html, body').animate({ scrollTop: $( pointer.target ).offset().top - 200 });
-		this_pointer.pointer( 'open' );
+		thisPointer.pointer( 'open' );
 
 		if ( pointer.next_trigger ) {
 			$( pointer.next_trigger.target ).on( pointer.next_trigger.event, function() {
-				setTimeout( function() { this_pointer.pointer( 'close' ); }, 400 );
+				setTimeout( function() { thisPointer.pointer( 'close' ); }, 400 );
 			});
 		}
 	}
 
-	function pre_show_wccr_pointer( pointer ) {
+	function revealTab( pointer ) {
 		if ( 'coupon-restrictions-panel' === pointer ) {
 			$('#woocommerce-coupon-data .usage_restriction_tab a').trigger('click');
 		}

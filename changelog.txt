@@ -3,6 +3,7 @@
 2022-03-06 - version 1.8.5
 
 * Bugfix: Rename translation file.
+* Update: Migrate inline javascript to file.
 
 2022-01-12 - version 1.8.4
 
