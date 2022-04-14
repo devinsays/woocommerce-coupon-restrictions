@@ -9,7 +9,7 @@
  * @since    1.7.0
  */
 
-if ( ! defined('ABSPATH') ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
@@ -21,7 +21,6 @@ class WC_Coupon_Restrictions_Settings {
 	public function init() {
 		// Filters the settings in the "General Tab".
 		add_filter( 'woocommerce_general_settings', array( $this, 'coupon_restrictions_settings' ) );
-
 	}
 
 	/**
@@ -35,8 +34,8 @@ class WC_Coupon_Restrictions_Settings {
 			'type'     => 'radio',
 			'desc_tip' => __( 'If you\'re restricting any coupons to new customers, we recommend requiring a user account for each customer. Checking against orders can be slow for sites with more than 10,000 orders.', 'woocommerce' ),
 			'options'  => array(
-				'accounts' => __( 'Verify new customers by checking against user accounts.', 'woocommerce' ),
-				'accounts-orders'  => __( 'Verify new customers by checking against user accounts and all guest orders.', 'woocommerce' ),
+				'accounts'        => __( 'Verify new customers by checking against user accounts.', 'woocommerce' ),
+				'accounts-orders' => __( 'Verify new customers by checking against user accounts and all guest orders.', 'woocommerce' ),
 			),
 		);
 

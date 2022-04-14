@@ -9,7 +9,7 @@
  * @since    1.5.0
  */
 
-if ( ! defined('ABSPATH') ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
@@ -62,7 +62,7 @@ class WC_Coupon_Restrictions_Onboarding {
 
 			// Inline script deletes the transient when notice is dismissed.
 			$notice_dismiss_script = $this->install_notice_dismiss();
-			wp_add_inline_script( 'jquery-core',  $notice_dismiss_script );
+			wp_add_inline_script( 'jquery-core', $notice_dismiss_script );
 
 		endif;
 	}
@@ -77,7 +77,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 */
 	public function plugin_action_links( $links ) {
 		// URL for coupon screen onboarding
-		$coupon_url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
+		$coupon_url  = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
 		$setting_url = admin_url( 'admin.php?page=wc-settings' );
 
 		$custom = array(
@@ -85,7 +85,7 @@ class WC_Coupon_Restrictions_Onboarding {
 			'<a href="' . esc_url( $setting_url ) . '">' . esc_html__( 'Settings', 'woocommerce-coupon-restrictions' ) . '</a>',
 			'<a href="https://devpress.com/products/woocommerce-coupon-restrictions/">' . esc_html__( 'Docs', 'woocommerce-coupon-restrictions' ) . '</a>',
 		);
-		$links = array_merge( $custom, $links );
+		$links  = array_merge( $custom, $links );
 		return $links;
 	}
 
@@ -97,8 +97,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	public function dismiss_notice_via_query() {
 		if (
 			current_user_can( 'manage_options' ) &&
-			isset( $_GET['woocommerce-coupon-restriction-pointers'] ) )
-		{
+			isset( $_GET['woocommerce-coupon-restriction-pointers'] ) ) {
 			delete_transient( 'woocommerce-coupon-restrictions-activated' );
 		}
 	}
@@ -201,24 +200,24 @@ class WC_Coupon_Restrictions_Onboarding {
 	public function get_pointers() {
 		return array(
 			'coupon-restrictions-panel' => array(
-				'target' => '#woocommerce-coupon-data .usage_restriction_options',
-				'next' => 'customer-restriction-type',
+				'target'       => '#woocommerce-coupon-data .usage_restriction_options',
+				'next'         => 'customer-restriction-type',
 				'next_trigger' => array(
 					'target' => '#title',
 					'event'  => 'input',
 				),
-				'options' => array(
+				'options'      => array(
 					'content'  => '<h3>' . esc_html__( 'Usage Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
 					'<p>' . esc_html__( 'Coupon restrictions can be found in this panel.', 'woocommerce-coupon-restrictions' ) . '</p>',
 					'position' => array(
 						'edge'  => 'top',
 						'align' => 'left',
-					)
-				)
+					),
+				),
 			),
 			'customer-restriction-type' => array(
-				'target' => '#usage_restriction_coupon_data .customer_restriction_type_field .woocommerce-help-tip',
-				'next' => 'usage-limit',
+				'target'       => '#usage_restriction_coupon_data .customer_restriction_type_field .woocommerce-help-tip',
+				'next'         => 'usage-limit',
 				'next_trigger' => array(
 					'target' => '#title',
 					'event'  => 'input',
@@ -230,12 +229,12 @@ class WC_Coupon_Restrictions_Onboarding {
 					'position' => array(
 						'edge'  => 'left',
 						'align' => 'left',
-					)
-				)
+					),
+				),
 			),
-			'usage-limit' => array(
-				'target' => '#usage_limit_coupon_data .usage_limit_per_user_field .woocommerce-help-tip',
-				'next' => 'role-restriction',
+			'usage-limit'               => array(
+				'target'       => '#usage_limit_coupon_data .usage_limit_per_user_field .woocommerce-help-tip',
+				'next'         => 'role-restriction',
 				'next_trigger' => array(
 					'target' => '#title',
 					'event'  => 'input',
@@ -247,12 +246,12 @@ class WC_Coupon_Restrictions_Onboarding {
 					'position' => array(
 						'edge'  => 'left',
 						'align' => 'left',
-					)
-				)
+					),
+				),
 			),
-			'role-restriction' => array(
-				'target' => '#usage_restriction_coupon_data .role_restriction_only_field',
-				'next' => 'location-restrictions',
+			'role-restriction'          => array(
+				'target'       => '#usage_restriction_coupon_data .role_restriction_only_field',
+				'next'         => 'location-restrictions',
 				'next_trigger' => array(
 					'target' => '#title',
 					'event'  => 'input',
@@ -263,12 +262,12 @@ class WC_Coupon_Restrictions_Onboarding {
 					'position' => array(
 						'edge'  => 'right',
 						'align' => 'right',
-					)
-				)
+					),
+				),
 			),
-			'location-restrictions' => array(
-				'target' => '#usage_restriction_coupon_data .location_restrictions_field',
-				'next' => 'multiple-restictions',
+			'location-restrictions'     => array(
+				'target'       => '#usage_restriction_coupon_data .location_restrictions_field',
+				'next'         => 'multiple-restictions',
 				'next_trigger' => array(
 					'target' => '#title',
 					'event'  => 'input',
@@ -279,20 +278,20 @@ class WC_Coupon_Restrictions_Onboarding {
 					'position' => array(
 						'edge'  => 'right',
 						'align' => 'right',
-					)
-				)
+					),
+				),
 			),
-			'multiple-restictions' => array(
-				'target' => '#coupon_options .usage_restriction_options',
-				'options'      => array(
+			'multiple-restictions'      => array(
+				'target'  => '#coupon_options .usage_restriction_options',
+				'options' => array(
 					'content'  => '<h3>' . esc_html__( 'Multiple Restrictions', 'woocommerce-coupon-restrictions' ) . '</h3>' .
 					'<p>' . esc_html__( 'If multiple coupon restrictions are set, the customer must meet all restrictions.', 'woocommerce-coupon-restrictions' ) . '</p>',
 					'position' => array(
 						'edge'  => 'left',
 						'align' => 'left',
-					)
-				)
-			)
+					),
+				),
+			),
 		);
 	}
 
@@ -306,7 +305,6 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @since 1.5.0
 	 */
 	public function display_pointers( $pointers ) {
-		// $pointers = wp_json_encode( $pointers );
 		wp_enqueue_style( 'wp-pointer' );
 		wp_enqueue_script( 'wp-pointer' );
 
@@ -319,12 +317,16 @@ class WC_Coupon_Restrictions_Onboarding {
 			true
 		);
 
-		wp_localize_script( 'wccr_onboarding_pointers', 'WCCR_POINTERS', array(
-			'pointers' => $pointers,
-			'close' => esc_html__( 'Dismiss', 'woocommerce-customer-coupons' ),
-			'next' => esc_html__( 'Next', 'woocommerce-customer-coupons' ),
-			'enjoy' => esc_html__( 'Enjoy!', 'woocommerce-customer-coupons' )
-		) );
+		wp_localize_script(
+			'wccr_onboarding_pointers',
+			'WCCR_POINTERS',
+			array(
+				'pointers' => $pointers,
+				'close'    => esc_html__( 'Dismiss', 'woocommerce-customer-coupons' ),
+				'next'     => esc_html__( 'Next', 'woocommerce-customer-coupons' ),
+				'enjoy'    => esc_html__( 'Enjoy!', 'woocommerce-customer-coupons' ),
+			)
+		);
 
 		wp_enqueue_script( 'wccr_onboarding_pointers' );
 	}

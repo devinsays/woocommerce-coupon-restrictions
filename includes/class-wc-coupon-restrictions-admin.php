@@ -9,7 +9,7 @@
  * @since    1.3.0
  */
 
-if ( ! defined('ABSPATH') ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
@@ -25,7 +25,7 @@ class WC_Coupon_Restrictions_Admin {
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ), 10, 2 );
 
 		// Saves the metabox.
-		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save'  ), 10, 2 );
+		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save' ), 10, 2 );
 	}
 
 	/**
@@ -47,17 +47,17 @@ class WC_Coupon_Restrictions_Admin {
 
 		woocommerce_wp_radio(
 			array(
-				'id' => 'customer_restriction_type',
-				'label' => __( 'Customer restrictions', 'woocommerce-coupon-restrictions' ),
+				'id'          => 'customer_restriction_type',
+				'label'       => __( 'Customer restrictions', 'woocommerce-coupon-restrictions' ),
 				'description' => __( 'Restricts coupon to specific customers based on purchase history.', 'woocommerce-coupon-restrictions' ),
-				'desc_tip' => true,
-				'class' => 'select',
-				'options' => array(
-					'none' => __( 'Default (no restriction)', 'woocommerce-coupon-restrictions' ),
-					'new' => __( 'New customers only', 'woocommerce-coupon-restrictions' ),
+				'desc_tip'    => true,
+				'class'       => 'select',
+				'options'     => array(
+					'none'     => __( 'Default (no restriction)', 'woocommerce-coupon-restrictions' ),
+					'new'      => __( 'New customers only', 'woocommerce-coupon-restrictions' ),
 					'existing' => __( 'Existing customers only', 'woocommerce-coupon-restrictions' ),
 				),
-				'value' => $value
+				'value'       => $value,
 			)
 		);
 
@@ -75,8 +75,8 @@ class WC_Coupon_Restrictions_Admin {
 	 */
 	public static function role_restrictions( $coupon_id, $coupon ) {
 
-		$id = 'role_restriction';
-		$title = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
+		$id     = 'role_restriction';
+		$title  = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );
 
 		$selections = array();
@@ -97,10 +97,10 @@ class WC_Coupon_Restrictions_Admin {
 				<label for="<?php echo esc_attr( $id ); ?>">
 					<?php echo esc_html( $title ); ?>
 				</label>
-				<select multiple="multiple" name="<?php echo $id; ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose roles&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Role', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
+				<select multiple="multiple" name="<?php echo $id; ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose roles&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Role', 'woocommerce-coupon-restrictions' ); ?>" class="wc-enhanced-select">
 				<?php
 				foreach ( $roles as $id => $role ) {
-					$selected = in_array( $id, $selections );
+					$selected  = in_array( $id, $selections );
 					$role_name = translate_user_role( $role['name'] );
 
 					echo '<option value="' . $id . '" ' . selected( $selected, true, false ) . '>' . esc_html( $role_name ) . '</option>';
@@ -126,9 +126,9 @@ class WC_Coupon_Restrictions_Admin {
 
 		woocommerce_wp_checkbox(
 			array(
-				'id' => 'location_restrictions',
-				'label' => __( 'Use location restrictions', 'woocommerce-coupon-restrictions' ),
-				'description' => __( 'Displays and enables location restriction options.', 'woocommerce-coupon-restrictions' )
+				'id'          => 'location_restrictions',
+				'label'       => __( 'Use location restrictions', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Displays and enables location restriction options.', 'woocommerce-coupon-restrictions' ),
 			)
 		);
 		?>
@@ -138,19 +138,19 @@ class WC_Coupon_Restrictions_Admin {
 		<?php
 		woocommerce_wp_select(
 			array(
-				'id' => 'address_for_location_restrictions',
-				'label' => __( 'Address for location restrictions', 'woocommerce-coupon-restrictions' ),
-				'class' => 'select',
+				'id'      => 'address_for_location_restrictions',
+				'label'   => __( 'Address for location restrictions', 'woocommerce-coupon-restrictions' ),
+				'class'   => 'select',
 				'options' => array(
 					'shipping' => __( 'Shipping', 'woocommerce-coupon-restrictions' ),
-					'billing' => __( 'Billing', 'woocommerce-coupon-restrictions' ),
+					'billing'  => __( 'Billing', 'woocommerce-coupon-restrictions' ),
 				),
 			)
 		);
 
 		// Country restriction.
-		$id = 'country_restriction';
-		$title = __( 'Restrict to specific countries', 'woocommerce-coupon-restrictions' );
+		$id     = 'country_restriction';
+		$title  = __( 'Restrict to specific countries', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );
 
 		$selections = array();
@@ -169,7 +169,7 @@ class WC_Coupon_Restrictions_Admin {
 		<label for="<?php echo esc_attr( $id ); ?>">
 			<?php echo esc_html( $title ); ?>
 		</label>
-		<select id="wccr-restricted-countries" multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce-coupon-restrictions' ) ?>" class="wc-enhanced-select">
+		<select id="wccr-restricted-countries" multiple="multiple" name="<?php echo esc_attr( $id ); ?>[]" style="width:350px" data-placeholder="<?php esc_attr_e( 'Choose countries&hellip;', 'woocommerce-coupon-restrictions' ); ?>" aria-label="<?php esc_attr_e( 'Country', 'woocommerce-coupon-restrictions' ); ?>" class="wc-enhanced-select">
 			<?php
 			foreach ( $countries as $key => $val ) {
 
@@ -180,7 +180,7 @@ class WC_Coupon_Restrictions_Admin {
 				$allowed = in_array( $key, $shop_countries );
 
 				// Output the options.
-				if ( $selected ||  $allowed ) {
+				if ( $selected || $allowed ) {
 					echo '<option value="' . esc_attr( $key ) . '" ' . selected( $selected, true, false ) . '>' . esc_html( $val ) . '</option>';
 				}
 			}
@@ -201,22 +201,22 @@ class WC_Coupon_Restrictions_Admin {
 		// State restrictions
 		woocommerce_wp_textarea_input(
 			array(
-				'label'   => __( 'Restrict to specific states', 'woocommerce-coupon-restrictions' ),
-				'description'    => __( 'Use the two digit state codes. Comma separate to specify multiple states.', 'woocommerce-coupon-restrictions' ),
-				'desc_tip' => true,
-				'id'      => 'state_restriction',
-				'type'    => 'textarea',
+				'label'       => __( 'Restrict to specific states', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Use the two digit state codes. Comma separate to specify multiple states.', 'woocommerce-coupon-restrictions' ),
+				'desc_tip'    => true,
+				'id'          => 'state_restriction',
+				'type'        => 'textarea',
 			)
 		);
 
 		// Postcode / Zip Code restrictions
 		woocommerce_wp_textarea_input(
 			array(
-				'label'   => __( 'Restrict to specific zip codes', 'woocommerce-coupon-restrictions' ),
-				'description'    => __( 'Comma separate to list multiple zip codes. Wildcards (*) can be used to match portions of zip codes.', 'woocommerce-coupon-restrictions' ),
-				'desc_tip' => true,
-				'id'      => 'postcode_restriction',
-				'type'    => 'textarea',
+				'label'       => __( 'Restrict to specific zip codes', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Comma separate to list multiple zip codes. Wildcards (*) can be used to match portions of zip codes.', 'woocommerce-coupon-restrictions' ),
+				'desc_tip'    => true,
+				'id'          => 'postcode_restriction',
+				'type'        => 'textarea',
 			)
 		);
 
@@ -254,7 +254,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		if ( 'all_except_countries' === $allowed_countries ) {
 			$all_except_countries = get_option( 'woocommerce_all_except_countries' );
-			$shop_countries = array_diff_key( $countries, $all_except_countries );
+			$shop_countries       = array_diff_key( $countries, $all_except_countries );
 			return $shop_countries;
 		}
 
@@ -295,7 +295,7 @@ class WC_Coupon_Restrictions_Admin {
 		";
 
 		// Strip line breaks and extra whitespace before returning.
-		$js = preg_replace( "/\s+/", " ", $js );
+		$js = preg_replace( '/\s+/', ' ', $js );
 		return trim( $js );
 	}
 
@@ -311,8 +311,8 @@ class WC_Coupon_Restrictions_Admin {
 	public static function coupon_options_save( $coupon_id, $coupon ) {
 
 		// Sanitize customer restriction type meta.
-		$id = 'customer_restriction_type';
-		$customer_restriction_type = $_POST[$id] ?? 'none';
+		$id                        = 'customer_restriction_type';
+		$customer_restriction_type = $_POST[ $id ] ?? 'none';
 		if ( in_array( $customer_restriction_type, array( 'new', 'existing' ) ) ) {
 			$coupon->update_meta_data( $id, $customer_restriction_type );
 		} else {
@@ -320,9 +320,9 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		// Sanitize role restriction meta.
-		$id = 'role_restriction';
-		$role_restriction_select = $_POST[$id] ?? array();
-		$role_restriction = array_filter( array_map( 'wc_clean', $role_restriction_select ) );
+		$id                      = 'role_restriction';
+		$role_restriction_select = $_POST[ $id ] ?? array();
+		$role_restriction        = array_filter( array_map( 'wc_clean', $role_restriction_select ) );
 		if ( $role_restriction ) {
 			$coupon->update_meta_data( $id, $role_restriction );
 		} else {
@@ -330,8 +330,8 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		// Sanitize location restrictions checkbox.
-		$id = 'location_restrictions';
-		$location_restrictions = isset( $_POST[$id] ) ? 'yes' : 'no';
+		$id                    = 'location_restrictions';
+		$location_restrictions = isset( $_POST[ $id ] ) ? 'yes' : 'no';
 		if ( 'yes' === $location_restrictions ) {
 			$coupon->update_meta_data( $id, $location_restrictions );
 		} else {
@@ -339,8 +339,8 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		// Sanitize address to use for location restrictions.
-		$id = 'address_for_location_restrictions';
-		$address_for_location_restrictions = isset( $_POST[$id] ) ? $_POST[$id] : 'shipping';
+		$id                                = 'address_for_location_restrictions';
+		$address_for_location_restrictions = isset( $_POST[ $id ] ) ? $_POST[ $id ] : 'shipping';
 		if ( 'billing' === $address_for_location_restrictions ) {
 			$coupon->update_meta_data( $id, $address_for_location_restrictions );
 		} else {
@@ -349,9 +349,9 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		// Sanitize country restriction meta.
-		$id = 'country_restriction';
-		$country_restriction_select = $_POST[$id] ?? array();
-		$country_restriction = array_filter( array_map( 'wc_clean', $country_restriction_select ) );
+		$id                         = 'country_restriction';
+		$country_restriction_select = $_POST[ $id ] ?? array();
+		$country_restriction        = array_filter( array_map( 'wc_clean', $country_restriction_select ) );
 		if ( $country_restriction ) {
 			$coupon->update_meta_data( $id, $country_restriction );
 		} else {
@@ -359,8 +359,8 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		// Sanitize state restriction meta.
-		$id = 'state_restriction';
-		$state_restriction = $_POST[$id] ?? '';
+		$id                = 'state_restriction';
+		$state_restriction = $_POST[ $id ] ?? '';
 		$state_restriction = self::sanitize_comma_seperated_textarea( $state_restriction );
 		if ( $state_restriction ) {
 			$coupon->update_meta_data( $id, $state_restriction );
@@ -369,8 +369,8 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		// Sanitize postcode restriction meta.
-		$id = 'postcode_restriction';
-		$postcode_restriction = $_POST[$id] ?? '';
+		$id                   = 'postcode_restriction';
+		$postcode_restriction = $_POST[ $id ] ?? '';
 		$postcode_restriction = self::sanitize_comma_seperated_textarea( $postcode_restriction );
 		if ( $postcode_restriction ) {
 			$coupon->update_meta_data( $id, $postcode_restriction );
@@ -396,10 +396,10 @@ class WC_Coupon_Restrictions_Admin {
 
 		if ( '' !== $textarea ) {
 			// Convert comma separated list into array for sanitization.
-			$items = explode( ',', $textarea );
-			$items = array_unique( array_map( 'trim', $items ) ); // Trim whitespace
-			$items = array_unique( array_map( 'esc_textarea', $items ) ); // Sanitize values
-			$textarea = implode(', ', $items ); // Convert back to comma separated string
+			$items    = explode( ',', $textarea );
+			$items    = array_unique( array_map( 'trim', $items ) ); // Trim whitespace
+			$items    = array_unique( array_map( 'esc_textarea', $items ) ); // Sanitize values
+			$textarea = implode( ', ', $items ); // Convert back to comma separated string
 		}
 
 		return $textarea;

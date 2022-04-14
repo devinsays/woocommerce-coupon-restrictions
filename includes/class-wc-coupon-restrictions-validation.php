@@ -9,7 +9,7 @@
  * @since    1.3.0
  */
 
-if ( ! defined('ABSPATH') ) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
@@ -21,11 +21,10 @@ class WC_Coupon_Restrictions_Validation {
 	public function init() {
 
 		// Validates coupons before checkout if customer session exists.
-		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupons_before_checkout'), 10, 2 );
+		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupons_before_checkout' ), 10, 2 );
 
 		// Validates coupons again during checkout validation.
-		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_coupons_after_checkout'), 1 );
-
+		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_coupons_after_checkout' ), 1 );
 	}
 
 	/**
@@ -126,7 +125,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Validate new customer restriction.
 		if ( false === $this->validate_new_customer_restriction( $coupon, $email ) ) {
-			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_new_customer_restriction'), 10, 3 );
+			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_new_customer_restriction' ), 10, 3 );
 			return false;
 		}
 
@@ -200,7 +199,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Defaults in case no conditions are met.
 		$country_validation = true;
-		$state_validation = true;
+		$state_validation   = true;
 		$zipcode_validation = true;
 
 		// Get the address type used for location restrictions (billing or shipping).
@@ -249,7 +248,7 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		if ( false === $country_validation ) {
-			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_country_restriction' ) , 10, 3 );
+			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_country_restriction' ), 10, 3 );
 		}
 
 		if ( false === $state_validation ) {
@@ -261,7 +260,7 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		// Coupon is not valid if country, state or zipcode validation failed.
-		if ( in_array( false, [$country_validation, $state_validation, $zipcode_validation] ) ) {
+		if ( in_array( false, array( $country_validation, $state_validation, $zipcode_validation ) ) ) {
 			return false;
 		}
 
@@ -343,9 +342,9 @@ class WC_Coupon_Restrictions_Validation {
 		$postcode_array = $this->comma_seperated_string_to_array( $postcode_restriction );
 
 		// Wildcard check.
-		if ( strpos( $postcode_restriction, '*') !== false ) {
+		if ( strpos( $postcode_restriction, '*' ) !== false ) {
 			foreach ( $postcode_array as $restricted_postcode ) {
-				if ( strpos( $restricted_postcode, '*') !== false ) {
+				if ( strpos( $restricted_postcode, '*' ) !== false ) {
 					if ( fnmatch( $restricted_postcode, $postcode ) ) {
 						return true;
 					}
@@ -409,7 +408,7 @@ class WC_Coupon_Restrictions_Validation {
 			return false;
 		}
 
-		$user_meta = get_userdata( $user->ID );
+		$user_meta  = get_userdata( $user->ID );
 		$user_roles = $user_meta->roles;
 
 		// If any the user roles do not match the restricted roles, coupon is invalid.
@@ -465,7 +464,7 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string $err
 	 */
-	public function validation_message_state_restriction($err, $err_code, $coupon ) {
+	public function validation_message_state_restriction( $err, $err_code, $coupon ) {
 		$err = $this->coupon_error_message( 'state', $err, $err_code, $coupon );
 		return $err;
 	}
@@ -475,7 +474,7 @@ class WC_Coupon_Restrictions_Validation {
 	 *
 	 * @return string $err
 	 */
-	public function validation_message_zipcode_restriction($err, $err_code, $coupon ) {
+	public function validation_message_zipcode_restriction( $err, $err_code, $coupon ) {
 		$err = $this->coupon_error_message( 'zipcode', $err, $err_code, $coupon );
 		return $err;
 	}
@@ -543,7 +542,6 @@ class WC_Coupon_Restrictions_Validation {
 			$msg = $this->get_validation_message( 'new-customer', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
-
 	}
 
 	/**
@@ -563,7 +561,6 @@ class WC_Coupon_Restrictions_Validation {
 			$msg = $this->get_validation_message( 'existing-customer', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
-
 	}
 
 	/**
@@ -582,7 +579,6 @@ class WC_Coupon_Restrictions_Validation {
 			$msg = $this->get_validation_message( 'role-restriction', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
-
 	}
 
 	/**
@@ -606,14 +602,12 @@ class WC_Coupon_Restrictions_Validation {
 
 		// Defaults in case no conditions are met.
 		$country_validation = true;
-		$state_validation = true;
+		$state_validation   = true;
 		$zipcode_validation = true;
 
 		if ( 'shipping' === $address && isset( $posted['shipping_country'] ) ) {
 			$country_validation = $this->validate_country_restriction( $coupon, $posted['shipping_country'] );
-		} else
-
-		if ( 'shipping' === $address && isset( $posted['shipping_state'] ) ) {
+		} elseif ( 'shipping' === $address && isset( $posted['shipping_state'] ) ) {
 			$state_validation = $this->validate_state_restriction( $coupon, $posted['shipping_state'] );
 		}
 
@@ -647,7 +641,6 @@ class WC_Coupon_Restrictions_Validation {
 			$msg = $this->get_validation_message( 'zipcode', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
-
 	}
 
 	/**
@@ -661,7 +654,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		$i8n_address = array(
 			'shipping' => __( 'shipping', 'woocommerce-coupon-restrictions' ),
-			'billing' => __( 'billing', 'woocommerce-coupon-restrictions' )
+			'billing'  => __( 'billing', 'woocommerce-coupon-restrictions' ),
 		);
 
 		if ( $key === 'new-customer' ) {
@@ -677,21 +670,21 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		if ( $key === 'country' ) {
-			$address_type = $this->get_address_type_for_restriction( $coupon );
-			$i8n_address_type = $i8n_address[$address_type];
-			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s country.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
+			$address_type     = $this->get_address_type_for_restriction( $coupon );
+			$i8n_address_type = $i8n_address[ $address_type ];
+			return sprintf( __( 'Sorry, coupon code "%1$s" is not valid in your %2$s country.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
 		if ( $key === 'state' ) {
-			$address_type = $this->get_address_type_for_restriction( $coupon );
-			$i8n_address_type = $i8n_address[$address_type];
-			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s state.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
+			$address_type     = $this->get_address_type_for_restriction( $coupon );
+			$i8n_address_type = $i8n_address[ $address_type ];
+			return sprintf( __( 'Sorry, coupon code "%1$s" is not valid in your %2$s state.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
 		if ( $key === 'zipcode' ) {
-			$address_type = $this->get_address_type_for_restriction( $coupon );
-			$i8n_address_type = $i8n_address[$address_type];
-			return sprintf( __( 'Sorry, coupon code "%s" is not valid in your %s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
+			$address_type     = $this->get_address_type_for_restriction( $coupon );
+			$i8n_address_type = $i8n_address[ $address_type ];
+			return sprintf( __( 'Sorry, coupon code "%1$s" is not valid in your %2$s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
 		// The $key should always find a match.
@@ -725,7 +718,7 @@ class WC_Coupon_Restrictions_Validation {
 	public function remove_coupon( $coupon, $code, $msg ) {
 
 		// Filter to change validation text.
-		$msg = apply_filters( 'woocommerce-coupon-restrictions-removed-message-with-code', $msg, $code, $coupon );
+		$msg = apply_filters( 'woocommerce_coupon_restrictions_removed_message_with_code', $msg, $code, $coupon );
 
 		// Remove the coupon.
 		WC()->cart->remove_coupon( $code );
@@ -764,18 +757,19 @@ class WC_Coupon_Restrictions_Validation {
 
 			// This query can be slow on sites with a lot of orders.
 			// @todo Check if 'customer' => '' improves performance.
-			$customer_orders = wc_get_orders( array(
-				'status' => array( 'wc-processing', 'wc-completed' ),
-				'email'  => $email,
-				'limit'  => 1,
-				'return' => 'ids',
-			) );
+			$customer_orders = wc_get_orders(
+				array(
+					'status' => array( 'wc-processing', 'wc-completed' ),
+					'email'  => $email,
+					'limit'  => 1,
+					'return' => 'ids',
+				)
+			);
 
 			// If there is at least one order, customer is returning.
 			if ( 1 === count( $customer_orders ) ) {
 				return true;
 			}
-
 		}
 
 		// If we've gotten to this point, the customer must be new.
