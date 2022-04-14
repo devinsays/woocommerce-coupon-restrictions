@@ -45,6 +45,12 @@ PHPUnit, Composer and WP-CLI are required for running unit tests.
 Local testing set up instructions:
 https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
 
+## Code Standards
+
+The WordPress VIP minimum standards and WordPress-Extra code standards are used for this project. They will be installed via composer.
+
+To run the code checks from the command line run: `vendor/bin/phpcs`
+
 ## Translations
 
 * Run `composer make-pot` to update the translation file.
