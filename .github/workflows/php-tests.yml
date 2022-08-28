@@ -1,6 +1,6 @@
 name: PHPUnit Tests
 
-on: [ push ]
+on: [push]
 
 jobs:
   test:
@@ -12,7 +12,7 @@ jobs:
           - "latest"
         wc_ver:
           - "latest"
-          - "4.8.1"
+          - "5.9.1"
 
     runs-on: ubuntu-latest
 
@@ -25,7 +25,7 @@ jobs:
       - name: Setup PHP with tools
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "7.4"
           tools: phpunit
 
       - name: Cache Composer dependencies
