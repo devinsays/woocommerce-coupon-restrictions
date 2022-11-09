@@ -1,12 +1,12 @@
 # WooCommerce Coupon Restrictions ![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=master)
 
-* Requires PHP: 7.0
-* WP requires at least: 4.9.0
-* WP tested up to: 5.7
-* WC requires at least: 4.8.1
-* WC tested up to: 6.1.0
-* Stable tag: 1.8.5
-* License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
+-   Requires PHP: 7.0
+-   WP requires at least: 4.9.0
+-   WP tested up to: 5.7
+-   WC requires at least: 4.8.1
+-   WC tested up to: 7.1.0
+-   Stable tag: 1.8.6
+-   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
 
@@ -53,114 +53,119 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 
 ## Translations
 
-* Run `composer make-pot` to update the translation file.
+-   Run `composer make-pot` to update the translation file.
 
 ## Changelog
 
+**1.8.6 (11.09.22)**
+
+-   Update: Tested to WooCommerce 7.1.0.
+-   Update: Migrate inline admin javascript to enqueued file.
+
 **1.8.5 (03.06.22)**
 
-* Bugfix: Rename translation file.
-* Update: Migrate inline javascript to file.
+-   Bugfix: Rename translation file.
+-   Update: Migrate inline javascript to file.
 
 **1.8.4 (01.11.22)**
 
-* Update: Tested to WooCommerce 6.1.0.
-* Update: WooCommerce 4.8.1 or higher required.
-* Bugfix: Display specific coupon validation messages during ajax checkout validation.
+-   Update: Tested to WooCommerce 6.1.0.
+-   Update: WooCommerce 4.8.1 or higher required.
+-   Bugfix: Display specific coupon validation messages during ajax checkout validation.
 
 **1.8.3 (03.28.21)**
 
-* Enhancement: Adds "Guest (No Account)" option to the roles restriction.
+-   Enhancement: Adds "Guest (No Account)" option to the roles restriction.
 
 **1.8.2**
 
-* Enhancement: Reduces use of coupon meta by only storing non-default values.
-* Update: Tested to WooCommerce  4.8.0.
-* Update: PHP 7.0 or higher required.
-* Update: WooCommerce 3.9.0 or higher required.
+-   Enhancement: Reduces use of coupon meta by only storing non-default values.
+-   Update: Tested to WooCommerce 4.8.0.
+-   Update: PHP 7.0 or higher required.
+-   Update: WooCommerce 3.9.0 or higher required.
 
 **1.8.1 (06.14.20)**
 
-* Enhancement: Add all countries easily for country restriction.
-* Enhancement: Improved automated testing suite.
-* Update: Tested to WooCommerce 4.2.0.
+-   Enhancement: Add all countries easily for country restriction.
+-   Enhancement: Improved automated testing suite.
+-   Update: Tested to WooCommerce 4.2.0.
 
 **1.8.0 (09.25.19)**
 
-* Enhancement: Adds feature to restrict coupon by user role.
-* Enhancement: Zip code restrictions now allow wildcard matches.
-* Enhancement: Filter to skip pre-checkout validation.
-* Bugfix: If user is logged in and has no orders associated with their account but does have previous guest orders, those guest orders will now be checked to verify if customer is a new customer when "check guest orders" is selected.
+-   Enhancement: Adds feature to restrict coupon by user role.
+-   Enhancement: Zip code restrictions now allow wildcard matches.
+-   Enhancement: Filter to skip pre-checkout validation.
+-   Bugfix: If user is logged in and has no orders associated with their account but does have previous guest orders, those guest orders will now be checked to verify if customer is a new customer when "check guest orders" is selected.
 
 **1.7.2 (03.12.19)**
 
-* Bugfix: Fixes 500 when saving coupons in specific server environments.
+-   Bugfix: Fixes 500 when saving coupons in specific server environments.
 
 **1.7.1 (03.03.19)**
 
-* Enhancement: Adds feature to restrict coupon by state.
+-   Enhancement: Adds feature to restrict coupon by state.
 
 **1.7.0 (02.11.19)**
 
-* Update: New setting for new/existing customer verification method. Defaults to account check.
-* Fix: Resolves bug applying coupon when there is no session (subscription renewals). Props @giantpeach.
+-   Update: New setting for new/existing customer verification method. Defaults to account check.
+-   Fix: Resolves bug applying coupon when there is no session (subscription renewals). Props @giantpeach.
 
 **1.6.2 (07.17.18)**
 
-* Fix: PHP5.6 compatibility fixes for onboarding script.
+-   Fix: PHP5.6 compatibility fixes for onboarding script.
 
 **1.6.1 (06.21.18)**
 
-* Update: Use WooCommerce data store methods for saving and reading coupon meta.
-* Update: WC_Coupon_Restrictions() now returns shared instance of class rather than singleton.
-* Fix: Display onboarding notice on initial activation.
-* Fix: If the session data is blank for country or zipcode, a coupon with location restrictions will now apply until session or checkout has data to validate it.
+-   Update: Use WooCommerce data store methods for saving and reading coupon meta.
+-   Update: WC_Coupon_Restrictions() now returns shared instance of class rather than singleton.
+-   Fix: Display onboarding notice on initial activation.
+-   Fix: If the session data is blank for country or zipcode, a coupon with location restrictions will now apply until session or checkout has data to validate it.
 
 **1.6.0 (06.15.18)**
 
-* Enhancement: Coupon validation now uses stored session data.
-* Enhancement: Checkout validation now uses $posted data.
-* Update: Additional unit and integration tests.
-* Update: Returns a main instance of the class to avoid the need for globals.
+-   Enhancement: Coupon validation now uses stored session data.
+-   Enhancement: Checkout validation now uses $posted data.
+-   Update: Additional unit and integration tests.
+-   Update: Returns a main instance of the class to avoid the need for globals.
 
 **1.5.0 (05.17.18)**
 
-* Update: Improve coupon validation messages.
-* Update: Use "Zip code" as default label.
-* Update: Improve customer restriction UX. Use radio buttons rather than select.
-* Update: Adds "Location Restrictions" checkbox. Additional options display when checked.
-* Update: Country restriction only permits selection of countries that shop currently sells to.
-* Update: New onboarding flow that shows where the new coupon options are located.
-* Fix: Bug with new customer coupon validation at checkout.
+-   Update: Improve coupon validation messages.
+-   Update: Use "Zip code" as default label.
+-   Update: Improve customer restriction UX. Use radio buttons rather than select.
+-   Update: Adds "Location Restrictions" checkbox. Additional options display when checked.
+-   Update: Country restriction only permits selection of countries that shop currently sells to.
+-   Update: New onboarding flow that shows where the new coupon options are located.
+-   Fix: Bug with new customer coupon validation at checkout.
 
 **1.4.1 (02.15.18)**
 
-* Update: Remove upgrade routine.
+-   Update: Remove upgrade routine.
 
 **1.4.0 (12.27.17)**
 
-* Enhancement: Adds option to restrict location based on shipping or billing address.
-* Enhancement: Adds option to restrict to postal code or zip code.
-* Update: Use WooCommerce order wrapper to fetch orders.
-* Update: Organize plugin into multiple classes.
-* Update: Upgrade script for sites using earlier version of plugin.
-* Update: Unit test framework added.
+-   Enhancement: Adds option to restrict location based on shipping or billing address.
+-   Enhancement: Adds option to restrict to postal code or zip code.
+-   Update: Use WooCommerce order wrapper to fetch orders.
+-   Update: Organize plugin into multiple classes.
+-   Update: Upgrade script for sites using earlier version of plugin.
+-   Update: Unit test framework added.
 
 **1.3.0 (01.31.17)**
 
-* Enhancement: Adds option to restrict to existing customers.
-* Enhancement: Adds option to restrict by shipping country.
-* Update: Compatibility updates for WooCommerce 2.7.0.
+-   Enhancement: Adds option to restrict to existing customers.
+-   Enhancement: Adds option to restrict by shipping country.
+-   Update: Compatibility updates for WooCommerce 2.7.0.
 
 **1.2.0 (11.25.16)**
 
-* Update: Compatibility updates for WooCommerce 2.6.8.
+-   Update: Compatibility updates for WooCommerce 2.6.8.
 
 **1.1.0 (12.28.15)**
 
-* Fix: Coupons without the new customer restriction were improperly marked invalid for logged in users.
-* Fix: Filter woocommerce_coupon_is_valid in addition to woocommerce_coupon_error.
+-   Fix: Coupons without the new customer restriction were improperly marked invalid for logged in users.
+-   Fix: Filter woocommerce_coupon_is_valid in addition to woocommerce_coupon_error.
 
 **1.0.0 (06.18.15)**
 
-* Initial release.
+-   Initial release.

@@ -69,7 +69,7 @@ class WC_Coupon_Restrictions_Validation {
 		// Gets the email if it is in the session and valid.
 		$email = $this->get_email_from_session( $session );
 
-		if ( $email ) :
+		if ( $email ) {
 			// Validate customer restrictions.
 			$customer = $this->session_validate_customer_restrictions( $coupon, $email );
 			if ( false === $customer ) {
@@ -82,7 +82,7 @@ class WC_Coupon_Restrictions_Validation {
 				add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_role_restriction' ), 10, 3 );
 				return false;
 			}
-		endif;
+		}
 
 		// Validate location restrictions.
 		$location = $this->session_validate_location_restrictions( $coupon, $session );
@@ -150,12 +150,12 @@ class WC_Coupon_Restrictions_Validation {
 
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 
-		if ( 'new' === $customer_restriction_type ) :
+		if ( 'new' === $customer_restriction_type ) {
 			// If customer has purchases, coupon is not valid.
 			if ( $this->is_returning_customer( $email ) ) {
 				return false;
 			}
-		endif;
+		}
 
 		return true;
 	}
@@ -173,11 +173,11 @@ class WC_Coupon_Restrictions_Validation {
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 
 		// If customer has purchases, coupon is valid.
-		if ( 'existing' === $customer_restriction_type ) :
+		if ( 'existing' === $customer_restriction_type ) {
 			if ( ! $this->is_returning_customer( $email ) ) {
 				return false;
 			}
-		endif;
+		}
 
 		return true;
 	}
@@ -503,7 +503,7 @@ class WC_Coupon_Restrictions_Validation {
 	 */
 	public function validate_coupons_after_checkout( $posted ) {
 
-		if ( ! empty( WC()->cart->applied_coupons ) ) :
+		if ( ! empty( WC()->cart->applied_coupons ) ) {
 
 			// If no billing email is set, we'll default to empty string.
 			// WooCommerce validation should catch this before we do.
@@ -511,19 +511,18 @@ class WC_Coupon_Restrictions_Validation {
 				$posted['billing_email'] = '';
 			}
 
-			foreach ( WC()->cart->applied_coupons as $code ) :
+			foreach ( WC()->cart->applied_coupons as $code ) {
 
 				$coupon = new WC_Coupon( $code );
 
-				if ( $coupon->is_valid() ) :
+				if ( $coupon->is_valid() ) {
 					$this->checkout_validate_new_customer_restriction( $coupon, $code, $posted );
 					$this->checkout_validate_existing_customer_restriction( $coupon, $code, $posted );
 					$this->checkout_validate_location_restrictions( $coupon, $code, $posted );
 					$this->checkout_validate_role_restriction( $coupon, $code, $posted );
-				endif;
-
-			endforeach;
-		endif;
+				}
+			}
+		}
 	}
 
 	/**
@@ -742,12 +741,12 @@ class WC_Coupon_Restrictions_Validation {
 		$user = get_user_by( 'email', $email );
 
 		// If there is a user account, we can check if customer is_paying_customer.
-		if ( $user ) :
+		if ( $user ) {
 			$customer = new WC_Customer( $user->ID );
 			if ( $customer->get_is_paying_customer() ) {
 				return true;
 			}
-		endif;
+		}
 
 		// If there isn't a user account or user account ! is_paying_customer
 		// we can check against previous guest orders.

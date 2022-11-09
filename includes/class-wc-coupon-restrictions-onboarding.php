@@ -18,7 +18,6 @@ class WC_Coupon_Restrictions_Onboarding {
 	* Init the class.
 	*/
 	public function init() {
-
 		// Gets the base file for plugin.
 		$base = WC_Coupon_Restrictions::plugin_base();
 
@@ -27,8 +26,7 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		// Transient is set in WC_Coupon_Restrictions->upgrade_routine()
 		// when plugin is activated for the first time.
-		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
-
+		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) {
 			// Loads the notice script and dismiss notice script.
 			add_action( 'admin_enqueue_scripts', array( $this, 'init_install_notice' ) );
 
@@ -37,8 +35,7 @@ class WC_Coupon_Restrictions_Onboarding {
 
 			// Deletes the transient via ajax (when user dismisses notice).
 			add_action( 'wp_ajax_wc_customer_coupons_dismiss_notice', array( $this, 'dismiss_notice_via_ajax' ) );
-
-		endif;
+		}
 
 		// Initialize the pointers for onboarding flow.
 		add_action( 'admin_enqueue_scripts', array( $this, 'init_pointers_for_screen' ) );
@@ -52,19 +49,19 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @return void
 	 */
 	public function init_install_notice() {
-		if ( current_user_can( 'manage_options' ) ) :
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
-			// Display the onboarding notice.
-			add_action( 'admin_notices', array( $this, 'install_notice' ) );
+		// Display the onboarding notice.
+		add_action( 'admin_notices', array( $this, 'install_notice' ) );
 
-			// Loads jQuery if not already available.
-			wp_enqueue_script( 'jquery-core' );
+		// Loads jQuery if not already available.
+		wp_enqueue_script( 'jquery-core' );
 
-			// Inline script deletes the transient when notice is dismissed.
-			$notice_dismiss_script = $this->install_notice_dismiss();
-			wp_add_inline_script( 'jquery-core', $notice_dismiss_script );
-
-		endif;
+		// Inline script deletes the transient when notice is dismissed.
+		$notice_dismiss_script = $this->install_notice_dismiss();
+		wp_add_inline_script( 'jquery-core', $notice_dismiss_script );
 	}
 
 	/**
@@ -97,7 +94,8 @@ class WC_Coupon_Restrictions_Onboarding {
 	public function dismiss_notice_via_query() {
 		if (
 			current_user_can( 'manage_options' ) &&
-			isset( $_GET['woocommerce-coupon-restriction-pointers'] ) ) {
+			isset( $_GET['woocommerce-coupon-restriction-pointers'] )
+		) {
 			delete_transient( 'woocommerce-coupon-restrictions-activated' );
 		}
 	}
@@ -129,7 +127,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @since 1.5.0
 	 */
 	public function install_notice() {
-		if ( current_user_can( 'manage_options' ) ) :
+		if ( current_user_can( 'manage_options' ) ) {
 			$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
 			?>
 			<div class="updated notice is-dismissible woocommerce-message" data-woocommerce-coupon-restrictions="true" style="border-left-color: #cc99c2">
@@ -139,7 +137,7 @@ class WC_Coupon_Restrictions_Onboarding {
 				</p>
 			</div>
 			<?php
-		endif;
+		}
 	}
 
 	/**
@@ -308,17 +306,17 @@ class WC_Coupon_Restrictions_Onboarding {
 		wp_enqueue_style( 'wp-pointer' );
 		wp_enqueue_script( 'wp-pointer' );
 
-		$path_to_js_file = esc_url( WC_Coupon_Restrictions::plugin_asset_path() . '/assets/onboarding.js' );
+		$file = esc_url( WC_Coupon_Restrictions::plugin_asset_path() . '/assets/onboarding.js' );
 		wp_register_script(
-			'wccr_onboarding_pointers',
-			$path_to_js_file,
+			'wccr-onboarding-pointers',
+			$file,
 			array( 'wp-pointer' ),
-			filemtime( $path_to_js_file ),
+			'1.8.6',
 			true
 		);
 
 		wp_localize_script(
-			'wccr_onboarding_pointers',
+			'wccr-onboarding-pointers',
 			'WCCR_POINTERS',
 			array(
 				'pointers' => $pointers,
@@ -328,7 +326,7 @@ class WC_Coupon_Restrictions_Onboarding {
 			)
 		);
 
-		wp_enqueue_script( 'wccr_onboarding_pointers' );
+		wp_enqueue_script( 'wccr-onboarding-pointers' );
 	}
 
 }

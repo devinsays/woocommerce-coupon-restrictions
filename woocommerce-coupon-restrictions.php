@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://woocommerce.com/products/woocommerce-coupon-restrictions/
  * Description: Adds additional coupon restrictions. Coupons can be restricted to new customers, existing customers, or specific locations.
- * Version: 1.8.5
+ * Version: 1.8.6
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Developer: Devin Price
@@ -13,7 +13,7 @@
  *
  * Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
  * WC requires at least: 4.8.1
- * WC tested up to: 6.2.1
+ * WC tested up to: 7.1.0
  *
  * Copyright: © 2015-2022 DevPress.
  * License: GNU General Public License v3.0
@@ -25,7 +25,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
+if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 	class WC_Coupon_Restrictions {
 
 		/**
@@ -44,7 +44,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		 * @static
 		 * @since  1.4.0
 		 */
-		public $version = '1.8.5';
+		public $version = '1.8.6';
 
 		/**
 		 * Required WooCommerce Version.
@@ -179,9 +179,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		 * @return void
 		 */
 		public function includes() {
-
 			if ( is_admin() ) {
-
 				// Onboarding actions when plugin is first installed.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-onboarding.php';
 				$this->onboarding = new WC_Coupon_Restrictions_Onboarding();
@@ -195,11 +193,9 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 				$this->settings = new WC_Coupon_Restrictions_Settings();
 
 			} else {
-
 				// Validates coupons.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation.php';
 				$this->validation = new WC_Coupon_Restrictions_Validation();
-
 			}
 		}
 
@@ -265,7 +261,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 	}
-endif;
+}
 
 /**
  * Public function to access the shared instance of WC_Coupon_Restrictions.
