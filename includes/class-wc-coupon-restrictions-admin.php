@@ -128,7 +128,7 @@ class WC_Coupon_Restrictions_Admin {
 			array(
 				'id'          => 'location_restrictions',
 				'label'       => __( 'Use location restrictions', 'woocommerce-coupon-restrictions' ),
-				'description' => __( 'Displays and enables location restriction options.', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Display and enable location restriction options.', 'woocommerce-coupon-restrictions' ),
 			)
 		);
 		?>
