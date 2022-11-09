@@ -57,10 +57,10 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 
 ## Changelog
 
-**1.8.6 (11.08.22)**
+**1.8.6 (11.09.22)**
 
--   Update: Move inline admin javascript to enqueued file.
 -   Update: Tested to WooCommerce 7.1.0.
+-   Update: Migrate inline admin javascript to enqueued file.
 
 **1.8.5 (03.06.22)**
 
