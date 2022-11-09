@@ -18,7 +18,6 @@ class WC_Coupon_Restrictions_Onboarding {
 	* Init the class.
 	*/
 	public function init() {
-
 		// Gets the base file for plugin.
 		$base = WC_Coupon_Restrictions::plugin_base();
 
@@ -27,8 +26,7 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		// Transient is set in WC_Coupon_Restrictions->upgrade_routine()
 		// when plugin is activated for the first time.
-		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) :
-
+		if ( get_transient( 'woocommerce-coupon-restrictions-activated' ) ) {
 			// Loads the notice script and dismiss notice script.
 			add_action( 'admin_enqueue_scripts', array( $this, 'init_install_notice' ) );
 
@@ -37,8 +35,7 @@ class WC_Coupon_Restrictions_Onboarding {
 
 			// Deletes the transient via ajax (when user dismisses notice).
 			add_action( 'wp_ajax_wc_customer_coupons_dismiss_notice', array( $this, 'dismiss_notice_via_ajax' ) );
-
-		endif;
+		}
 
 		// Initialize the pointers for onboarding flow.
 		add_action( 'admin_enqueue_scripts', array( $this, 'init_pointers_for_screen' ) );
@@ -130,7 +127,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @since 1.5.0
 	 */
 	public function install_notice() {
-		if ( current_user_can( 'manage_options' ) ) :
+		if ( current_user_can( 'manage_options' ) ) {
 			$url = admin_url( 'post-new.php?post_type=shop_coupon&woocommerce-coupon-restriction-pointers=1' );
 			?>
 			<div class="updated notice is-dismissible woocommerce-message" data-woocommerce-coupon-restrictions="true" style="border-left-color: #cc99c2">
@@ -140,7 +137,7 @@ class WC_Coupon_Restrictions_Onboarding {
 				</p>
 			</div>
 			<?php
-		endif;
+		}
 	}
 
 	/**

@@ -25,7 +25,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
+if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 	class WC_Coupon_Restrictions {
 
 		/**
@@ -179,9 +179,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		 * @return void
 		 */
 		public function includes() {
-
 			if ( is_admin() ) {
-
 				// Onboarding actions when plugin is first installed.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-onboarding.php';
 				$this->onboarding = new WC_Coupon_Restrictions_Onboarding();
@@ -195,11 +193,9 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 				$this->settings = new WC_Coupon_Restrictions_Settings();
 
 			} else {
-
 				// Validates coupons.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation.php';
 				$this->validation = new WC_Coupon_Restrictions_Validation();
-
 			}
 		}
 
@@ -265,7 +261,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) :
 		}
 
 	}
-endif;
+}
 
 /**
  * Public function to access the shared instance of WC_Coupon_Restrictions.
