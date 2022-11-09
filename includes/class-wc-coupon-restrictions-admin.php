@@ -19,6 +19,9 @@ class WC_Coupon_Restrictions_Admin {
 	* Init the class.
 	*/
 	public function init() {
+		// Enqueues javascript.
+		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
+
 		// Adds metabox to usage restriction fields.
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'role_restrictions' ), 10, 2 );
@@ -223,11 +226,7 @@ class WC_Coupon_Restrictions_Admin {
 		echo '</div>'; // .woocommerce-coupon-restrictions-locations
 		echo '</div>'; // .options-group
 
-		// Calls the global instance for PHP5.6 compatibility.
-		$js = WC_Coupon_Restrictions()->admin->location_restrictions_admin_js();
-
-		// Enqueue the inline script.
-		wc_enqueue_js( $js );
+		wp_enqueue_script( 'wccr-admin' );
 	}
 
 	/**
@@ -260,43 +259,6 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Returns all countries if above conditions are not met.
 		return $countries;
-	}
-
-	/**
-	 * Outputs javascript to be enqueued on the coupon admin screen.
-	 *
-	 * @since  1.5.0
-	 * @return void
-	 */
-	public static function location_restrictions_admin_js() {
-		$js = "
-			var location_restrictions_group = document.querySelector('.woocommerce-coupon-restrictions-locations');
-			var location_restrictions_cb = document.querySelector('#location_restrictions');
-			if ( location_restrictions_cb.checked ) {
-				location_restrictions_group.removeAttribute('style');
-			}
-			location_restrictions_cb.addEventListener( 'change', function() {
-				if ( this.checked ) {
-					location_restrictions_group.removeAttribute('style');
-				} else {
-					location_restrictions_group.style.display = 'none';
-				}
-			});
-		";
-
-		$js .= "
-			document.querySelector('#wccr-add-all-countries').addEventListener( 'click', function() {
-				jQuery('#wccr-restricted-countries').select2('destroy').find('option').prop('selected', 'selected').end().select2();
-			});
-
-			document.querySelector('#wccr-clear-all-countries').addEventListener( 'click', function() {
-				jQuery('#wccr-restricted-countries').select2('destroy').find('option').prop('selected', false).end().select2();
-			});
-		";
-
-		// Strip line breaks and extra whitespace before returning.
-		$js = preg_replace( '/\s+/', ' ', $js );
-		return trim( $js );
 	}
 
 	/**
@@ -403,6 +365,22 @@ class WC_Coupon_Restrictions_Admin {
 		}
 
 		return $textarea;
+	}
+
+	/**
+	 * Registers javascript.
+	 *
+	 * @return void
+	 */
+	public function scripts() {
+		$file = esc_url( WC_Coupon_Restrictions::plugin_asset_path() . 'assets/admin.js' );
+		wp_register_script(
+			'wccr-admin',
+			$file,
+			array( 'jquery' ),
+			'1.8.6',
+			true
+		);
 	}
 
 }

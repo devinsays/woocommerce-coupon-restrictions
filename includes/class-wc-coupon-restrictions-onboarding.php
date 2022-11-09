@@ -52,19 +52,19 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * @return void
 	 */
 	public function init_install_notice() {
-		if ( current_user_can( 'manage_options' ) ) :
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
-			// Display the onboarding notice.
-			add_action( 'admin_notices', array( $this, 'install_notice' ) );
+		// Display the onboarding notice.
+		add_action( 'admin_notices', array( $this, 'install_notice' ) );
 
-			// Loads jQuery if not already available.
-			wp_enqueue_script( 'jquery-core' );
+		// Loads jQuery if not already available.
+		wp_enqueue_script( 'jquery-core' );
 
-			// Inline script deletes the transient when notice is dismissed.
-			$notice_dismiss_script = $this->install_notice_dismiss();
-			wp_add_inline_script( 'jquery-core', $notice_dismiss_script );
-
-		endif;
+		// Inline script deletes the transient when notice is dismissed.
+		$notice_dismiss_script = $this->install_notice_dismiss();
+		wp_add_inline_script( 'jquery-core', $notice_dismiss_script );
 	}
 
 	/**
@@ -97,7 +97,8 @@ class WC_Coupon_Restrictions_Onboarding {
 	public function dismiss_notice_via_query() {
 		if (
 			current_user_can( 'manage_options' ) &&
-			isset( $_GET['woocommerce-coupon-restriction-pointers'] ) ) {
+			isset( $_GET['woocommerce-coupon-restriction-pointers'] )
+		) {
 			delete_transient( 'woocommerce-coupon-restrictions-activated' );
 		}
 	}
@@ -308,17 +309,17 @@ class WC_Coupon_Restrictions_Onboarding {
 		wp_enqueue_style( 'wp-pointer' );
 		wp_enqueue_script( 'wp-pointer' );
 
-		$path_to_js_file = esc_url( WC_Coupon_Restrictions::plugin_asset_path() . '/assets/onboarding.js' );
+		$file = esc_url( WC_Coupon_Restrictions::plugin_asset_path() . '/assets/onboarding.js' );
 		wp_register_script(
-			'wccr_onboarding_pointers',
-			$path_to_js_file,
+			'wccr-onboarding-pointers',
+			$file,
 			array( 'wp-pointer' ),
-			filemtime( $path_to_js_file ),
+			'1.8.6',
 			true
 		);
 
 		wp_localize_script(
-			'wccr_onboarding_pointers',
+			'wccr-onboarding-pointers',
 			'WCCR_POINTERS',
 			array(
 				'pointers' => $pointers,
@@ -328,7 +329,7 @@ class WC_Coupon_Restrictions_Onboarding {
 			)
 		);
 
-		wp_enqueue_script( 'wccr_onboarding_pointers' );
+		wp_enqueue_script( 'wccr-onboarding-pointers' );
 	}
 
 }

@@ -1,5 +1,10 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2022-11-08 - version 1.8.6
+
+* Update: Move inline admin javascript to enqueued file.
+* Update: Tested to WooCommerce 7.1.0.
+
 2022-03-06 - version 1.8.5
 
 * Bugfix: Rename translation file.
