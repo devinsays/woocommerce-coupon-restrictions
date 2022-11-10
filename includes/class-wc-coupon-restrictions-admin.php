@@ -22,17 +22,20 @@ class WC_Coupon_Restrictions_Admin {
 		// Enqueues javascript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
 
-		// Adds metabox to usage restriction fields.
+		// Adds additional usage restriction fields.
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'role_restrictions' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ), 10, 2 );
 
-		// Saves the metabox.
+		// Adds additional usage limit fields.
+		add_action( 'woocommerce_coupon_options_usage_limit', array( $this, 'email_usage_limit' ), 10, 2 );
+
+		// Saves the meta fields.
 		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save' ), 10, 2 );
 	}
 
 	/**
-	 * Adds "new customer" and "existing customer" restriction checkboxes.
+	 * Adds "new customer" and "existing customer" restriction radio buttons.
 	 *
 	 * @since  1.3.0
 	 *
@@ -230,6 +233,31 @@ class WC_Coupon_Restrictions_Admin {
 	}
 
 	/**
+	 * Adds email usage limit to prevent similar emails from being used.
+	 *
+	 * @since  1.7.0
+	 *
+	 * @param int $coupon_id
+	 * @param object $coupon
+	 * @return void
+	 */
+	public static function email_usage_limit( $coupon_id, $coupon ) {
+		$value = esc_attr( $coupon->get_meta( 'prevent_similar_emails', true ) );
+
+		// Default to none if no value has been saved.
+		$value = $value ? $value : 'none';
+
+		woocommerce_wp_checkbox(
+			array(
+				'id'          => 'prevent_similar_emails',
+				'label'       => __( 'Prevent similar emails', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Many email services ignore periods and anything after a "+". This setting prevents customers from using similar emails to exceed the coupon usage limit.', 'woocommerce-coupon-restrictions' ),
+				'value'       => wc_bool_to_string( $value ),
+			)
+		);
+	}
+
+	/**
 	 * Returns an array of countries the shop sells to.
 	 *
 	 * @since  1.5.0
@@ -336,6 +364,15 @@ class WC_Coupon_Restrictions_Admin {
 		$postcode_restriction = self::sanitize_comma_seperated_textarea( $postcode_restriction );
 		if ( $postcode_restriction ) {
 			$coupon->update_meta_data( $id, $postcode_restriction );
+		} else {
+			$coupon->delete_meta_data( $id );
+		}
+
+		// Sanitize prevent similar emails checkbox.
+		$id                     = 'prevent_similar_emails';
+		$prevent_similar_emails = isset( $_POST[ $id ] ) ? 'yes' : 'no';
+		if ( 'yes' === $prevent_similar_emails ) {
+			$coupon->update_meta_data( $id, $prevent_similar_emails );
 		} else {
 			$coupon->delete_meta_data( $id );
 		}
