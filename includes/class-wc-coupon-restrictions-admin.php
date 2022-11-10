@@ -251,7 +251,7 @@ class WC_Coupon_Restrictions_Admin {
 			array(
 				'id'          => 'prevent_similar_emails',
 				'label'       => __( 'Prevent similar emails', 'woocommerce-coupon-restrictions' ),
-				'description' => __( 'Many email services ignore periods and anything after a "+". This setting prevents customers from using similar emails to exceed the coupon usage limit.', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Many email services ignore periods and anything after a "+". Check this box to prevent customers from using a similar email address to exceed the coupon usage limit.', 'woocommerce-coupon-restrictions' ),
 				'value'       => wc_bool_to_string( $value ),
 			)
 		);
