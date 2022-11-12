@@ -320,9 +320,9 @@ class WC_Coupon_Restrictions_Onboarding {
 			'WCCR_POINTERS',
 			array(
 				'pointers' => $pointers,
-				'close'    => esc_html__( 'Dismiss', 'woocommerce-customer-coupons' ),
-				'next'     => esc_html__( 'Next', 'woocommerce-customer-coupons' ),
-				'enjoy'    => esc_html__( 'Enjoy!', 'woocommerce-customer-coupons' ),
+				'close'    => esc_html__( 'Dismiss', 'woocommerce-coupon-restrictions' ),
+				'next'     => esc_html__( 'Next', 'woocommerce-coupon-restrictions' ),
+				'enjoy'    => esc_html__( 'Enjoy!', 'woocommerce-coupon-restrictions' ),
 			)
 		);
 
