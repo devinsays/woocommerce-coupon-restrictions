@@ -12,20 +12,16 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	public $coupon;
 
 	public function setUp() {
-
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'customer_restriction_type', 'existing' );
 		$this->coupon = $coupon;
-
 	}
 
 	/**
 	 * Coupon will not apply because $posted data contains a new customer.
 	 */
 	public function test_existing_customer_restriction_with_checkout_not_valid() {
-
-		// Get data from setup.
 		$coupon = $this->coupon;
 
 		// Applies the coupon. This should apply since no session is set.
@@ -42,14 +38,12 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons are still in cart after checkout validation.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Coupon will be valid because $posted data contains an existing customer.
 	 */
 	public function test_existing_customer_restriction_checkout_not_valid() {
-
 		// Create a customer.
 		$customer = WC_Helper_Customer::create_customer();
 
@@ -82,14 +76,12 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 
 	public function tearDown() {
-
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
 
 		// Deletes the coupon.
 		$this->coupon->delete();
-
 	}
 
 }

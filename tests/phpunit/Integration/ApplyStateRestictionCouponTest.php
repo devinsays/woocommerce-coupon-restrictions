@@ -12,7 +12,6 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 	public $session;
 
 	public function setUp() {
-
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$customer->set_billing_state( 'TX' );
@@ -43,15 +42,12 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 
 		// Set the current customer.
 		wp_set_current_user( $customer->get_id() );
-
 	}
 
 	/**
 	 * Tests applying a coupon with country restriction and valid customer.
 	 */
 	public function test_coupon_state_restriction_with_valid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		// Apply state restriction to single state "TX"
@@ -63,15 +59,12 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Tests applying a coupon with a two state restriction and valid customer.
 	 */
 	public function test_coupon_two_state_restriction_with_valid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		// Apply country restiction to two states "TX" and "CA"
@@ -82,15 +75,12 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Tests applying a coupon with a two country restriction and non-valid customer.
 	 */
 	public function test_coupon_state_restriction_with_nonvalid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		// Apply state restriction single state "CA".
@@ -102,11 +92,9 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	public function tearDown() {
-
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -116,7 +104,6 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 
 		$this->customer->delete();
 		$this->coupon->delete();
-
 	}
 
 }

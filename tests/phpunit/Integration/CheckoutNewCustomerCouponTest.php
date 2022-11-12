@@ -12,7 +12,6 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 	public $coupon;
 
 	public function setUp() {
-
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'customer_restriction_type', 'new' );
@@ -24,8 +23,6 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 	 * Coupon will apply because $posted data contains a new customer.
 	 */
 	public function test_new_customer_restriction_with_checkout_valid() {
-
-		// Get data from setup.
 		$coupon = $this->coupon;
 
 		// Applies the coupon. This should apply since no session is set.
@@ -49,7 +46,6 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 	 * Coupon will be removed because $posted data contains an existing customer.
 	 */
 	public function test_new_customer_restriction_with_checkout_not_valid() {
-
 		// Create a customer.
 		$customer = WC_Helper_Customer::create_customer();
 
@@ -76,7 +72,6 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
@@ -84,8 +79,6 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 	 * is set to 'accounts-orders', checkout should fail.
 	 */
 	public function test_customer_has_previous_guest_order() {
-
-		// Get data from setup.
 		$coupon = $this->coupon;
 
 		// Email to use for this test.
@@ -98,7 +91,7 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$order->save();
 
 		// Create a customer.
-		$customer = WC_Helper_Customer::create_customer( 'customer', 'password', $email );
+		WC_Helper_Customer::create_customer( 'customer', 'password', $email );
 
 		// Adds a coupon restricted to new customers.
 		// This should return true because customer doesn't have any purchases applied to their account.
@@ -132,14 +125,12 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 
 
 	public function tearDown() {
-
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
 
 		// Deletes the coupon.
 		$this->coupon->delete();
-
 	}
 
 }

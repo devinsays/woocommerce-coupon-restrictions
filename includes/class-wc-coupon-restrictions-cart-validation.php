@@ -9,7 +9,6 @@
 defined( 'ABSPATH' ) || exit;
 
 class WC_Coupon_Restrictions_Cart_Validation {
-
 	/**
 	 * Constructor.
 	 */

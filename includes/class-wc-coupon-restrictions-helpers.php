@@ -17,7 +17,6 @@ class WC_Coupon_Restrictions_Helpers {
 	 * @return boolean
 	 */
 	public static function is_returning_customer( $email ) {
-
 		// Checks if there is an account associated with the $email.
 		$user = get_user_by( 'email', $email );
 

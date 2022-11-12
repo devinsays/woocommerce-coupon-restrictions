@@ -11,7 +11,6 @@ class Apply_Basic_Coupon_Test extends WP_UnitTestCase {
 	 * Tests that generic coupons can be applied.
 	 */
 	public function test_apply_coupon() {
-
 		// Create a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$customer_id = $customer->get_id();
@@ -32,7 +31,6 @@ class Apply_Basic_Coupon_Test extends WP_UnitTestCase {
 
 		$coupon->delete();
 		$customer->delete();
-
 	}
 
 }

@@ -12,7 +12,6 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 	public $customer;
 
 	public function setUp() {
-
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'role_restriction', ['administrator'] );
@@ -21,15 +20,12 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$this->customer = $customer;
-
 	}
 
 	/**
 	 * Coupon will be removed because user role does not match restriction.
 	 */
 	public function test_coupon_removed_if_role_restriction_invalid() {
-
-		// Get data from setup.
 		$coupon = $this->coupon;
 		$customer = $this->customer;
 
@@ -51,15 +47,12 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies coupon has been removed.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Coupon will remain applied because user role matches restriction.
 	 */
 	public function test_coupon_applies_if_role_restriction_valid() {
-
-		// Get data from setup.
 		$coupon = $this->coupon;
 		$customer = $this->customer;
 
@@ -81,14 +74,12 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies coupon remains applied.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Coupon will apply because customer is guest and guest role is permitted.
 	 */
 	public function test_coupon_success_if_guest_and_guest_role_set() {
-
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		$coupon->update_meta_data( 'role_restriction', ['woocommerce-coupon-restrictions-guest'] );
@@ -108,14 +99,12 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies coupon remains applied.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Coupon will not apply because customer is guest and guest role is not permitted.
 	 */
 	public function test_coupon_fails_if_guest_and_guest_role_not_set() {
-
 		// Get data from setup for coupon restricted to administrators (no guest role).
 		$coupon = $this->coupon;
 
@@ -138,7 +127,6 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 
 	public function tearDown() {
-
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
@@ -146,7 +134,6 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		// Deletes objects.
 		$this->coupon->delete();
 		$this->customer->delete();
-
 	}
 
 }

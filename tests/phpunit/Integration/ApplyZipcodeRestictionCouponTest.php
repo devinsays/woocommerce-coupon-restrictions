@@ -12,7 +12,6 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 	public $session;
 
 	public function setUp() {
-
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$customer->set_billing_postcode( '78703' );
@@ -43,15 +42,12 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 
 		// Set the current customer.
 		wp_set_current_user( $customer->get_id() );
-
 	}
 
 	/**
 	 * Tests applying a coupon with postcode restriction and valid customer.
 	 */
 	public function test_postcode_restriction_with_valid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		update_post_meta( $coupon->get_id(), 'postcode_restriction', '78703' );
@@ -60,15 +56,12 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Tests applying a postcode restriction and non-valid customer.
 	 */
 	public function test_coupon_country_restriction_with_nonvalid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		update_post_meta( $coupon->get_id(), 'postcode_restriction', '000000' );
@@ -77,15 +70,12 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Tests applying a coupon with postcode restriction and valid customer.
 	 */
 	public function test_valid_postcode_restriction_wildcard() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
 
 		update_post_meta( $coupon->get_id(), 'postcode_restriction', '00000,787*,ALPHAZIP' );
@@ -94,12 +84,10 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 
 	public function tearDown() {
-
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -109,7 +97,6 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 
 		$this->customer->delete();
 		$this->coupon->delete();
-
 	}
 
 }

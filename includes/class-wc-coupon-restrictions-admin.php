@@ -74,7 +74,6 @@ class WC_Coupon_Restrictions_Admin {
 	 * @return void
 	 */
 	public static function role_restrictions( $coupon_id, $coupon ) {
-
 		$id     = 'role_restriction';
 		$title  = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );

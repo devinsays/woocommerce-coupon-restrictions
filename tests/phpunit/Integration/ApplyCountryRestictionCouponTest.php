@@ -96,7 +96,6 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
@@ -122,7 +121,6 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies the coupon has not been added to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
