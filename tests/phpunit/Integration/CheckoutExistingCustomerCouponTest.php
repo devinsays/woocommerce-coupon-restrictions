@@ -14,7 +14,8 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	public function setUp() {
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'customer_restriction_type', 'existing' );
+		$coupon->update_meta_data( 'customer_restriction_type', 'existing' );
+		$coupon->save();
 		$this->coupon = $coupon;
 	}
 

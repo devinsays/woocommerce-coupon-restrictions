@@ -5,7 +5,7 @@ use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 
-class Apply_Postcode_Restriction_Test extends WP_UnitTestCase {
+class Apply_Postcode_Restriction_Coupon_Test extends WP_UnitTestCase {
 	/** @var WC_Coupon */
 	public $coupon;
 
@@ -37,8 +37,9 @@ class Apply_Postcode_Restriction_Test extends WP_UnitTestCase {
 
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
-		update_post_meta( $coupon->get_id(), 'address_for_location_restrictions', 'billing' );
+		$coupon->update_meta_data( 'location_restrictions', 'yes' );
+		$coupon->update_meta_data( 'address_for_location_restrictions', 'billing' );
+		$coupon->save();
 		$this->coupon = $coupon;
 
 		// Set the current customer.
@@ -50,8 +51,8 @@ class Apply_Postcode_Restriction_Test extends WP_UnitTestCase {
 	 */
 	public function test_postcode_restriction_with_valid_customer() {
 		$coupon = $this->coupon;
-
-		update_post_meta( $coupon->get_id(), 'postcode_restriction', '78703' );
+		$coupon->update_meta_data( 'postcode_restriction', '78703' );
+		$coupon->save();
 
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
@@ -64,8 +65,8 @@ class Apply_Postcode_Restriction_Test extends WP_UnitTestCase {
 	 */
 	public function test_coupon_country_restriction_with_nonvalid_customer() {
 		$coupon = $this->coupon;
-
-		update_post_meta( $coupon->get_id(), 'postcode_restriction', '000000' );
+		$coupon->update_meta_data( 'postcode_restriction', '000000' );
+		$coupon->save();
 
 		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
@@ -78,8 +79,8 @@ class Apply_Postcode_Restriction_Test extends WP_UnitTestCase {
 	 */
 	public function test_valid_postcode_restriction_wildcard() {
 		$coupon = $this->coupon;
-
-		update_post_meta( $coupon->get_id(), 'postcode_restriction', '00000,787*,ALPHAZIP' );
+		$coupon->update_meta_data( 'postcode_restriction', '00000,787*,ALPHAZIP' );
+		$coupon->save();
 
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
