@@ -28,7 +28,7 @@ class WC_Coupon_Restrictions_Admin {
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ), 10, 2 );
 
 		// Adds additional usage limit fields.
-		add_action( 'woocommerce_coupon_options_usage_limit', array( $this, 'email_usage_limit' ), 10, 2 );
+		add_action( 'woocommerce_coupon_options_usage_limit', array( $this, 'usage_limits' ), 10, 2 );
 
 		// Saves the meta fields.
 		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save' ), 10, 2 );
@@ -233,7 +233,7 @@ class WC_Coupon_Restrictions_Admin {
 	}
 
 	/**
-	 * Adds email usage limit to prevent similar emails from being used.
+	 * Adds additional usage restrictions.
 	 *
 	 * @since  1.7.0
 	 *
@@ -241,18 +241,52 @@ class WC_Coupon_Restrictions_Admin {
 	 * @param object $coupon
 	 * @return void
 	 */
-	public static function email_usage_limit( $coupon_id, $coupon ) {
+	public static function usage_limits( $coupon_id, $coupon ) {
 		$value = esc_attr( $coupon->get_meta( 'prevent_similar_emails', true ) );
-
-		// Default to none if no value has been saved.
-		$value = $value ? $value : 'none';
-
 		woocommerce_wp_checkbox(
 			array(
 				'id'          => 'prevent_similar_emails',
 				'label'       => __( 'Prevent similar emails', 'woocommerce-coupon-restrictions' ),
 				'description' => __( 'Many email services ignore periods and anything after a "+". Check this box to prevent customers from using a similar email address to exceed the coupon usage limit.', 'woocommerce-coupon-restrictions' ),
 				'value'       => wc_bool_to_string( $value ),
+			)
+		);
+
+		// Usage limit per shipping address.
+		$value = $coupon->get_meta( 'usage_limit_per_shipping_address' ) ? $coupon->get_usage_limit_per_user( 'usage_limit_per_shipping_address' ) : '';
+		woocommerce_wp_text_input(
+			array(
+				'id'                => 'usage_limit_per_shipping_address',
+				'label'             => __( 'Usage limit per shipping address', 'woocommerce-coupon-restrictions' ),
+				'placeholder'       => esc_attr__( 'Unlimited usage', 'woocommerce-coupon-restrictions' ),
+				'description'       => __( 'How many times this coupon can be used with the same shipping address.', 'woocommerce-coupon-restrictions' ),
+				'desc_tip'          => true,
+				'class'             => 'short',
+				'type'              => 'number',
+				'custom_attributes' => array(
+					'step' => 1,
+					'min'  => 0,
+				),
+				'value'             => $value,
+			)
+		);
+
+		// Usage limit per IP address.
+		$value = $coupon->get_meta( 'usage_limit_per_ip_address' ) ? $coupon->get_usage_limit_per_user( 'usage_limit_per_ip_address' ) : '';
+		woocommerce_wp_text_input(
+			array(
+				'id'                => 'usage_limit_per_ip_address',
+				'label'             => __( 'Usage limit per IP address', 'woocommerce-coupon-restrictions' ),
+				'placeholder'       => esc_attr__( 'Unlimited usage', 'woocommerce-coupon-restrictions' ),
+				'description'       => __( 'How many times this coupon can be used with the same IP address.', 'woocommerce-coupon-restrictions' ),
+				'desc_tip'          => true,
+				'class'             => 'short',
+				'type'              => 'number',
+				'custom_attributes' => array(
+					'step' => 1,
+					'min'  => 0,
+				),
+				'value'             => $value,
 			)
 		);
 	}
