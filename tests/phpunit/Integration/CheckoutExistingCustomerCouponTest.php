@@ -1,6 +1,5 @@
 <?php
-
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;
@@ -77,7 +76,7 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-		
+
 		$order->delete();
 	}
 

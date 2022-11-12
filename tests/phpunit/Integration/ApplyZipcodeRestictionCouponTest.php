@@ -1,11 +1,9 @@
 <?php
-
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
-use WC_Mock_Session_Handler;
 
 class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 
@@ -81,7 +79,7 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 
 	}
-	
+
 	/**
 	 * Tests applying a coupon with postcode restriction and valid customer.
 	 */

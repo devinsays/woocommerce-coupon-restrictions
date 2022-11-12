@@ -1,9 +1,7 @@
 <?php
-
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
-use WC_Customer;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 use WC_Helper_Order;
@@ -20,7 +18,7 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'customer_restriction_type', 'new' );
 		$this->coupon = $coupon;
-		
+
 		// Create a customer.
 		$customer = WC_Helper_Customer::create_customer(
 			'customer',
@@ -88,7 +86,7 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 
 	}
-	
+
 	/**
 	 * Checks that "coupon_restrictions_customer_query" setting is working.
 	 */
@@ -96,20 +94,20 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Get data from setup.
 		$coupon = $this->coupon;
-		
+
 		// Create new order.
 		$guest_email = 'guest@woo.com';
 		$order = WC_Helper_Order::create_order();
 		$order->set_billing_email( $guest_email );
 		$order->set_status( 'completed' );
 		$order->save();
-		
+
 		// Create a mock customer session.
 		$session = array(
 			'email' => $guest_email
 		);
 		WC_Helper_Customer::set_customer_details( $session );
-		
+
 		// Sets coupon_restrictions_customer_query to search accounts only.
 		update_option( 'coupon_restrictions_customer_query', 'accounts' );
 
@@ -120,20 +118,20 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-		
+
 		// Sets coupon_restrictions_customer_query to now search guest orders.
 		update_option( 'coupon_restrictions_customer_query', 'accounts-orders' );
-		
+
 		// Remove coupon that had just been set.
 		WC()->cart->remove_coupons();
-		
+
 		// Adds a coupon restricted to new customers.
 		// This should return false because customer has a previous guest order.
 		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-		
+
 		delete_option( 'coupon_restrictions_customer_query' );
 
 	}

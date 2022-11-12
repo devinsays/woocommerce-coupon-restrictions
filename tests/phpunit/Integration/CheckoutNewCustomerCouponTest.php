@@ -1,6 +1,5 @@
 <?php
-
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;
@@ -79,37 +78,37 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 
 	}
-	
+
 	/**
 	 * If customer has previous guest order and coupon_restrictions_customer_query
 	 * is set to 'accounts-orders', checkout should fail.
 	 */
 	public function test_customer_has_previous_guest_order() {
-		
+
 		// Get data from setup.
 		$coupon = $this->coupon;
-		
+
 		// Email to use for this test.
 		$email = 'customer@woo.com';
-		
+
 		// Creates a new guest order.
 		$order = WC_Helper_Order::create_order();
 		$order->set_billing_email( $email );
 		$order->set_status( 'completed' );
 		$order->save();
-		
+
 		// Create a customer.
 		$customer = WC_Helper_Customer::create_customer( 'customer', 'password', $email );
-		
+
 		// Adds a coupon restricted to new customers.
 		// This should return true because customer doesn't have any purchases applied to their account.
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
-		
+
 		// Mock the posted data.
 		$posted = array(
 			'billing_email' => $email
 		);
-		
+
 		// Run the post checkout validation.
 		// Coupon will not be removed because coupon_restrictions_customer_query
 		// is set to 'acccounts' by default.
@@ -118,15 +117,15 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupons have been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-		
+
 		update_option( 'coupon_restrictions_customer_query', 'accounts-orders' );
-		
+
 		// Run the post checkout validation now with
 		// coupon_restrictions_customer_query set to 'accounts-orders'.
 		// Coupon will be removed this time.
 		$validation = new WC_Coupon_Restrictions_Validation();
 		$validation->validate_coupons_after_checkout( $posted );
-		
+
 		delete_option( 'coupon_restrictions_customer_query' );
 		$order->delete();
 	}

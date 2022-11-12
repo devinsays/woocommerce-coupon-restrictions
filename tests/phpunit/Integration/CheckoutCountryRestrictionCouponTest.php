@@ -1,5 +1,5 @@
 <?php
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Coupon;
@@ -26,7 +26,7 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 	public function test_checkout_country_restriction_with_valid_customer() {
 		$coupon = $this->coupon;
 
-		// Apply country restriction to single country "US"
+		// Apply country restriction to single country "US".
 		$coupon->update_meta_data( 'country_restriction', array( 'US' ) );
 		$coupon->save();
 

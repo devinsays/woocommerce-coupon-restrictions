@@ -1,5 +1,5 @@
 <?php
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Unit;
+namespace WooCommerce_Coupon_Restrictions\Tests\Unit;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;
