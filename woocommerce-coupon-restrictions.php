@@ -177,6 +177,10 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-settings.php';
 				new WC_Coupon_Restrictions_Settings();
 			} else {
+				// Validation helpers
+				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-helpers.php';
+				new WC_Coupon_Restrictions_Helpers();
+
 				// Validates coupons.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation.php';
 				$this->validation = new WC_Coupon_Restrictions_Validation();
