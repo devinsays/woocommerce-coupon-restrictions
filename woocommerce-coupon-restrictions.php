@@ -28,45 +28,19 @@ if ( ! defined( 'WPINC' ) ) {
 if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 	class WC_Coupon_Restrictions {
 
-		/**
-		 * The single instance of the class.
-		 *
-		 * @access public
-		 * @static
-		 * @since  1.8.6
-		 */
+		/** @var WC_Coupon_Restrictions */
 		public static $instance;
 
-		/**
-		 * Plugin Version.
-		 *
-		 * @access public
-		 * @static
-		 * @since  1.4.0
-		 */
+		/** @var string */
 		public $version = '1.8.6';
 
-		/**
-		 * Required WooCommerce Version.
-		 *
-		 * @access public
-		 * @since  1.4.0
-		 */
+		/** @var string */
 		public $required_woo = '4.8.1';
 
-		/**
-		 * Plugin path.
-		 *
-		 * @access public
-		 * @since  1.8.6
-		 */
+		/** @var string */
 		public $plugin_path = null;
 
-		/**
-		 * Instance of WC_Coupon_Restrictions_Validation.
-		 *
-		 * @var WC_Coupon_Restrictions_Validation
-		 */
+		/** @var WC_Coupon_Restrictions_Validation */
 		public $validation = null;
 
 		/**
@@ -104,7 +78,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		 * Plugin base file.
 		 * Used for activation hook and plugin links.
 		 *
-		 * @access public
 		 * @since  1.5.0
 		 */
 		public static function plugin_base() {
@@ -114,7 +87,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		/**
 		 * Plugin asset path.
 		 *
-		 * @access public
 		 * @since  1.8.5
 		 */
 		public static function plugin_asset_path() {
@@ -124,7 +96,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		/**
 		 * Check requirements on activation.
 		 *
-		 * @access public
 		 * @since  1.3.0
 		 */
 		public function load_plugin() {
@@ -138,7 +109,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		/**
 		 * Display a warning message if minimum version of WooCommerce check fails.
 		 *
-		 * @access public
 		 * @since  1.3.0
 		 * @return void
 		 */
@@ -149,7 +119,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		/**
 		 * Initialize the plugin.
 		 *
-		 * @access public
 		 * @since  1.3.0
 		 * @return void
 		 */
@@ -190,7 +159,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		/**
 		 * Runs an upgrade routine.
 		 *
-		 * @access public
 		 * @since  1.3.0
 		 * @return void
 		 */
@@ -226,7 +194,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
  * Public function to access the shared instance of WC_Coupon_Restrictions.
  *
  * @since  1.5.0
- * @return class WC_Coupon_Restrictions_Factory
+ * @return class WC_Coupon_Restrictions
  */
 function WC_Coupon_Restrictions() {
 	 return WC_Coupon_Restrictions::instance();

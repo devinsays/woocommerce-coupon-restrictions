@@ -3,6 +3,7 @@ namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Coupon;
+use WC_Coupon_Restrictions_Validation;
 
 class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 
@@ -37,7 +38,8 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		WC()->cart->apply_coupon( $coupon->get_code() );
 
 		// Run the post checkout validation.
-		WC_Coupon_Restrictions()->validation->validate_coupons_after_checkout( $posted );
+		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 1 coupon is still in cart after checkout validation.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
@@ -49,7 +51,6 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 	 * and customer billing_country is CA.
 	 */
 	public function test_checkout_country_restriction_with_not_valid_customer() {
-
 		$coupon = $this->coupon;
 
 		// Apply country restriction to single country "US"
@@ -66,22 +67,20 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		WC()->cart->apply_coupon( $coupon->get_code() );
 
 		// Run the post checkout validation.
-		WC_Coupon_Restrictions()->validation->validate_coupons_after_checkout( $posted );
+		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 0 coupons are still in cart after checkout validation.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	public function tearDown() {
-
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
 
 		// Deletes the coupon.
 		$this->coupon->delete();
-
 	}
 
 }
