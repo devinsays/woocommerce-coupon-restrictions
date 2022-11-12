@@ -5,7 +5,8 @@ use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 
-class Apply_Country_Restriction_Test extends WP_UnitTestCase {
+class Apply_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
+	/** @var WC_Coupon */
 	public $coupon;
 	public $customer;
 	public $session;

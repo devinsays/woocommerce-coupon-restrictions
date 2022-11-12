@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://woocommerce.com/products/woocommerce-coupon-restrictions/
  * Description: Adds additional coupon restrictions. Coupons can be restricted to new customers, existing customers, or specific locations.
- * Version: 1.8.6
+ * Version: 2.0.0
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Developer: Devin Price
@@ -32,16 +32,13 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public static $instance;
 
 		/** @var string */
-		public $version = '1.8.6';
+		public $version = '2.0.0';
 
 		/** @var string */
 		public $required_woo = '4.8.1';
 
 		/** @var string */
 		public $plugin_path = null;
-
-		/** @var WC_Coupon_Restrictions_Validation */
-		public $validation = null;
 
 		/**
 		 * Main WC_Coupon_Restrictions Instance.
@@ -145,15 +142,21 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				// Adds coupon meta fields.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-settings.php';
 				new WC_Coupon_Restrictions_Settings();
-			} else {
-				// Validation helpers
-				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-helpers.php';
-				new WC_Coupon_Restrictions_Helpers();
 
-				// Validates coupons.
-				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation.php';
-				$this->validation = new WC_Coupon_Restrictions_Validation();
+				return;
 			}
+
+			// Validation methods used for both cart and checkout validation.
+			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation.php';
+			new WC_Coupon_Restrictions_Validation();
+
+			// Validates coupons added to the cart.
+			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation-cart.php';
+			new WC_Coupon_Restrictions_Validation_Cart();
+
+			// Validates coupons on checkout.
+			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation-checkout.php';
+			new WC_Coupon_Restrictions_Validation_Checkout();
 		}
 
 		/**
@@ -163,7 +166,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		 * @return void
 		 */
 		public function upgrade_routine() {
-
 			$option = get_option( 'woocommerce-coupon-restrictions', false );
 
 			// If a previous version was installed, run any required updates.

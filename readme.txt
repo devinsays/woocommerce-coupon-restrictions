@@ -3,9 +3,9 @@
 Contributors: @downstairsdev
 Tags: woocommerce, coupon
 Requires at least: 4.9.0
-Tested up to: 5.7
+Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 1.8.6
+Stable tag: 2.0.0
 License: GPLv3 or later License
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 4.8.1

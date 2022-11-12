@@ -2,10 +2,10 @@
 
 -   Requires PHP: 7.0
 -   WP requires at least: 4.9.0
--   WP tested up to: 5.7
+-   WP tested up to: 6.0
 -   WC requires at least: 4.8.1
 -   WC tested up to: 7.1.0
--   Stable tag: 1.8.6
+-   Stable tag: 2.0.0
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
@@ -56,6 +56,10 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 -   Run `composer make-pot` to update the translation file.
 
 ## Changelog
+
+**2.0.0 (11.12.22)**
+
+-   Update: Major plugin rewrite.
 
 **1.8.6 (11.09.22)**
 

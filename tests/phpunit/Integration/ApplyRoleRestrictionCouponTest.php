@@ -6,7 +6,7 @@ use WC_Helper_Customer;
 use WC_Helper_Coupon;
 
 class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
-
+	/** @var WC_Coupon */
 	public $coupon;
 	public $customer;
 	public $session;

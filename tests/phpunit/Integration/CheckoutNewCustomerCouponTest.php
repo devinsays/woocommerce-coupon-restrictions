@@ -5,10 +5,10 @@ use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 use WC_Helper_Order;
-use WC_Coupon_Restrictions_Validation;
+use WC_Coupon_Restrictions_Validation_Checkout;
 
 class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
-
+	/** @var WC_Coupon */
 	public $coupon;
 
 	public function setUp() {
@@ -34,7 +34,7 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		);
 
 		// Run the post checkout validation.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 1 coupon is still in cart after checkout validation.
@@ -67,7 +67,7 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Run the post checkout validation.
 		// Coupon will be removed from cart because customer has previous purchases.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 0 coupons have been applied to cart.
@@ -105,7 +105,7 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		// Run the post checkout validation.
 		// Coupon will not be removed because coupon_restrictions_customer_query
 		// is set to 'acccounts' by default.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 1 coupons have been applied to cart.
@@ -116,7 +116,6 @@ class Checkout_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		// Run the post checkout validation now with
 		// coupon_restrictions_customer_query set to 'accounts-orders'.
 		// Coupon will be removed this time.
-		$validation = new WC_Coupon_Restrictions_Validation();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		delete_option( 'coupon_restrictions_customer_query' );

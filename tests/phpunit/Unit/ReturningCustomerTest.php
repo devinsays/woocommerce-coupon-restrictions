@@ -4,10 +4,10 @@ namespace WooCommerce_Coupon_Restrictions\Tests\Unit;
 use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Order;
-use WC_Coupon_Restrictions_Helpers;
+use WC_Coupon_Restrictions_Validation;
 
 class New_Customer_Coupon_Test extends WP_UnitTestCase {
-
+	/** @var WC_Coupon */
 	public $coupon;
 	public $customer;
 	public $order;
@@ -31,14 +31,14 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 	 */
 	public function test_is_returning_customer() {
 		// Test should return false because customer hasn't purchased.
-		$this->assertFalse( WC_Coupon_Restrictions_Helpers::is_returning_customer( 'not@woo.com' ) );
+		$this->assertFalse( WC_Coupon_Restrictions_Validation::is_returning_customer( 'not@woo.com' ) );
 
 		// Get data from setup.
 		$customer = $this->customer;
 		wp_set_current_user( $customer->get_id() );
 
 		// Test should return true because customer has a completed order.
-		$this->assertTrue( WC_Coupon_Restrictions_Helpers::is_returning_customer( $customer->get_email() ) );
+		$this->assertTrue( WC_Coupon_Restrictions_Validation::is_returning_customer( $customer->get_email() ) );
 	}
 
 	public function tearDown() {
@@ -48,5 +48,4 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 		// Delete customer.
 		$this->customer->delete();
 	}
-
 }

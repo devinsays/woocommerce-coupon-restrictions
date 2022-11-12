@@ -7,7 +7,6 @@ use WC_Helper_Coupon;
 use WC_Helper_Order;
 
 class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
-
 	public $coupon;
 	public $customer;
 	public $order;
@@ -140,5 +139,4 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$this->customer->delete();
 		$this->order->delete();
 	}
-
 }

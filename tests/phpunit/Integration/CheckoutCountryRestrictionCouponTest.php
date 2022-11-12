@@ -3,10 +3,9 @@ namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Coupon;
-use WC_Coupon_Restrictions_Validation;
+use WC_Coupon_Restrictions_Validation_Checkout;
 
 class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
-
 	/* var WC_Coupon */
 	public $coupon;
 
@@ -40,7 +39,7 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		WC()->cart->apply_coupon( $coupon->get_code() );
 
 		// Run the post checkout validation.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 1 coupon is still in cart after checkout validation.
@@ -69,7 +68,7 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		WC()->cart->apply_coupon( $coupon->get_code() );
 
 		// Run the post checkout validation.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies 0 coupons are still in cart after checkout validation.
@@ -84,5 +83,4 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		// Deletes the coupon.
 		$this->coupon->delete();
 	}
-
 }

@@ -4,11 +4,12 @@ namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
-use WC_Coupon_Restrictions_Validation;
+use WC_Coupon_Restrictions_Validation_Checkout;
 
 class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
-
+	/** @var WC_Coupon */
 	public $coupon;
+
 	public $customer;
 
 	public function setUp() {
@@ -42,7 +43,7 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		);
 
 		// Run the post checkout validation.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies coupon has been removed.
@@ -69,7 +70,7 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		);
 
 		// Run the post checkout validation.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies coupon remains applied.
@@ -94,7 +95,7 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		);
 
 		// Run the post checkout validation.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies coupon remains applied.
@@ -117,12 +118,11 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		);
 
 		// Run the post checkout validation.
-		$validation = new WC_Coupon_Restrictions_Validation();
+		$validation = new WC_Coupon_Restrictions_Validation_Checkout();
 		$validation->validate_coupons_after_checkout( $posted );
 
 		// Verifies coupon removed because customer does not meet restriction.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 
@@ -135,5 +135,4 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		$this->coupon->delete();
 		$this->customer->delete();
 	}
-
 }

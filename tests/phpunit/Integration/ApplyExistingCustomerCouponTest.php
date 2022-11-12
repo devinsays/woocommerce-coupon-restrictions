@@ -7,6 +7,7 @@ use WC_Helper_Coupon;
 use WC_Helper_Order;
 
 class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
+	/** @var WC_Coupon */
 	public $coupon;
 
 	public function setUp() {

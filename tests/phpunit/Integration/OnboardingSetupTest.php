@@ -4,7 +4,6 @@ namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 use WP_UnitTestCase;
 
 class Onboarding_Setup_Test extends WP_UnitTestCase {
-
 	/**
 	 * Checks that option version is set correctly.
 	 */
@@ -18,7 +17,7 @@ class Onboarding_Setup_Test extends WP_UnitTestCase {
 	 * Checks that onboarding transient is set.
 	 */
 	public function test_onboarding_transient_set() {
-		$plugin = WC_Coupon_Restrictions();
+		WC_Coupon_Restrictions();
 		$transient = get_transient( 'woocommerce-coupon-restrictions-activated' );
 		$this->assertEquals( 1, $transient );
 	}
@@ -39,5 +38,4 @@ class Onboarding_Setup_Test extends WP_UnitTestCase {
 
 		delete_option( 'woocommerce-coupon-restrictions' );
 	}
-
 }

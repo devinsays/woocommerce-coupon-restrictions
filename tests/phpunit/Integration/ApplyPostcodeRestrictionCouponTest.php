@@ -5,17 +5,18 @@ use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 
-class Apply_State_Restriction_Test extends WP_UnitTestCase {
-
+class Apply_Postcode_Restriction_Test extends WP_UnitTestCase {
+	/** @var WC_Coupon */
 	public $coupon;
+
 	public $customer;
 	public $session;
 
 	public function setUp() {
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
-		$customer->set_billing_state( 'TX' );
-		$customer->set_shipping_state( 'TX' );
+		$customer->set_billing_postcode( '78703' );
+		$customer->set_shipping_postcode( '78703' );
 		$customer->save();
 		$this->customer = $customer;
 
@@ -45,16 +46,13 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests applying a coupon with country restriction and valid customer.
+	 * Tests applying a coupon with postcode restriction and valid customer.
 	 */
-	public function test_coupon_state_restriction_with_valid_customer() {
+	public function test_postcode_restriction_with_valid_customer() {
 		$coupon = $this->coupon;
 
-		// Apply state restriction to single state "TX"
-		update_post_meta( $coupon->get_id(), 'state_restriction', 'TX' );
+		update_post_meta( $coupon->get_id(), 'postcode_restriction', '78703' );
 
-		// Adds a state restricted coupon.
-		// This should return true because customer billing is in TX.
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 1 coupon has been applied to cart.
@@ -62,36 +60,31 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests applying a coupon with a two state restriction and valid customer.
+	 * Tests applying a postcode restriction and non-valid customer.
 	 */
-	public function test_coupon_two_state_restriction_with_valid_customer() {
+	public function test_coupon_country_restriction_with_nonvalid_customer() {
 		$coupon = $this->coupon;
 
-		// Apply country restiction to two states "TX" and "CA"
-		update_post_meta( $coupon->get_id(), 'state_restriction', "ca,tx" );
+		update_post_meta( $coupon->get_id(), 'postcode_restriction', '000000' );
 
-		// This should return true because customer billing is in tx.
-		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
-
-		// Verifies 1 coupon has been applied to cart.
-		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-	}
-
-	/**
-	 * Tests applying a coupon with a two country restriction and non-valid customer.
-	 */
-	public function test_coupon_state_restriction_with_nonvalid_customer() {
-		$coupon = $this->coupon;
-
-		// Apply state restriction single state "CA".
-		update_post_meta( $coupon->get_id(), 'state_restriction', 'CA' );
-
-		// Adds a state restricted coupon.
-		// This should return false because customer billing is in TX.
 		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
+	}
+
+	/**
+	 * Tests applying a coupon with postcode restriction and valid customer.
+	 */
+	public function test_valid_postcode_restriction_wildcard() {
+		$coupon = $this->coupon;
+
+		update_post_meta( $coupon->get_id(), 'postcode_restriction', '00000,787*,ALPHAZIP' );
+
+		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
+
+		// Verifies 1 coupon has been applied to cart.
+		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 	}
 
 	public function tearDown() {
@@ -105,5 +98,4 @@ class Apply_State_Restriction_Test extends WP_UnitTestCase {
 		$this->customer->delete();
 		$this->coupon->delete();
 	}
-
 }
