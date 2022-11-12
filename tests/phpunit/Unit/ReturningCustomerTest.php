@@ -24,7 +24,6 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$order->set_status( 'completed' );
 		$order->save();
 		$this->order = $order;
-
 	}
 
 	/**

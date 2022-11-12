@@ -123,7 +123,7 @@ class WC_Coupon_Restrictions_Validation {
 	public function session_validate_customer_restrictions( $coupon, $email ) {
 
 		// Validate new customer restriction.
-		if ( false === $this->validate_new_customer_restriction( $coupon, $email ) ) {
+		if ( false === WC_Coupon_Restrictions_Helpers::validate_new_customer_restriction( $coupon, $email ) ) {
 			add_filter( 'woocommerce_coupon_error', array( $this, 'validation_message_new_customer_restriction' ), 10, 3 );
 			return false;
 		}
@@ -138,28 +138,6 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
-	 * Validates new customer restriction.
-	 * Returns true if customer meets $coupon criteria.
-	 *
-	 * @param object $coupon
-	 * @param string $email
-	 * @return boolean
-	 */
-	public function validate_new_customer_restriction( $coupon, $email ) {
-
-		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
-
-		if ( 'new' === $customer_restriction_type ) {
-			// If customer has purchases, coupon is not valid.
-			if ( WC_Coupon_Restrictions_Helpers::is_returning_customer( $email ) ) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
 	 * Validates existing customer restriction.
 	 * Returns true if customer meets $coupon criteria.
 	 *
@@ -168,7 +146,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_existing_customer_restriction( $coupon, $email ) {
-
 		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
 
 		// If customer has purchases, coupon is valid.
@@ -190,7 +167,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function session_validate_location_restrictions( $coupon, $session ) {
-
 		// If location restrictions aren't set, coupon is valid.
 		if ( 'yes' !== $coupon->get_meta( 'location_restrictions' ) ) {
 			return true;
@@ -276,7 +252,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_country_restriction( $coupon, $country ) {
-
 		// Get the allowed countries from coupon meta.
 		$allowed_countries = $coupon->get_meta( 'country_restriction', true );
 
@@ -329,7 +304,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_postcode_restriction( $coupon, $postcode ) {
-
 		// Get the allowed postcodes from coupon meta.
 		$postcode_restriction = $coupon->get_meta( 'postcode_restriction', true );
 
@@ -385,7 +359,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return boolean
 	 */
 	public function validate_role_restriction( $coupon, $email ) {
-
 		// Returns an array with all the restricted roles.
 		$restricted_roles = $coupon->get_meta( 'role_restriction', true );
 
@@ -532,9 +505,8 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return void
 	 */
 	public function checkout_validate_new_customer_restriction( $coupon, $code, $posted ) {
-
 		$email = strtolower( $posted['billing_email'] );
-		$valid = $this->validate_new_customer_restriction( $coupon, $email );
+		$valid = WC_Coupon_Restrictions_Helpers::validate_new_customer_restriction( $coupon, $email );
 
 		if ( false === $valid ) {
 			$msg = $this->get_validation_message( 'new-customer', $coupon );
@@ -569,7 +541,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return void
 	 */
 	public function checkout_validate_role_restriction( $coupon, $code, $posted ) {
-
 		$email = strtolower( $posted['billing_email'] );
 		$valid = $this->validate_role_restriction( $coupon, $email );
 
@@ -589,7 +560,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return void
 	 */
 	public function checkout_validate_location_restrictions( $coupon, $code, $posted ) {
-
 		// If location restrictions aren't set, coupon is valid.
 		if ( 'yes' !== $coupon->get_meta( 'location_restrictions' ) ) {
 			return true;
@@ -649,7 +619,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return string
 	 */
 	public function get_validation_message( $key, $coupon ) {
-
 		$i8n_address = array(
 			'shipping' => __( 'shipping', 'woocommerce-coupon-restrictions' ),
 			'billing'  => __( 'billing', 'woocommerce-coupon-restrictions' ),
@@ -714,7 +683,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return void
 	 */
 	public function remove_coupon( $coupon, $code, $msg ) {
-
 		// Filter to change validation text.
 		$msg = apply_filters( 'woocommerce_coupon_restrictions_removed_message_with_code', $msg, $code, $coupon );
 

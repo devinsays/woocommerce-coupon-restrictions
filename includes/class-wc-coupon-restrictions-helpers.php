@@ -60,4 +60,25 @@ class WC_Coupon_Restrictions_Helpers {
 		// If we've gotten to this point, the customer must be new.
 		return false;
 	}
+
+	/**
+	 * Validates new customer restriction.
+	 * Returns true if customer meets $coupon criteria.
+	 *
+	 * @param object $coupon
+	 * @param string $email
+	 * @return boolean
+	 */
+	public static function validate_new_customer_restriction( $coupon, $email ) {
+		$customer_restriction_type = $coupon->get_meta( 'customer_restriction_type', true );
+
+		if ( 'new' === $customer_restriction_type ) {
+			// If customer has purchases, coupon is not valid.
+			if ( self::is_returning_customer( $email ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
