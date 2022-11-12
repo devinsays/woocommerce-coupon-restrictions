@@ -14,11 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WC_Coupon_Restrictions_Admin {
-
 	/**
-	* Init the class.
-	*/
-	public function init() {
+	 * Constructor.
+	 */
+	public function __construct() {
 		// Enqueues javascript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
 
@@ -168,8 +167,7 @@ class WC_Coupon_Restrictions_Admin {
 		$countries = WC()->countries->get_countries();
 
 		// An array of countries the shop sells to.
-		// Calls the global instance for PHP5.6 compatibility.
-		$shop_countries = WC_Coupon_Restrictions()->admin->shop_countries();
+		$shop_countries = self::shop_countries();
 		?>
 		<p class="form-field <?php echo $id; ?>_only_field">
 		<label for="<?php echo esc_attr( $id ); ?>">

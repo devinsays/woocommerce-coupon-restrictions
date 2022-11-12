@@ -70,28 +70,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public $validation = null;
 
 		/**
-		 * Instance of WC_Coupon_Restrictions_Onboarding.
-		 *
-		 * @var WC_Coupon_Restrictions_Validation
-		 */
-		public $onboarding = null;
-
-		/**
-		 * Instance of WC_Coupon_Restrictions_Admin.
-		 *
-		 * @var WC_Coupon_Restrictions_Validation
-		 */
-		public $admin = null;
-
-		/**
-		 * Instance of WC_Coupon_Restrictions_Settings.
-		 *
-		 * @var WC_Coupon_Restrictions_Settings
-		 */
-		public $settings = null;
-
-
-		/**
 		 * Main WC_Coupon_Restrictions Instance.
 		 *
 		 * Ensures only one instance of the WC_Coupon_Restrictions is loaded or can be loaded.
@@ -113,10 +91,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		 * @since  1.3.0
 		 */
 		public function __construct() {
-
-			// Loads plugin classes.
 			$this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
-			$this->includes();
 
 			// Checks WooCommerce version.
 			add_action( 'plugins_loaded', array( $this, 'load_plugin' ) );
@@ -172,34 +147,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		}
 
 		/**
-		 * Includes classes that implement coupon restrictions.
-		 *
-		 * @access public
-		 * @since  1.3.0
-		 * @return void
-		 */
-		public function includes() {
-			if ( is_admin() ) {
-				// Onboarding actions when plugin is first installed.
-				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-onboarding.php';
-				$this->onboarding = new WC_Coupon_Restrictions_Onboarding();
-
-				// Adds fields and metadata for coupons in admin screen.
-				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-admin.php';
-				$this->admin = new WC_Coupon_Restrictions_Admin();
-
-				// Adds global coupon settings.
-				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-settings.php';
-				$this->settings = new WC_Coupon_Restrictions_Settings();
-
-			} else {
-				// Validates coupons.
-				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation.php';
-				$this->validation = new WC_Coupon_Restrictions_Validation();
-			}
-		}
-
-		/**
 		 * Initialize the plugin.
 		 *
 		 * @access public
@@ -217,13 +164,22 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 			// Upgrade routine.
 			$this->upgrade_routine();
 
-			// Inits classes.
 			if ( is_admin() ) {
-				$this->onboarding->init();
-				$this->admin->init();
-				$this->settings->init();
+				// Onboarding actions when plugin is first installed.
+				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-onboarding.php';
+				new WC_Coupon_Restrictions_Onboarding();
+
+				// Adds fields and metadata for coupons in admin screen.
+				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-admin.php';
+				new WC_Coupon_Restrictions_Admin();
+
+				// Adds coupon meta fields.
+				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-settings.php';
+				new WC_Coupon_Restrictions_Settings();
 			} else {
-				$this->validation->init();
+				// Validates coupons.
+				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation.php';
+				new WC_Coupon_Restrictions_Validation();
 			}
 		}
 
@@ -259,7 +215,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 			}
 		}
-
 	}
 }
 

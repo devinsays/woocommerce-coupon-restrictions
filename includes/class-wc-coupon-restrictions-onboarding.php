@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WC_Coupon_Restrictions_Onboarding {
 	/**
-	* Init the class.
-	*/
-	public function init() {
+	 * Constructor.
+	 */
+	public function __construct() {
 		// Gets the base file for plugin.
 		$base = WC_Coupon_Restrictions::plugin_base();
 

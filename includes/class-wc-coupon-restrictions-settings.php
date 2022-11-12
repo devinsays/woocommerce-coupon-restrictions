@@ -14,11 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class WC_Coupon_Restrictions_Settings {
-
 	/**
-	* Init the class.
-	*/
-	public function init() {
+	 * Constructor.
+	 */
+	public function __construct() {
 		// Filters the settings in the "General Tab".
 		add_filter( 'woocommerce_general_settings', array( $this, 'coupon_restrictions_settings' ) );
 	}
