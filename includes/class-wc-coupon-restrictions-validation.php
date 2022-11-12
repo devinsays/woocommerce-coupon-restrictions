@@ -19,7 +19,6 @@ class WC_Coupon_Restrictions_Validation {
 	* Init the class.
 	*/
 	public function init() {
-
 		// Validates coupons before checkout if customer session exists.
 		add_filter( 'woocommerce_coupon_is_valid', array( $this, 'validate_coupons_before_checkout' ), 10, 2 );
 
