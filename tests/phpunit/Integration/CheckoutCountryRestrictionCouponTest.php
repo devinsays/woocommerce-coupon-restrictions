@@ -1,18 +1,14 @@
 <?php
-
 namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
 
 use WP_UnitTestCase;
-use WC_Helper_Customer;
 use WC_Helper_Coupon;
-use WC_Helper_Order;
 
 class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 	public $coupon;
 
 	public function setUp() {
-
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
@@ -26,7 +22,6 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 	 * and customer billing_country is US.
 	 */
 	public function test_checkout_country_restriction_with_valid_customer() {
-
 		$coupon = $this->coupon;
 
 		// Apply country restriction to single country "US"
