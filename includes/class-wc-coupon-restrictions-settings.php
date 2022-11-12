@@ -2,16 +2,11 @@
 /**
  * WooCommerce Coupon Restrictions - Settings.
  *
- * @class    WC_Coupon_Restrictions_Settings
- * @author   DevPress
  * @package  WooCommerce Coupon Restrictions
- * @license  GPL-2.0+
  * @since    1.7.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+defined( 'ABSPATH' ) || exit;
 
 class WC_Coupon_Restrictions_Settings {
 	/**

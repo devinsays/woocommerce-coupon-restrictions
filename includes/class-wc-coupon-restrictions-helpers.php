@@ -1,17 +1,12 @@
 <?php
 /**
- * WooCommerce Coupon Restrictions - Validation.
+ * WooCommerce Coupon Restrictions - Helpers.
  *
- * @class    WC_Coupon_Restrictions_Validation
- * @author   DevPress
  * @package  WooCommerce Coupon Restrictions
- * @license  GPL-2.0+
- * @since    1.3.0
+ * @since    1.9.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+defined( 'ABSPATH' ) || exit;
 
 class WC_Coupon_Restrictions_Helpers {
 

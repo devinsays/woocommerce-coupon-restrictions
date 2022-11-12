@@ -2,16 +2,11 @@
 /**
  * WooCommerce Coupon Restrictions - Validation.
  *
- * @class    WC_Coupon_Restrictions_Validation
- * @author   DevPress
  * @package  WooCommerce Coupon Restrictions
- * @license  GPL-2.0+
  * @since    1.3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+defined( 'ABSPATH' ) || exit;
 
 class WC_Coupon_Restrictions_Validation {
 
@@ -523,7 +518,6 @@ class WC_Coupon_Restrictions_Validation {
 	 * @return void
 	 */
 	public function checkout_validate_existing_customer_restriction( $coupon, $code, $posted ) {
-
 		$email = strtolower( $posted['billing_email'] );
 		$valid = $this->validate_existing_customer_restriction( $coupon, $email );
 

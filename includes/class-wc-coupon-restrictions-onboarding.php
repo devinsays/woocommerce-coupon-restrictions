@@ -2,16 +2,11 @@
 /**
  * WooCommerce Coupon Restrictions - Onboarding.
  *
- * @class    WC_Coupon_Restrictions_Onboarding
- * @author   DevPress
  * @package  WooCommerce Coupon Restrictions
- * @license  GPL-2.0+
  * @since    1.5.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+defined( 'ABSPATH' ) || exit;
 
 class WC_Coupon_Restrictions_Onboarding {
 	/**
