@@ -7,15 +7,16 @@ use WC_Coupon_Restrictions_Validation;
 
 class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 
+	/* var WC_Coupon */
 	public $coupon;
 
 	public function setUp() {
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
-		update_post_meta( $coupon->get_id(), 'address_for_location_restrictions', 'billing' );
+		$coupon->update_meta_data( 'location_restrictions', 'yes' );
+		$coupon->update_meta_data( 'address_for_location_restrictions', 'billing' );
+		$coupon->save();
 		$this->coupon = $coupon;
-
 	}
 
 	/**
@@ -26,7 +27,8 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		$coupon = $this->coupon;
 
 		// Apply country restriction to single country "US"
-		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'US' ) );
+		$coupon->update_meta_data( 'country_restriction', array( 'US' ) );
+		$coupon->save();
 
 		// Mock post data.
 		$posted = array(
@@ -43,7 +45,6 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Verifies 1 coupon is still in cart after checkout validation.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
@@ -54,7 +55,8 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		$coupon = $this->coupon;
 
 		// Apply country restriction to single country "US"
-		update_post_meta( $coupon->get_id(), 'country_restriction', array( 'US' ) );
+		$coupon->update_meta_data( 'country_restriction', array( 'US' ) );
+		$coupon->save();
 
 		// Mock post data.
 		$posted = array(
