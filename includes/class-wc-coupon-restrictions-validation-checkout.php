@@ -25,23 +25,30 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	 * @return void
 	 */
 	public function validate_coupons_after_checkout( $posted ) {
-		if ( ! empty( WC()->cart->applied_coupons ) ) {
+		if ( empty( WC()->cart->applied_coupons ) ) {
+			return;
+		}
 
-			// If no billing email is set, we'll default to empty string.
-			// WooCommerce validation should catch this before we do.
-			if ( ! isset( $posted['billing_email'] ) ) {
-				$posted['billing_email'] = '';
+		// If no billing email is set, we'll default to empty string.
+		// WooCommerce validation should catch this before we do.
+		if ( ! isset( $posted['billing_email'] ) ) {
+			$posted['billing_email'] = '';
+		}
+
+		foreach ( WC()->cart->applied_coupons as $code ) {
+			$coupon = new WC_Coupon( $code );
+
+			if ( ! $coupon->is_valid() ) {
+				continue;
 			}
 
-			foreach ( WC()->cart->applied_coupons as $code ) {
-				$coupon = new WC_Coupon( $code );
+			$this->validate_new_customer_restriction( $coupon, $code, $posted );
+			$this->validate_existing_customer_restriction( $coupon, $code, $posted );
+			$this->validate_location_restrictions( $coupon, $code, $posted );
+			$this->validate_role_restriction( $coupon, $code, $posted );
 
-				if ( $coupon->is_valid() ) {
-					$this->validate_new_customer_restriction( $coupon, $code, $posted );
-					$this->validate_existing_customer_restriction( $coupon, $code, $posted );
-					$this->validate_location_restrictions( $coupon, $code, $posted );
-					$this->validate_role_restriction( $coupon, $code, $posted );
-				}
+			if ( $this->has_enhanced_usage_restictions( $coupon ) ) {
+				// Validate usage restrictions.
 			}
 		}
 	}
@@ -157,6 +164,28 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'zipcode', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
+	}
+
+	/**
+	 * Checks if coupon has enhanced usage restrictions set.
+	 *
+	 * @param WC_Coupon $coupon
+	 * @return boolean
+	 */
+	public function has_enhanced_usage_restictions( $coupon ) {
+		$meta = array(
+			'prevent_similar_emails',
+			'usage_limit_per_shipping_address',
+			'usage_limit_per_ip_address',
+		);
+
+		foreach ( $meta as $key ) {
+			if ( $coupon->get_meta( $key ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
