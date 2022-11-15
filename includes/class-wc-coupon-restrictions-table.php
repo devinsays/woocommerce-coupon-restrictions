@@ -17,7 +17,6 @@ class WC_Coupon_Restrictions_Verification_Table {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->maybe_create_table();
 	}
 
 	public static function get_table_name() {

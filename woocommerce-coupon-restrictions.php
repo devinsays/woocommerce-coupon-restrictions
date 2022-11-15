@@ -130,6 +130,10 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 			// Upgrade routine.
 			$this->upgrade_routine();
 
+			// Creates a custom table.
+			// Only called if a coupon with enhanced usage restrictions is saved.
+			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-table.php';
+
 			if ( is_admin() ) {
 				// Onboarding actions when plugin is first installed.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-onboarding.php';

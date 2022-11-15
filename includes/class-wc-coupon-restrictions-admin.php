@@ -393,11 +393,15 @@ class WC_Coupon_Restrictions_Admin {
 			$coupon->delete_meta_data( $id );
 		}
 
+		// Track whether an enhanced usage restriction is set.
+		$enhanced_usage_restriction = false;
+
 		// Prevent similar emails.
 		$id                     = 'prevent_similar_emails';
 		$prevent_similar_emails = isset( $_POST[ $id ] ) ? 'yes' : 'no';
 		if ( 'yes' === $prevent_similar_emails ) {
 			$coupon->update_meta_data( $id, $prevent_similar_emails );
+			$enhanced_usage_restriction = true;
 		} else {
 			$coupon->delete_meta_data( $id );
 		}
@@ -407,6 +411,7 @@ class WC_Coupon_Restrictions_Admin {
 		$usage_limit_per_shipping = absint( $_POST[ $id ] );
 		if ( $usage_limit_per_shipping > 0 ) {
 			$coupon->update_meta_data( $id, $usage_limit_per_shipping );
+			$enhanced_usage_restriction = true;
 		} else {
 			$coupon->delete_meta_data( $id );
 		}
@@ -416,8 +421,16 @@ class WC_Coupon_Restrictions_Admin {
 		$usage_limit_per_ip_address = absint( $_POST[ $id ] );
 		if ( $usage_limit_per_ip_address > 0 ) {
 			$coupon->update_meta_data( $id, $usage_limit_per_ip_address );
+			$enhanced_usage_restriction = true;
 		} else {
 			$coupon->delete_meta_data( $id );
+		}
+
+		// If an enhanced usage restiction is set,
+		// make sure the custom restrictions table is available.
+		if ( $enhanced_usage_restriction ) {
+			$verification_table = new WC_Coupon_Restrictions_Verification_Table();
+			$verification_table->maybe_create_table();
 		}
 
 		// Save meta data.
