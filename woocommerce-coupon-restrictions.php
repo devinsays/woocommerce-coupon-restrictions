@@ -147,6 +147,10 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-settings.php';
 				new WC_Coupon_Restrictions_Settings();
 
+				// File needs to be included for both admin and customer.
+				// But we only instantiate it when we need it for the admin.
+				new WC_Coupon_Restrictions_Table();
+
 				return;
 			}
 
