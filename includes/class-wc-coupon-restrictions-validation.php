@@ -244,6 +244,28 @@ class WC_Coupon_Restrictions_Validation {
 	}
 
 	/**
+	 * Checks if coupon has enhanced usage restrictions set.
+	 *
+	 * @param WC_Coupon $coupon
+	 * @return boolean
+	 */
+	public static function has_enhanced_usage_restrictions( $coupon ) {
+		$meta = array(
+			'prevent_similar_emails',
+			'usage_limit_per_shipping_address',
+			'usage_limit_per_ip_address',
+		);
+
+		foreach ( $meta as $key ) {
+			if ( $coupon->get_meta( $key ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Convert string textarea to normalized array with uppercase.
 	 *
 	 * @param string $string

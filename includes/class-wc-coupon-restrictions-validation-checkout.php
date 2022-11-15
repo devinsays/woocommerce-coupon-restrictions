@@ -47,7 +47,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			$this->validate_location_restrictions( $coupon, $code, $posted );
 			$this->validate_role_restriction( $coupon, $code, $posted );
 
-			if ( $this->has_enhanced_usage_restictions( $coupon ) ) {
+			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
 				// Validate usage restrictions.
 			}
 		}
@@ -164,28 +164,6 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'zipcode', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
-	}
-
-	/**
-	 * Checks if coupon has enhanced usage restrictions set.
-	 *
-	 * @param WC_Coupon $coupon
-	 * @return boolean
-	 */
-	public function has_enhanced_usage_restictions( $coupon ) {
-		$meta = array(
-			'prevent_similar_emails',
-			'usage_limit_per_shipping_address',
-			'usage_limit_per_ip_address',
-		);
-
-		foreach ( $meta as $key ) {
-			if ( $coupon->get_meta( $key ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
