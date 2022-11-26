@@ -32,6 +32,7 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 		$this->assertTrue( WC_Coupon_Restrictions_Table::table_exists() );
 	}
 
+
 	/**
 	 * Test that format_address is correct.
 	 */

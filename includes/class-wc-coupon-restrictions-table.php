@@ -104,7 +104,6 @@ class WC_Coupon_Restrictions_Table {
 		// Check all the coupons.
 		foreach ( $order->get_items( 'coupon' ) as $coupon_item ) {
 			/** @var \WC_Order_Item_Coupon $coupon_item */
-
 			$coupon = new \WC_Coupon( $coupon_item->get_code() );
 
 			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
