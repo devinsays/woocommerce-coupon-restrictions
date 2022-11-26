@@ -8,7 +8,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class WC_Coupon_Restrictions_Verification_Table {
+class WC_Coupon_Restrictions_Table {
 
 	// Name of table.
 	public static $table_name = 'wcr_coupon_verification';
@@ -25,16 +25,35 @@ class WC_Coupon_Restrictions_Verification_Table {
 		return $wpdb->prefix . self::$table_name;
 	}
 
-	public function maybe_create_table() {
+	/**
+	 * Checks if the table exists.
+	 *
+	 * @return bool
+	 */
+	public static function table_exists() {
 		global $wpdb;
+		$table_name = self::get_table_name();
 
-		$table_name      = self::get_table_name();
-		$charset_collate = $wpdb->get_charset_collate();
-
-		// Only create the table if it does not exist yet.
 		if ( $wpdb->get_var( "show tables like '{$table_name}'" ) == $table_name ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Creates the table if it does not exist.
+	 *
+	 * @return void
+	 */
+	public function maybe_create_table() {
+		if ( self::table_exists() ) {
 			return;
 		}
+
+		global $wpdb;
+		$table_name      = self::get_table_name();
+		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -43,13 +62,27 @@ class WC_Coupon_Restrictions_Verification_Table {
 			email varchar(255) NOT NULL,
 			ip varchar(15) NOT NULL,
 			shipping_address varchar(255) NOT NULL,
-			payment_method varchar(15) NOT NULL,
-			payment_identifier varchar(20) NOT NULL,
 			UNIQUE KEY id (id)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
+	}
+
+	/**
+	 * Deletes the table.
+	 * Currently just used for tests.
+	 *
+	 * @return void
+	 */
+	public function delete_table() {
+		if ( ! self::table_exists() ) {
+			return;
+		}
+
+		global $wpdb;
+		$table_name = self::get_table_name();
+		$wpdb->query( "DROP TABLE {$table_name}" );
 	}
 
 	/**
@@ -95,13 +128,11 @@ class WC_Coupon_Restrictions_Verification_Table {
 
 		// Gather the data for each column in the database table.
 		$data = array(
-			'email'              => self::format_email( $order->get_billing_email() ),
-			'shipping_address'   => self::format_address( $order->get_shipping_address_1(), $order->get_shipping_address_2(), $order->get_shipping_postcode() ),
-			'payment_method'     => str_replace( 'braintree_', '', $order->get_payment_method() ), // credit_card or paypal
-			'payment_identifier' => $order->get_meta( '_wc_braintree_credit_card_account_four' ),
-			'ip'                 => $order->get_customer_ip_address(),
-			'coupon_code'        => $coupon_code,
-			'order_id'           => $order->get_id(),
+			'coupon_code'      => $coupon_code,
+			'order_id'         => $order->get_id(),
+			'email'            => self::get_scrubbed_email( $order->get_billing_email() ),
+			'ip'               => $order->get_customer_ip_address(),
+			'shipping_address' => self::format_address( $order->get_shipping_address_1(), $order->get_shipping_address_2(), $order->get_shipping_city(), $order->get_shipping_postcode() ),
 		);
 
 		// Insert data to the table.
@@ -110,64 +141,143 @@ class WC_Coupon_Restrictions_Verification_Table {
 			$data,
 			array(
 				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
-				'%s',
 				'%d',
+				'%s',
+				'%s',
+				'%s',
 			)
 		);
+	}
+
+	/**
+	 * Check if scrubbed email has been used with coupon previously.
+	 *
+	 * @param \WC_Coupon $coupon
+	 * @param string $email
+	 *
+	 * @return bool
+	 */
+	public static function get_similar_email_usage( $coupon_code, $email ) {
+		$email = self::get_scrubbed_email( $email );
+
+		global $wpdb;
+		$table_name = VerificationTable::get_table_name();
+		$results    = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id FROM $table_name WHERE coupon_code = %s AND email = %s LIMIT 1",
+				$coupon_code,
+				$email
+			)
+		);
+
+		if ( $results ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns amount of times a scrubbed shipping address has been used with a specific coupon.
+	 *
+	 * @param \WC_Coupon $coupon
+	 * @param string $email
+	 *
+	 * @return int $count
+	 */
+	public static function get_shipping_address_usage( $coupon, $coupon_code, $posted ) {
+		$shipping_address = self::format_address(
+			$posted['shipping_address_1'],
+			$posted['shipping_address_2'],
+			$posted['shipping_city'],
+			$posted['shipping_postcode'],
+		);
+
+		global $wpdb;
+		$table_name = VerificationTable::get_table_name();
+		$results    = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id FROM $table_name WHERE coupon_code = %s AND shipping_address = %s",
+				$coupon_code,
+				$shipping_address
+			)
+		);
+
+		return ( count( $results ) );
+	}
+
+	/**
+	 * Returns amount of times an IP address has been used with a specific coupon.
+	 *
+	 * @param \WC_Coupon $coupon
+	 * @param string $email
+	 *
+	 * @return int $count
+	 */
+	public static function get_ip_address_usage( $coupon, $coupon_code, $posted ) {
+		$ip = $posted['customer_ip_address'];
+
+		global $wpdb;
+		$table_name = VerificationTable::get_table_name();
+		$results    = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id FROM $table_name WHERE coupon_code = %s AND ip = %s",
+				$coupon_code,
+				$ip
+			)
+		);
+
+		return ( count( $results ) );
 	}
 
 	/**
 	 * Keep only English characters and numbers.
 	 * If there are any non-English characters, we convert them to the closest English character.
 	 *
-	 * @param string $shipping_address_1
-	 * @param string $shipping_address_2
-	 * @param string $shipping_postcode
+	 * @param string $address_1
+	 * @param string $address_2
+	 * @param string $city
+	 * @param string $postcode
 	 *
 	 * @return string|string[]|null
 	 */
-	public static function format_address( $shipping_address_1, $shipping_address_2, $shipping_postcode ) {
+	public static function format_address( $address_1, $address_2, $city, $postcode ) {
 		$address_index = implode(
 			'',
 			array_map(
 				'trim',
 				array(
-					$shipping_address_1,
-					$shipping_address_2,
-					$shipping_postcode,
+					$address_1,
+					$address_2,
+					$city,
+					$postcode,
 				)
 			)
 		);
 
 		// Remove everything except a-z, A-Z and 0-9.
 		$address_index = preg_replace( '/[^a-zA-Z0-9]+/', '', sanitize_title( $address_index ) );
-
 		return strtoupper( $address_index );
 	}
 
 	/**
-	 * Strip email from any dots and "+" signs.
+	 * Strip any dots and "+" signs from email.
 	 *
-	 * @param string $get_billing_email
+	 * @param string $email
 	 *
 	 * @return string
 	 */
-	public static function format_email( string $get_billing_email ) {
-		list( $email_name, $email_domain ) = explode( '@', strtolower( trim( $get_billing_email ) ) );
+	public static function get_scrubbed_email( string $email ) {
+		list( $email_name, $email_domain ) = explode( '@', strtolower( trim( $email ) ) );
 
 		// Let's ignore everything after "+".
 		$email_name = explode( '+', $email_name )[0];
 
-		// The dots in Gmail do not matter.
+		// The dots in Gmail does not matter.
 		if ( 'gmail.com' === $email_domain ) {
 			$email_name = str_replace( '.', '', $email_name );
 		}
 
-		return strtoupper( "$email_name@$email_domain" );
+		return strtolower( "$email_name@$email_domain" );
 	}
-
 }

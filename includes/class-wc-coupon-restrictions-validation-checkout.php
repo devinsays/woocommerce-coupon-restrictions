@@ -48,7 +48,9 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			$this->validate_role_restriction( $coupon, $code, $posted );
 
 			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
-				// Validate usage restrictions.
+				$this->validate_similar_emails_restriction( $coupon, $code, $posted );
+				$this->validate_usage_limit_per_shipping_address( $coupon, $code, $posted );
+				$this->validate_usage_limit_per_ip( $coupon, $code, $posted );
 			}
 		}
 	}
@@ -162,6 +164,67 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 
 		if ( false === $zipcode_validation ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'zipcode', $coupon );
+			$this->remove_coupon( $coupon, $code, $msg );
+		}
+	}
+
+	/**
+	 * Validates similar emails restriction.
+	 *
+	 * @param object $coupon
+	 * @param string $code
+	 * @return void
+	 */
+	public function validate_similar_emails_restriction( $coupon, $code, $posted ) {
+		if ( 'yes' !== $coupon->get_meta( 'prevent_similar_emails' ) ) {
+			return;
+		}
+
+		$email  = $posted['billing_email'];
+		$result = WC_Coupon_Restrictions_Table::get_similar_email_usage( $code, $email );
+
+		if ( $result ) {
+			$msg = WC_Coupon_Restrictions_Validation::message( 'similar-email-usage', $coupon );
+			$this->remove_coupon( $coupon, $code, $msg );
+		}
+	}
+
+	/**
+	 * Validates usage limit per shipping address.
+	 *
+	 * @param object $coupon
+	 * @param string $code
+	 * @return void
+	 */
+	public function validate_usage_limit_per_shipping_address( $coupon, $code, $posted ) {
+		$limit = $coupon->get_meta( 'usage_limit_per_shipping_address' );
+		if ( ! $limit ) {
+			return;
+		}
+
+		$count = WC_Coupon_Restrictions_Table::get_shipping_address_usage( $coupon, $code, $posted );
+		if ( $count >= $limit ) {
+			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-shipping-address', $coupon );
+			$this->remove_coupon( $coupon, $code, $msg );
+		}
+	}
+
+	/**
+	 * Validates enhanced usage restrictions.
+	 *
+	 * @param object $coupon
+	 * @param string $code
+	 * @return void
+	 */
+	public function validate_usage_limit_per_ip( $coupon, $code, $posted ) {
+		$limit = $coupon->get_meta( 'usage_limit_per_ip_address' );
+		if ( ! $limit ) {
+			return;
+		}
+
+		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $coupon, $code, $posted );
+		if ( $count >= $limit ) {
+			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-ip-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
 	}

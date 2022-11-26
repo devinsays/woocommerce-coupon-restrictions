@@ -153,11 +153,8 @@ class Checkout_Postcode_Restriction_Coupon_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown() {
-		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
-
-		// Deletes the coupon.
 		$this->coupon->delete();
 	}
 }

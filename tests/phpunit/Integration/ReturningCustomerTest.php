@@ -1,5 +1,5 @@
 <?php
-namespace WooCommerce_Coupon_Restrictions\Tests\Unit;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;
@@ -42,10 +42,7 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown() {
-		// Delete order.
 		$this->order->delete();
-
-		// Delete customer.
 		$this->customer->delete();
 	}
 }

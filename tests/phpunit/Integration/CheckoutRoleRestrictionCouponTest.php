@@ -127,11 +127,8 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 
 	public function tearDown() {
-		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
-
-		// Deletes objects.
 		$this->coupon->delete();
 		$this->customer->delete();
 	}

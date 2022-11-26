@@ -325,6 +325,12 @@ class WC_Coupon_Restrictions_Validation {
 			return sprintf( __( 'Sorry, coupon code "%1$s" is not valid in your %2$s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
+		if ( $key === 'similar-email-usage' ||
+			$key === 'usage-limit-per-shipping-address' ||
+			$key === 'usage-limit-per-ip-address' ) {
+			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+		}
+
 		// The $key should always find a match.
 		// But we'll return a default message just in case.
 		return sprintf( __( 'Sorry, coupon code "%s" is not valid.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
