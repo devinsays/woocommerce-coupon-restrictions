@@ -7,16 +7,6 @@ use WC_Coupon_Restrictions_Table;
 
 class RestrictionsTableTest extends WP_UnitTestCase {
 
-	/** @var WC_Coupon */
-	public $coupon;
-
-	public function setUp() {
-		// Creates a coupon.
-		$coupon = WC_Helper_Coupon::create_coupon();
-		$coupon->save();
-		$this->coupon = $coupon;
-	}
-
 	/**
 	 * Test table creation.
 	 */
@@ -53,6 +43,41 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that table is created and entry stored when an order is created
+	 * using a coupon with a similar emails restriction.
+	 *
+	 * @throws \WC_Data_Exception
+	 */
+	public function test_order_with_similiar_emails_restriction() {
+		$email              = 'test.customer@gmail.com';
+		$coupon_code        = 'smiliar-emails-test';
+
+		// Usage should before order is created.
+		$usage = WC_Coupon_Restrictions_Table::get_similar_email_usage( $coupon_code , $email );
+		$this->assertFalse( $usage );
+
+		// Create the coupon.
+		$coupon = WC_Helper_Coupon::create_coupon();
+		$this->coupon->set_code( $coupon_code );
+		$coupon->add_meta_data( 'prevent_similar_emails', 'yes' );
+		$coupon->save();
+
+		// Create the order.
+		$order = WC_Helper_Order::create_order();
+		$order->set_billing_email( $email );
+		$order->set_status( 'processing' );
+		$order->apply_coupon( $coupon );
+		$order->calculate_totals();
+
+		// Mimic the hook that gets triggered once the payment is successful.
+		do_action( 'woocommerce_payment_successful_result', [], $order->get_id() );
+
+		// Usage should be 1 after order is created.
+		$usage = WC_Coupon_Restrictions_Table::get_similar_email_usage( $coupon_code , $email );
+		$this->assertTrue( $usage );
+	}
+
+	/**
 	 * Test that get_scrubbed_email is correct.
 	 */
 	public function test_get_scrubbed_email() {
@@ -78,10 +103,6 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 	}
 
 	public function tearDown() {
-		WC()->cart->empty_cart();
-		WC()->cart->remove_coupons();
-		$this->coupon->delete();
-
 		// Deletes the custom table if it has been created.
 		$verification_table = new WC_Coupon_Restrictions_Table();
 		$verification_table->delete_table();

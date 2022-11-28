@@ -34,7 +34,7 @@ class WC_Coupon_Restrictions_Table {
 		global $wpdb;
 		$table_name = self::get_table_name();
 
-		if ( $wpdb->get_var( "show tables like '{$table_name}'" ) == $table_name ) {
+		if ( $wpdb->get_var( "show tables like '{$table_name}'" ) === $table_name ) {
 			return true;
 		}
 
@@ -160,7 +160,7 @@ class WC_Coupon_Restrictions_Table {
 		$email = self::get_scrubbed_email( $email );
 
 		global $wpdb;
-		$table_name = VerificationTable::get_table_name();
+		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id FROM $table_name WHERE coupon_code = %s AND email = %s LIMIT 1",
@@ -193,7 +193,7 @@ class WC_Coupon_Restrictions_Table {
 		);
 
 		global $wpdb;
-		$table_name = VerificationTable::get_table_name();
+		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id FROM $table_name WHERE coupon_code = %s AND shipping_address = %s",
@@ -217,7 +217,7 @@ class WC_Coupon_Restrictions_Table {
 		$ip = $posted['customer_ip_address'];
 
 		global $wpdb;
-		$table_name = VerificationTable::get_table_name();
+		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id FROM $table_name WHERE coupon_code = %s AND ip = %s",
