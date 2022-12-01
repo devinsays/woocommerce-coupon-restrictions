@@ -176,15 +176,20 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	 * @return void
 	 */
 	public function validate_similar_emails_restriction( $coupon, $code, $posted ) {
+		$coupon_usage_limit = $coupon->get_usage_limit_per_user();
+		if ( ! $coupon_usage_limit ) {
+			return;
+		}
+
 		if ( 'yes' !== $coupon->get_meta( 'prevent_similar_emails' ) ) {
 			return;
 		}
 
-		$email  = $posted['billing_email'];
-		$result = WC_Coupon_Restrictions_Table::get_similar_email_usage( $code, $email );
+		$email = $posted['billing_email'];
+		$count = WC_Coupon_Restrictions_Table::get_similar_email_usage( $code, $email );
 
-		if ( $result ) {
-			$msg = WC_Coupon_Restrictions_Validation::message( 'similar-email-usage', $coupon );
+		if ( $count >= $coupon_usage_limit ) {
+			$msg = WC_Coupon_Restrictions_Validation::message( 'similar-emails', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
 	}

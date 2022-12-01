@@ -34,7 +34,7 @@ class WC_Coupon_Restrictions_Table {
 		global $wpdb;
 		$table_name = self::get_table_name();
 
-		if ( $wpdb->get_var( "show tables like '{$table_name}'" ) === $table_name ) {
+		if ( $wpdb->get_var( "show tables like '{$table_name}'" ) == $table_name ) {
 			return true;
 		}
 
@@ -47,6 +47,7 @@ class WC_Coupon_Restrictions_Table {
 	 * @return void
 	 */
 	public function maybe_create_table() {
+		error_log( 'maybe_create_table()' );
 		if ( self::table_exists() ) {
 			return;
 		}
@@ -117,7 +118,7 @@ class WC_Coupon_Restrictions_Table {
 	}
 
 	/**
-	 * Store the details so we can check run fraud verification in the future.
+	 * Store the details so we can check run usage checks in the future.
 	 *
 	 * @param \WC_Order $order
 	 * @param string    $coupon_code
@@ -154,7 +155,7 @@ class WC_Coupon_Restrictions_Table {
 	 * @param \WC_Coupon $coupon
 	 * @param string $email
 	 *
-	 * @return bool
+	 * @return int
 	 */
 	public static function get_similar_email_usage( $coupon_code, $email ) {
 		$email = self::get_scrubbed_email( $email );
@@ -163,17 +164,13 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id FROM $table_name WHERE coupon_code = %s AND email = %s LIMIT 1",
+				"SELECT id FROM $table_name WHERE coupon_code = %s AND email = %s",
 				$coupon_code,
 				$email
 			)
 		);
 
-		if ( $results ) {
-			return true;
-		}
-
-		return false;
+		return count( $results );
 	}
 
 	/**
