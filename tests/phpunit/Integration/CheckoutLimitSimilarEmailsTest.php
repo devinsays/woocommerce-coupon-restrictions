@@ -7,7 +7,7 @@ use WC_Helper_Order;
 use WC_Coupon_Restrictions_Table;
 use WC_Coupon_Restrictions_Validation_Checkout;
 
-class CheckoutUsageSimilarEmailsTest extends WP_UnitTestCase {
+class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 	/** @var WC_Coupon */
 	public $coupon;
 
@@ -112,13 +112,11 @@ class CheckoutUsageSimilarEmailsTest extends WP_UnitTestCase {
 		WC()->cart->apply_coupon( $coupon->get_code() );
 		$this->validation->validate_coupons_after_checkout( $posted );
 
-		// Verifies coupon now applies again.
+		// Verifies coupon now applies.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 	}
 
 	public function tearDown() {
-		WC()->cart->empty_cart();
-		WC()->session->set( 'customer', array() );
 		$this->coupon->delete();
 		$this->order->delete();
 

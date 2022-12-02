@@ -54,9 +54,9 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 		$email              = 'test.customer@gmail.com';
 		$coupon_code        = 'smiliar-emails-test';
 
-		// Usage should before order is created.
-		$usage = WC_Coupon_Restrictions_Table::get_similar_email_usage( $coupon_code , $email );
-		$this->assertFalse( $usage );
+		// Usage should return false if table has not been created.
+		$count = WC_Coupon_Restrictions_Table::get_similar_email_usage( $coupon_code , $email );
+		$this->assertEquals( 0, $count );
 
 		// Create the coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
@@ -75,8 +75,12 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 		do_action( 'woocommerce_payment_successful_result', [], $order->get_id() );
 
 		// Usage should be 1 after order is created.
-		$usage = WC_Coupon_Restrictions_Table::get_similar_email_usage( $coupon_code , $email );
-		$this->assertTrue( $usage );
+		$count = WC_Coupon_Restrictions_Table::get_similar_email_usage( $coupon_code , $email );
+		$this->assertEquals( 1, $count );
+
+		// Teardown.
+		$coupon->delete();
+		$order->delete();
 	}
 
 	/**

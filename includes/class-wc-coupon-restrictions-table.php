@@ -3,7 +3,7 @@
  * WooCommerce Coupon Restrictions - Verification Table.
  *
  * @package  WooCommerce Coupon Restrictions
- * @since    1.9.0
+ * @since    2.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -34,7 +34,7 @@ class WC_Coupon_Restrictions_Table {
 		global $wpdb;
 		$table_name = self::get_table_name();
 
-		if ( $wpdb->get_var( "show tables like '{$table_name}'" ) == $table_name ) {
+		if ( $wpdb->get_var( "show tables like '{$table_name}'" ) === $table_name ) {
 			return true;
 		}
 
@@ -47,7 +47,6 @@ class WC_Coupon_Restrictions_Table {
 	 * @return void
 	 */
 	public function maybe_create_table() {
-		error_log( 'maybe_create_table()' );
 		if ( self::table_exists() ) {
 			return;
 		}
@@ -169,6 +168,10 @@ class WC_Coupon_Restrictions_Table {
 				$email
 			)
 		);
+
+		if ( ! $results ) {
+			return 0;
+		}
 
 		return count( $results );
 	}

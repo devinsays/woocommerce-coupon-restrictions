@@ -3,7 +3,7 @@
  * WooCommerce Coupon Restrictions - Validation Checkout.
  *
  * @package  WooCommerce Coupon Restrictions
- * @since    1.9.0
+ * @since    2.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
