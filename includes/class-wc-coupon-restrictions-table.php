@@ -17,7 +17,7 @@ class WC_Coupon_Restrictions_Table {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action( 'woocommerce_payment_successful_result', array( $this, 'maybe_store_customer_details' ), 999, 2 );
+		add_action( 'woocommerce_pre_payment_complete', array( $this, 'maybe_store_customer_details' ), 999, 1 );
 	}
 
 	public static function get_table_name() {
@@ -46,7 +46,7 @@ class WC_Coupon_Restrictions_Table {
 	 *
 	 * @return void
 	 */
-	public function maybe_create_table() {
+	public static function maybe_create_table() {
 		if ( self::table_exists() ) {
 			return;
 		}
@@ -57,8 +57,8 @@ class WC_Coupon_Restrictions_Table {
 
 		$sql = "CREATE TABLE $table_name (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
-			coupon_code varchar(20) NOT NULL,
 			order_id bigint(20) UNSIGNED NOT NULL,
+			coupon_code varchar(20) NOT NULL,
 			email varchar(255) NOT NULL,
 			ip varchar(15) NOT NULL,
 			shipping_address varchar(255) NOT NULL,
@@ -75,7 +75,7 @@ class WC_Coupon_Restrictions_Table {
 	 *
 	 * @return void
 	 */
-	public function delete_table() {
+	public static function delete_table() {
 		if ( ! self::table_exists() ) {
 			return;
 		}
@@ -93,13 +93,8 @@ class WC_Coupon_Restrictions_Table {
 	 *
 	 * @return array
 	 */
-	public function maybe_store_customer_details( $result, $order_id ) {
+	public static function maybe_store_customer_details( $order_id ) {
 		$order = wc_get_order( $order_id );
-
-		// The order needs to be in processing.
-		if ( ! $order->has_status( 'processing' ) ) {
-			return $result;
-		}
 
 		// Check all the coupons.
 		foreach ( $order->get_items( 'coupon' ) as $coupon_item ) {
@@ -108,12 +103,10 @@ class WC_Coupon_Restrictions_Table {
 
 			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
 				// Store user details.
-				$this->store_customer_details( $order, $coupon_item->get_code() );
+				self::store_customer_details( $order, $coupon_item->get_code() );
 				break;
 			}
 		}
-
-		return $result;
 	}
 
 	/**
@@ -122,13 +115,13 @@ class WC_Coupon_Restrictions_Table {
 	 * @param \WC_Order $order
 	 * @param string    $coupon_code
 	 */
-	protected function store_customer_details( \WC_Order $order, string $coupon_code ) {
+	protected static function store_customer_details( \WC_Order $order, string $coupon_code ) {
 		global $wpdb;
 
 		// Gather the data for each column in the database table.
 		$data = array(
-			'coupon_code'      => $coupon_code,
 			'order_id'         => $order->get_id(),
+			'coupon_code'      => $coupon_code,
 			'email'            => self::get_scrubbed_email( $order->get_billing_email() ),
 			'ip'               => $order->get_customer_ip_address(),
 			'shipping_address' => self::format_address( $order->get_shipping_address_1(), $order->get_shipping_address_2(), $order->get_shipping_city(), $order->get_shipping_postcode() ),
@@ -139,8 +132,8 @@ class WC_Coupon_Restrictions_Table {
 			self::get_table_name(),
 			$data,
 			array(
-				'%s',
 				'%d',
+				'%s',
 				'%s',
 				'%s',
 				'%s',

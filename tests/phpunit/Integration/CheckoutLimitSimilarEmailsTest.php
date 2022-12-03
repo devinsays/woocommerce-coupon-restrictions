@@ -36,15 +36,14 @@ class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 		// Validation object.
 		$this->validation = new WC_Coupon_Restrictions_Validation_Checkout();
 
-		// Custom table.
-		$this->verification_table = new WC_Coupon_Restrictions_Table();
+		// Create table.
+		WC_Coupon_Restrictions_Table::maybe_create_table();
 	}
 
 	/**
 	 * Validate basic similar emails restriction.
 	 */
 	public function test_email_usage_restriction() {
-		$this->verification_table->maybe_create_table();
 		$coupon = $this->coupon;
 		$order = $this->order;
 
@@ -79,7 +78,6 @@ class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 	 * Validate similar emails restriction.
 	 */
 	public function test_similar_email_usage_restriction() {
-		$this->verification_table->maybe_create_table();
 		$coupon = $this->coupon;
 		$order = $this->order;
 
@@ -121,6 +119,6 @@ class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 		$this->order->delete();
 
 		// Deletes the custom table if it has been created.
-		$this->verification_table->delete_table();
+		WC_Coupon_Restrictions_Table::delete_table();
 	}
 }

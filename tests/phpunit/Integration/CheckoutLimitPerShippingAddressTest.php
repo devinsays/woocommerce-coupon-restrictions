@@ -16,8 +16,6 @@ class CheckoutLimitPerShippingAddressTest extends WP_UnitTestCase {
 
 	public $validation;
 
-	public $verification_table;
-
 	public function setUp() {
 		// Create coupon with usage limit and similar emails restriction.
 		$coupon = WC_Helper_Coupon::create_coupon();
@@ -36,7 +34,7 @@ class CheckoutLimitPerShippingAddressTest extends WP_UnitTestCase {
 		$this->validation = new WC_Coupon_Restrictions_Validation_Checkout();
 
 		// Custom table.
-		$this->verification_table = new WC_Coupon_Restrictions_Table();
+		WC_Coupon_Restrictions_Table::maybe_create_table();
 	}
 
 	/**
@@ -50,7 +48,6 @@ class CheckoutLimitPerShippingAddressTest extends WP_UnitTestCase {
 			'shipping_postcode' => '12345',
 		];
 
-		$this->verification_table->maybe_create_table();
 		$coupon = $this->coupon;
 		$order = $this->order;
 
@@ -97,6 +94,6 @@ class CheckoutLimitPerShippingAddressTest extends WP_UnitTestCase {
 		$this->order->delete();
 
 		// Deletes the custom table if it has been created.
-		$this->verification_table->delete_table();
+		WC_Coupon_Restrictions_Table::delete_table();
 	}
 }

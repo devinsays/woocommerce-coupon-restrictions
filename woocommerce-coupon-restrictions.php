@@ -130,10 +130,11 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 			// Upgrade routine.
 			$this->upgrade_routine();
 
-			// Creates a custom table.
-			// Only called if a coupon with enhanced usage restrictions is saved.
+			// Stores coupon use in a custom table if required by restrictions.
 			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-table.php';
+			new WC_Coupon_Restrictions_Table();
 
+			// These classes are only needed in the admin.
 			if ( is_admin() ) {
 				// Onboarding actions when plugin is first installed.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-onboarding.php';
@@ -146,10 +147,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				// Adds coupon meta fields.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-settings.php';
 				new WC_Coupon_Restrictions_Settings();
-
-				// File needs to be included for both admin and customer.
-				// But we only instantiate it when we need it for the admin.
-				new WC_Coupon_Restrictions_Table();
 
 				return;
 			}

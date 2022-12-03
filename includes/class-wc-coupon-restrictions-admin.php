@@ -429,8 +429,7 @@ class WC_Coupon_Restrictions_Admin {
 		// If an enhanced usage restiction is set,
 		// make sure the custom restrictions table is available.
 		if ( $enhanced_usage_restriction ) {
-			$verification_table = new WC_Coupon_Restrictions_Table();
-			$verification_table->maybe_create_table();
+			WC_Coupon_Restrictions_Table::maybe_create_table();
 		}
 
 		// Save meta data.

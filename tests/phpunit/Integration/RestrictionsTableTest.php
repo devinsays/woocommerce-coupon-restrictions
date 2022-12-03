@@ -8,6 +8,9 @@ use WC_Coupon_Restrictions_Table;
 
 class RestrictionsTableTest extends WP_UnitTestCase {
 
+	public function setUp() {
+	}
+
 	/**
 	 * Test table creation.
 	 */
@@ -16,14 +19,12 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 		$this->assertFalse( WC_Coupon_Restrictions_Table::table_exists() );
 
 		// Create table.
-		$verification_table = new WC_Coupon_Restrictions_Table();
-		$verification_table->maybe_create_table();
+		WC_Coupon_Restrictions_Table::maybe_create_table();
 
 		// Table should exist now.
 		// @TODO This test is not passing.
 		// $this->assertTrue( WC_Coupon_Restrictions_Table::table_exists() );
 	}
-
 
 	/**
 	 * Test that format_address is correct.
@@ -110,7 +111,6 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 
 	public function tearDown() {
 		// Deletes the custom table if it has been created.
-		$verification_table = new WC_Coupon_Restrictions_Table();
-		$verification_table->delete_table();
+		WC_Coupon_Restrictions_Table::delete_table();
 	}
 }
