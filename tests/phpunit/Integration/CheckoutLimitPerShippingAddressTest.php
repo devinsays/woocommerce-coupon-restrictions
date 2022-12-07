@@ -67,8 +67,8 @@ class CheckoutLimitPerShippingAddressTest extends WP_UnitTestCase {
 		// Verifies coupon is still applied.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 
-		// Mimic the hook that gets triggered once the payment is successful.
-		do_action( 'woocommerce_payment_successful_result', [], $order->get_id() );
+		// Mimic the hook that gets triggered once the order is created.
+		do_action( 'woocommerce_pre_payment_complete', $order->get_id() );
 
 		// Run the post checkout validation.
 		WC()->cart->apply_coupon( $coupon->get_code() );

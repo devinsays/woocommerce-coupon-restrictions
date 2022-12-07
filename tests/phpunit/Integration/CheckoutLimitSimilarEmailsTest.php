@@ -16,8 +16,6 @@ class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 
 	public $validation;
 
-	public $verification_table;
-
 	public function setUp() {
 		// Create coupon with usage limit and similar emails restriction.
 		$coupon = WC_Helper_Coupon::create_coupon();
@@ -63,8 +61,8 @@ class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 		// Verifies 1 coupon is still in cart after checkout validation.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 
-		// Mimic the hook that gets triggered once the payment is successful.
-		do_action( 'woocommerce_payment_successful_result', [], $order->get_id() );
+		// Mimic the hook that gets triggered once the order is created.
+		do_action( 'woocommerce_pre_payment_complete', $order->get_id() );
 
 		// Run the post checkout validation.
 		WC()->cart->apply_coupon( $coupon->get_code() );
@@ -83,12 +81,16 @@ class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 
 		$email = 'customer2@gmail.com';
 		$order->set_billing_email( $email );
+		$order->set_status( 'processing' );
 		$order->save();
 
-		// Mimic the hook that gets triggered once the payment is successful.
-		do_action( 'woocommerce_payment_successful_result', [], $order->get_id() );
+		// Mimic the hook that gets triggered once the order is created.
+		do_action( 'woocommerce_pre_payment_complete', $order->get_id() );
+
+		// @TODO It appears table has not be created at this point. Why?
 
 		// Test a similar email (not exact match).
+		// @TODO Testing an exact match for the moment.
 		$posted = array(
 			'billing_email' => $email
 		);
@@ -96,11 +98,10 @@ class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 		// Run the post checkout validation.
 		WC()->cart->apply_coupon( $coupon->get_code() );
 
-
 		// Verifies coupon has been removed.
 		// @TODO This test is failing for some reason.
 		// It seems like an issue with the tests itself.
-		// $this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
+		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 
 		// Update the usage limit to 2.
 		$coupon->set_usage_limit_per_user( 2 );

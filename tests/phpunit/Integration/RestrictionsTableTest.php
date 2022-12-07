@@ -2,14 +2,9 @@
 namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
-use WC_Helper_Coupon;
-use WC_Helper_Order;
 use WC_Coupon_Restrictions_Table;
 
 class RestrictionsTableTest extends WP_UnitTestCase {
-
-	public function setUp() {
-	}
 
 	/**
 	 * Test table creation.
@@ -22,8 +17,7 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 		WC_Coupon_Restrictions_Table::maybe_create_table();
 
 		// Table should exist now.
-		// @TODO This test is not passing.
-		// $this->assertTrue( WC_Coupon_Restrictions_Table::table_exists() );
+		$this->assertTrue( WC_Coupon_Restrictions_Table::table_exists() );
 	}
 
 	/**
@@ -43,45 +37,6 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 			$address['postcode']
 		 );
 		$this->assertEquals( $formatted_address, '123MAINSTAPT1TESTCITY12345' );
-	}
-
-	/**
-	 * Test that table is created and entry stored when an order is created
-	 * using a coupon with a similar emails restriction.
-	 *
-	 * @throws \WC_Data_Exception
-	 */
-	public function test_order_with_similiar_emails_restriction() {
-		$email              = 'test.customer@gmail.com';
-		$coupon_code        = 'smiliar-emails-test';
-
-		// Usage should return false if table has not been created.
-		$count = WC_Coupon_Restrictions_Table::get_similar_email_usage( $coupon_code , $email );
-		$this->assertEquals( 0, $count );
-
-		// Create the coupon.
-		$coupon = WC_Helper_Coupon::create_coupon();
-		$coupon->set_code( $coupon_code );
-		$coupon->add_meta_data( 'prevent_similar_emails', 'yes' );
-		$coupon->save();
-
-		// Create the order.
-		$order = WC_Helper_Order::create_order();
-		$order->set_billing_email( $email );
-		$order->set_status( 'processing' );
-		$order->apply_coupon( $coupon );
-		$order->calculate_totals();
-
-		// Mimic the hook that gets triggered once the payment is successful.
-		do_action( 'woocommerce_payment_successful_result', [], $order->get_id() );
-
-		// Usage should be 1 after order is created.
-		$count = WC_Coupon_Restrictions_Table::get_similar_email_usage( $coupon_code , $email );
-		$this->assertEquals( 1, $count );
-
-		// Teardown.
-		$coupon->delete();
-		$order->delete();
 	}
 
 	/**
