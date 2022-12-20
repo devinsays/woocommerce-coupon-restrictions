@@ -94,6 +94,7 @@ class WC_Coupon_Restrictions_Table {
 	 * @return array
 	 */
 	public static function maybe_store_customer_details( $order_id ) {
+		error_log( 'maybe_store_customer_details' );
 		$order = wc_get_order( $order_id );
 
 		// Check all the coupons.
@@ -206,8 +207,8 @@ class WC_Coupon_Restrictions_Table {
 	 *
 	 * @return int $count
 	 */
-	public static function get_ip_address_usage( $coupon, $coupon_code, $posted ) {
-		$ip = $posted['customer_ip_address'];
+	public static function get_ip_address_usage( $coupon, $coupon_code ) {
+		$ip = \WC_Geolocation::get_ip_address();
 
 		global $wpdb;
 		$table_name = self::get_table_name();

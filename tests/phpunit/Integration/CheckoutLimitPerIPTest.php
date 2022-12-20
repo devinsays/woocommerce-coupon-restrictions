@@ -41,16 +41,14 @@ class CheckoutLimitPerIPTest extends WP_UnitTestCase {
 	 * Validate IP usage.
 	 */
 	public function test_ip_limit() {
+		$ip = '208.67.220.220';
 		$coupon = $this->coupon;
 		$order = $this->order;
-
-		$order->set_customer_ip_address( '127.0.0.1' );
+		$order->set_customer_ip_address( $ip );
 		$order->save();
 
-		// Mock post data.
-		$posted = array(
-			'customer_ip_address' => '127.0.0.1',
-		);
+		// Set IP address.
+		$_SERVER['HTTP_X_REAL_IP'] = $ip;
 
 		// Run the post checkout validation with new customer.
 		WC()->cart->apply_coupon( $coupon->get_code() );
@@ -79,6 +77,9 @@ class CheckoutLimitPerIPTest extends WP_UnitTestCase {
 
 		// Verifies coupon is still applied.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
+
+		// Unset IP used for test.
+		unset( $_SERVER['HTTP_X_REAL_IP'] );
 	}
 
 	public function tearDown() {

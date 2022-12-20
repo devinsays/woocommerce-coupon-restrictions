@@ -50,7 +50,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
 				$this->validate_similar_emails_restriction( $coupon, $code, $posted );
 				$this->validate_usage_limit_per_shipping_address( $coupon, $code, $posted );
-				$this->validate_usage_limit_per_ip( $coupon, $code, $posted );
+				$this->validate_usage_limit_per_ip( $coupon, $code );
 			}
 		}
 	}
@@ -189,7 +189,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 		$count = WC_Coupon_Restrictions_Table::get_similar_email_usage( $code, $email );
 
 		if ( $count >= $coupon_usage_limit ) {
-			$msg = WC_Coupon_Restrictions_Validation::message( 'similar-emails', $coupon );
+			$msg = WC_Coupon_Restrictions_Validation::message( 'similar-email-usage', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
 	}
@@ -209,7 +209,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 
 		$count = WC_Coupon_Restrictions_Table::get_shipping_address_usage( $coupon, $code, $posted );
 		if ( $count >= $limit ) {
-			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-shipping-address', $coupon );
+			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-per-shipping-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
 	}
@@ -221,15 +221,15 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	 * @param string $code
 	 * @return void
 	 */
-	public function validate_usage_limit_per_ip( $coupon, $code, $posted ) {
+	public function validate_usage_limit_per_ip( $coupon, $code ) {
 		$limit = $coupon->get_meta( 'usage_limit_per_ip_address' );
 		if ( ! $limit ) {
 			return;
 		}
 
-		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $coupon, $code, $posted );
+		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $coupon, $code );
 		if ( $count >= $limit ) {
-			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-ip-address', $coupon );
+			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-per-ip-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
 		}
 	}

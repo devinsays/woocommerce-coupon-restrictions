@@ -81,26 +81,21 @@ class CheckoutLimitSimilarEmailsTest extends WP_UnitTestCase {
 
 		$email = 'customer2@gmail.com';
 		$order->set_billing_email( $email );
-		$order->set_status( 'processing' );
 		$order->save();
 
 		// Mimic the hook that gets triggered once the order is created.
 		do_action( 'woocommerce_pre_payment_complete', $order->get_id() );
 
-		// @TODO It appears table has not be created at this point. Why?
-
 		// Test a similar email (not exact match).
-		// @TODO Testing an exact match for the moment.
 		$posted = array(
-			'billing_email' => $email
+			'billing_email' => 'customer2+test@gmail.com'
 		);
 
-		// Run the post checkout validation.
+		// Apply the coupon.
 		WC()->cart->apply_coupon( $coupon->get_code() );
 
-		// Verifies coupon has been removed.
-		// @TODO This test is failing for some reason.
-		// It seems like an issue with the tests itself.
+		// Verify the coupon is removed because it is a similar email.
+		$this->validation->validate_coupons_after_checkout( $posted );
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 
 		// Update the usage limit to 2.
