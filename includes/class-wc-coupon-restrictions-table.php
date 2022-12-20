@@ -56,13 +56,13 @@ class WC_Coupon_Restrictions_Table {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
-			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			log_id mediumint(9) NOT NULL AUTO_INCREMENT,
 			order_id bigint(20) UNSIGNED NOT NULL,
 			coupon_code varchar(20) NOT NULL,
 			email varchar(255) NOT NULL,
 			ip varchar(15) NOT NULL,
 			shipping_address varchar(255) NOT NULL,
-			UNIQUE KEY id (id)
+			UNIQUE KEY log_id (log_id)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -76,13 +76,9 @@ class WC_Coupon_Restrictions_Table {
 	 * @return void
 	 */
 	public static function delete_table() {
-		if ( ! self::table_exists() ) {
-			return;
-		}
-
 		global $wpdb;
 		$table_name = self::get_table_name();
-		$wpdb->query( "DROP TABLE {$table_name}" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
 	}
 
 	/**
@@ -94,7 +90,6 @@ class WC_Coupon_Restrictions_Table {
 	 * @return array
 	 */
 	public static function maybe_store_customer_details( $order_id ) {
-		error_log( 'maybe_store_customer_details' );
 		$order = wc_get_order( $order_id );
 
 		// Check all the coupons.
@@ -157,7 +152,7 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id FROM $table_name WHERE coupon_code = %s AND email = %s",
+				"SELECT log_id FROM $table_name WHERE coupon_code = %s AND email = %s",
 				$coupon_code,
 				$email
 			)
@@ -190,7 +185,7 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id FROM $table_name WHERE coupon_code = %s AND shipping_address = %s",
+				"SELECT log_id FROM $table_name WHERE coupon_code = %s AND shipping_address = %s",
 				$coupon_code,
 				$shipping_address
 			)
@@ -214,7 +209,7 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id FROM $table_name WHERE coupon_code = %s AND ip = %s",
+				"SELECT log_id FROM $table_name WHERE coupon_code = %s AND ip = %s",
 				$coupon_code,
 				$ip
 			)
