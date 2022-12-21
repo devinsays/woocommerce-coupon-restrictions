@@ -34,7 +34,7 @@ class WC_Coupon_Restrictions_Table {
 		global $wpdb;
 		$table_name = self::get_table_name();
 
-		if ( $wpdb->get_var( "show tables like '{$table_name}'" ) === $table_name ) {
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) === $table_name ) {
 			return true;
 		}
 
@@ -44,11 +44,11 @@ class WC_Coupon_Restrictions_Table {
 	/**
 	 * Creates the table if it does not exist.
 	 *
-	 * @return void
+	 * @return array Strings containing the results of update queries.
 	 */
 	public static function maybe_create_table() {
 		if ( self::table_exists() ) {
-			return;
+			return array();
 		}
 
 		global $wpdb;
@@ -66,7 +66,7 @@ class WC_Coupon_Restrictions_Table {
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
+		return dbDelta( $sql );
 	}
 
 	/**

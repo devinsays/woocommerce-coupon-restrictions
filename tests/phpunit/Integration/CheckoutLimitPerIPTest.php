@@ -50,6 +50,10 @@ class CheckoutLimitPerIPTest extends WP_UnitTestCase {
 		// Set IP address.
 		$_SERVER['HTTP_X_REAL_IP'] = $ip;
 
+		$posted = array(
+			'billing_email' => 'customer@test.com'
+		);
+
 		// Run the post checkout validation with new customer.
 		WC()->cart->apply_coupon( $coupon->get_code() );
 		$this->validation->validate_coupons_after_checkout( $posted );
