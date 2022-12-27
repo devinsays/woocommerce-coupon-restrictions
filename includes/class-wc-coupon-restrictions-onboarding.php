@@ -2,22 +2,17 @@
 /**
  * WooCommerce Coupon Restrictions - Onboarding.
  *
- * @class    WC_Coupon_Restrictions_Onboarding
- * @author   DevPress
  * @package  WooCommerce Coupon Restrictions
- * @license  GPL-2.0+
  * @since    1.5.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+defined( 'ABSPATH' ) || exit;
 
 class WC_Coupon_Restrictions_Onboarding {
 	/**
-	* Init the class.
-	*/
-	public function init() {
+	 * Constructor.
+	 */
+	public function __construct() {
 		// Gets the base file for plugin.
 		$base = WC_Coupon_Restrictions::plugin_base();
 
@@ -320,9 +315,9 @@ class WC_Coupon_Restrictions_Onboarding {
 			'WCCR_POINTERS',
 			array(
 				'pointers' => $pointers,
-				'close'    => esc_html__( 'Dismiss', 'woocommerce-customer-coupons' ),
-				'next'     => esc_html__( 'Next', 'woocommerce-customer-coupons' ),
-				'enjoy'    => esc_html__( 'Enjoy!', 'woocommerce-customer-coupons' ),
+				'close'    => esc_html__( 'Dismiss', 'woocommerce-coupon-restrictions' ),
+				'next'     => esc_html__( 'Next', 'woocommerce-coupon-restrictions' ),
+				'enjoy'    => esc_html__( 'Enjoy!', 'woocommerce-coupon-restrictions' ),
 			)
 		);
 

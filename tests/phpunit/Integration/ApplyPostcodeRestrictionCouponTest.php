@@ -1,20 +1,18 @@
 <?php
-
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
-use WC_Mock_Session_Handler;
 
-class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
-
+class Apply_Postcode_Restriction_Coupon_Test extends WP_UnitTestCase {
+	/** @var WC_Coupon */
 	public $coupon;
+
 	public $customer;
 	public $session;
 
 	public function setUp() {
-
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$customer->set_billing_postcode( '78703' );
@@ -39,69 +37,58 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
-		update_post_meta( $coupon->get_id(), 'location_restrictions', 'yes' );
-		update_post_meta( $coupon->get_id(), 'address_for_location_restrictions', 'billing' );
+		$coupon->update_meta_data( 'location_restrictions', 'yes' );
+		$coupon->update_meta_data( 'address_for_location_restrictions', 'billing' );
+		$coupon->save();
 		$this->coupon = $coupon;
 
 		// Set the current customer.
 		wp_set_current_user( $customer->get_id() );
-
 	}
 
 	/**
 	 * Tests applying a coupon with postcode restriction and valid customer.
 	 */
 	public function test_postcode_restriction_with_valid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
-
-		update_post_meta( $coupon->get_id(), 'postcode_restriction', '78703' );
+		$coupon->update_meta_data( 'postcode_restriction', '78703' );
+		$coupon->save();
 
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
 	 * Tests applying a postcode restriction and non-valid customer.
 	 */
 	public function test_coupon_country_restriction_with_nonvalid_customer() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
-
-		update_post_meta( $coupon->get_id(), 'postcode_restriction', '000000' );
+		$coupon->update_meta_data( 'postcode_restriction', '000000' );
+		$coupon->save();
 
 		$this->assertFalse( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
-	
+
 	/**
 	 * Tests applying a coupon with postcode restriction and valid customer.
 	 */
 	public function test_valid_postcode_restriction_wildcard() {
-
-		$customer = $this->customer;
 		$coupon = $this->coupon;
-
-		update_post_meta( $coupon->get_id(), 'postcode_restriction', '00000,787*,ALPHAZIP' );
+		$coupon->update_meta_data( 'postcode_restriction', '00000,787*,ALPHAZIP' );
+		$coupon->save();
 
 		$this->assertTrue( WC()->cart->apply_coupon( $coupon->get_code() ) );
 
 		// Verifies 1 coupon has been applied to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
-
 	public function tearDown() {
-
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -111,7 +98,5 @@ class Apply_Zipcode_Restriction_Test extends WP_UnitTestCase {
 
 		$this->customer->delete();
 		$this->coupon->delete();
-
 	}
-
 }

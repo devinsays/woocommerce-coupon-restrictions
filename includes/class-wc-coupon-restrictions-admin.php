@@ -2,37 +2,34 @@
 /**
  * WooCommerce Coupon Restrictions - Admin.
  *
- * @class    WC_Coupon_Restrictions_Admin
- * @author   DevPress
  * @package  WooCommerce Coupon Restrictions
- * @license  GPL-2.0+
  * @since    1.3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
+defined( 'ABSPATH' ) || exit;
 
 class WC_Coupon_Restrictions_Admin {
-
 	/**
-	* Init the class.
-	*/
-	public function init() {
+	 * Constructor.
+	 */
+	public function __construct() {
 		// Enqueues javascript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ) );
 
-		// Adds metabox to usage restriction fields.
+		// Adds additional usage restriction fields.
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'customer_restrictions' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'role_restrictions' ), 10, 2 );
 		add_action( 'woocommerce_coupon_options_usage_restriction', array( $this, 'location_restrictions' ), 10, 2 );
 
-		// Saves the metabox.
+		// Adds additional usage limit fields.
+		add_action( 'woocommerce_coupon_options_usage_limit', array( $this, 'usage_limits' ), 10, 2 );
+
+		// Saves the meta fields.
 		add_action( 'woocommerce_coupon_options_save', array( $this, 'coupon_options_save' ), 10, 2 );
 	}
 
 	/**
-	 * Adds "new customer" and "existing customer" restriction checkboxes.
+	 * Adds "new customer" and "existing customer" restriction radio buttons.
 	 *
 	 * @since  1.3.0
 	 *
@@ -77,7 +74,6 @@ class WC_Coupon_Restrictions_Admin {
 	 * @return void
 	 */
 	public static function role_restrictions( $coupon_id, $coupon ) {
-
 		$id     = 'role_restriction';
 		$title  = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
 		$values = $coupon->get_meta( $id, true );
@@ -165,8 +161,7 @@ class WC_Coupon_Restrictions_Admin {
 		$countries = WC()->countries->get_countries();
 
 		// An array of countries the shop sells to.
-		// Calls the global instance for PHP5.6 compatibility.
-		$shop_countries = WC_Coupon_Restrictions()->admin->shop_countries();
+		$shop_countries = self::shop_countries();
 		?>
 		<p class="form-field <?php echo $id; ?>_only_field">
 		<label for="<?php echo esc_attr( $id ); ?>">
@@ -230,6 +225,65 @@ class WC_Coupon_Restrictions_Admin {
 	}
 
 	/**
+	 * Adds additional usage restrictions.
+	 *
+	 * @since  1.7.0
+	 *
+	 * @param int $coupon_id
+	 * @param object $coupon
+	 * @return void
+	 */
+	public static function usage_limits( $coupon_id, $coupon ) {
+		$value = esc_attr( $coupon->get_meta( 'prevent_similar_emails', true ) );
+		woocommerce_wp_checkbox(
+			array(
+				'id'          => 'prevent_similar_emails',
+				'label'       => __( 'Prevent similar emails', 'woocommerce-coupon-restrictions' ),
+				'description' => __( 'Many email services ignore periods and anything after a "+". Check this box to prevent customers from using a similar email address to exceed the usage limit per user.', 'woocommerce-coupon-restrictions' ),
+				'value'       => wc_bool_to_string( $value ),
+			)
+		);
+
+		// Usage limit per shipping address.
+		$value = $coupon->get_meta( 'usage_limit_per_shipping_address' );
+		woocommerce_wp_text_input(
+			array(
+				'id'                => 'usage_limit_per_shipping_address',
+				'label'             => __( 'Usage limit per shipping address', 'woocommerce-coupon-restrictions' ),
+				'placeholder'       => esc_attr__( 'Unlimited usage', 'woocommerce-coupon-restrictions' ),
+				'description'       => __( 'How many times this coupon can be used with the same shipping address.', 'woocommerce-coupon-restrictions' ),
+				'desc_tip'          => true,
+				'class'             => 'short',
+				'type'              => 'number',
+				'custom_attributes' => array(
+					'step' => 1,
+					'min'  => 0,
+				),
+				'value'             => $value ? intval( $value ) : '',
+			)
+		);
+
+		// Usage limit per IP address.
+		$value = $coupon->get_meta( 'usage_limit_per_ip_address' );
+		woocommerce_wp_text_input(
+			array(
+				'id'                => 'usage_limit_per_ip_address',
+				'label'             => __( 'Usage limit per IP address', 'woocommerce-coupon-restrictions' ),
+				'placeholder'       => esc_attr__( 'Unlimited usage', 'woocommerce-coupon-restrictions' ),
+				'description'       => __( 'How many times this coupon can be used with the same IP address.', 'woocommerce-coupon-restrictions' ),
+				'desc_tip'          => true,
+				'class'             => 'short',
+				'type'              => 'number',
+				'custom_attributes' => array(
+					'step' => 1,
+					'min'  => 0,
+				),
+				'value'             => $value ? intval( $value ) : '',
+			)
+		);
+	}
+
+	/**
 	 * Returns an array of countries the shop sells to.
 	 *
 	 * @since  1.5.0
@@ -271,17 +325,16 @@ class WC_Coupon_Restrictions_Admin {
 	 * @return void
 	 */
 	public static function coupon_options_save( $coupon_id, $coupon ) {
-
-		// Sanitize customer restriction type meta.
+		// Customer restriction type.
 		$id                        = 'customer_restriction_type';
-		$customer_restriction_type = $_POST[ $id ] ?? 'none';
+		$customer_restriction_type = $_POST[ $id ] ?? '';
 		if ( in_array( $customer_restriction_type, array( 'new', 'existing' ) ) ) {
 			$coupon->update_meta_data( $id, $customer_restriction_type );
 		} else {
 			$coupon->delete_meta_data( $id );
 		}
 
-		// Sanitize role restriction meta.
+		// Role restriction.
 		$id                      = 'role_restriction';
 		$role_restriction_select = $_POST[ $id ] ?? array();
 		$role_restriction        = array_filter( array_map( 'wc_clean', $role_restriction_select ) );
@@ -291,7 +344,7 @@ class WC_Coupon_Restrictions_Admin {
 			$coupon->delete_meta_data( $id );
 		}
 
-		// Sanitize location restrictions checkbox.
+		// Location restrictions.
 		$id                    = 'location_restrictions';
 		$location_restrictions = isset( $_POST[ $id ] ) ? 'yes' : 'no';
 		if ( 'yes' === $location_restrictions ) {
@@ -300,7 +353,7 @@ class WC_Coupon_Restrictions_Admin {
 			$coupon->delete_meta_data( $id );
 		}
 
-		// Sanitize address to use for location restrictions.
+		// Address for location restrictions.
 		$id                                = 'address_for_location_restrictions';
 		$address_for_location_restrictions = isset( $_POST[ $id ] ) ? $_POST[ $id ] : 'shipping';
 		if ( 'billing' === $address_for_location_restrictions ) {
@@ -310,7 +363,7 @@ class WC_Coupon_Restrictions_Admin {
 			$coupon->delete_meta_data( $id );
 		}
 
-		// Sanitize country restriction meta.
+		// Country restriction.
 		$id                         = 'country_restriction';
 		$country_restriction_select = $_POST[ $id ] ?? array();
 		$country_restriction        = array_filter( array_map( 'wc_clean', $country_restriction_select ) );
@@ -320,7 +373,7 @@ class WC_Coupon_Restrictions_Admin {
 			$coupon->delete_meta_data( $id );
 		}
 
-		// Sanitize state restriction meta.
+		// State restriction.
 		$id                = 'state_restriction';
 		$state_restriction = $_POST[ $id ] ?? '';
 		$state_restriction = self::sanitize_comma_seperated_textarea( $state_restriction );
@@ -330,7 +383,7 @@ class WC_Coupon_Restrictions_Admin {
 			$coupon->delete_meta_data( $id );
 		}
 
-		// Sanitize postcode restriction meta.
+		// Postcode restriction.
 		$id                   = 'postcode_restriction';
 		$postcode_restriction = $_POST[ $id ] ?? '';
 		$postcode_restriction = self::sanitize_comma_seperated_textarea( $postcode_restriction );
@@ -338,6 +391,45 @@ class WC_Coupon_Restrictions_Admin {
 			$coupon->update_meta_data( $id, $postcode_restriction );
 		} else {
 			$coupon->delete_meta_data( $id );
+		}
+
+		// Track whether an enhanced usage restriction is set.
+		$enhanced_usage_restriction = false;
+
+		// Prevent similar emails.
+		$id                     = 'prevent_similar_emails';
+		$prevent_similar_emails = isset( $_POST[ $id ] ) ? 'yes' : 'no';
+		if ( 'yes' === $prevent_similar_emails ) {
+			$coupon->update_meta_data( $id, $prevent_similar_emails );
+			$enhanced_usage_restriction = true;
+		} else {
+			$coupon->delete_meta_data( $id );
+		}
+
+		// Usage limit per shipping address.
+		$id                       = 'usage_limit_per_shipping_address';
+		$usage_limit_per_shipping = absint( $_POST[ $id ] );
+		if ( $usage_limit_per_shipping > 0 ) {
+			$coupon->update_meta_data( $id, $usage_limit_per_shipping );
+			$enhanced_usage_restriction = true;
+		} else {
+			$coupon->delete_meta_data( $id );
+		}
+
+		// Usage limit per IP address.
+		$id                         = 'usage_limit_per_ip_address';
+		$usage_limit_per_ip_address = absint( $_POST[ $id ] );
+		if ( $usage_limit_per_ip_address > 0 ) {
+			$coupon->update_meta_data( $id, $usage_limit_per_ip_address );
+			$enhanced_usage_restriction = true;
+		} else {
+			$coupon->delete_meta_data( $id );
+		}
+
+		// If an enhanced usage restiction is set,
+		// make sure the custom restrictions table is available.
+		if ( $enhanced_usage_restriction ) {
+			WC_Coupon_Restrictions_Table::maybe_create_table();
 		}
 
 		// Save meta data.
@@ -352,7 +444,7 @@ class WC_Coupon_Restrictions_Admin {
 	 *
 	 * @return string
 	 */
-	public static function sanitize_comma_seperated_textarea( $textarea ) {
+	public static function sanitize_comma_seperated_textarea( $textarea = '' ) {
 		// Trim whitespace.
 		$textarea = trim( $textarea );
 

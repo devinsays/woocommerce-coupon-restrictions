@@ -1,16 +1,16 @@
 # WooCommerce Coupon Restrictions ![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=master)
 
--   Requires PHP: 7.0
+-   Requires PHP: 7.2
 -   WP requires at least: 4.9.0
--   WP tested up to: 5.7
+-   WP tested up to: 6.1.1
 -   WC requires at least: 4.8.1
--   WC tested up to: 7.1.0
--   Stable tag: 1.8.6
+-   WC tested up to: 7.2.2
+-   Stable tag: 2.0.0
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
 
-This extension allows you to create coupons with addition restriction options:
+This extension provides additional coupon restriction options to better target coupons. There are usage limits to help reduce coupon abuse.
 
 **New customer restriction**: Verifies that the customer does not have an account with completed purchases before applying the coupon. The extension can also verify that a customer doesn't have completed guest orders if when that setting is selected.
 
@@ -23,6 +23,12 @@ This extension allows you to create coupons with addition restriction options:
 **State restriction**: Allows you to restrict a coupon to specific states. Restriction can be applied to shipping or billing country.
 
 **Zip code restriction**: Allows you to restrict a coupon to specific zip codes or postal codes. Can be applied to the shipping or the billing address.
+
+**Similar emails usage limit**: Sometimes customers use different email addresses in order to avoid coupon usage limits. This option does basic checks to ensure a customer is not using an email alias with periods or a "+" to exceed the coupon usage limit.
+
+**Shipping address usage limit**: Allows you to limit the amount of a times a coupon can be used with a specific shipping address.
+
+**IP address usage limit**: Allows you to limit the amount of times a coupon can be used with a specific IP address.
 
 The plugin is fully translatable. Developers can also use filters to modify any notices displayed during coupon validation.
 
@@ -56,6 +62,11 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 -   Run `composer make-pot` to update the translation file.
 
 ## Changelog
+
+**2.0.0 (01.05.23)**
+
+-   Update: Major plugin rewrite.
+-   Enhancement: Enhanced usage limits to help reduce coupon fraud.
 
 **1.8.6 (11.09.22)**
 

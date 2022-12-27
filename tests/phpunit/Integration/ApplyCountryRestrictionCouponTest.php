@@ -1,12 +1,12 @@
 <?php
-
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;
 use WC_Helper_Coupon;
 
-class Apply_Country_Restriction_Test extends WP_UnitTestCase {
+class Apply_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
+	/** @var WC_Coupon */
 	public $coupon;
 	public $customer;
 	public $session;
@@ -97,7 +97,6 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies 0 coupons have been applied to cart.
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**
@@ -123,7 +122,6 @@ class Apply_Country_Restriction_Test extends WP_UnitTestCase {
 
 		// Verifies the coupon has not been added to cart.
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
-
 	}
 
 	/**

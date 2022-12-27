@@ -1,6 +1,5 @@
 <?php
-
-namespace DevPress\WooCommerce\CouponRestrictions\Test\Integration;
+namespace WooCommerce_Coupon_Restrictions\Tests\Integration;
 
 use WP_UnitTestCase;
 use WC_Helper_Customer;
@@ -8,6 +7,7 @@ use WC_Helper_Coupon;
 use WC_Helper_Order;
 
 class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
+	/** @var WC_Coupon */
 	public $coupon;
 
 	public function setUp() {
@@ -23,7 +23,6 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	 * Coupon will apply because no session has been set yet.
 	 */
 	public function test_existing_customer_restriction_coupon_applies_with_no_session() {
-		// Get data from setup.
 		$coupon = $this->coupon;
 
 		// Adds a coupon restricted to existing customers.
@@ -39,7 +38,6 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	 * and email does not match existing customer.
 	 */
 	public function test_existing_customer_restriction_with_session_not_valid() {
-		// Get data from setup.
 		$coupon = $this->coupon;
 
 		// Crate a mock customer session.
@@ -61,7 +59,6 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	 * and email does not match existing customer.
 	 */
 	public function test_existing_customer_restriction_with_session_valid() {
-		// Get data from setup.
 		$coupon = $this->coupon;
 
 		// Create a customer.

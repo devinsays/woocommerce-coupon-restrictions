@@ -29,4 +29,8 @@
 	<rule ref="WordPress-Extra"/>
 	<rule ref="PSR2.Methods.FunctionClosingBrace"/>
 
+	<rule ref="WordPress-Extra">
+        <exclude name="WordPress.PHP.YodaConditions"/>
+    </rule>
+
 </ruleset>
