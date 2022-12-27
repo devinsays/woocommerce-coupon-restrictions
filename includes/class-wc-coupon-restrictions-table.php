@@ -18,6 +18,7 @@ class WC_Coupon_Restrictions_Table {
 	 */
 	public function __construct() {
 		add_action( 'woocommerce_pre_payment_complete', array( $this, 'maybe_store_customer_details' ), 999, 1 );
+		add_action( 'woocommerce_order_status_cancelled', array( $this, 'maybe_update_record_status' ), 10, 1 );
 	}
 
 	public static function get_table_name() {
@@ -56,13 +57,14 @@ class WC_Coupon_Restrictions_Table {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
-			log_id mediumint(9) NOT NULL AUTO_INCREMENT,
+			record_id mediumint(9) NOT NULL AUTO_INCREMENT,
+			status varchar(20) NOT NULL,
 			order_id bigint(20) UNSIGNED NOT NULL,
 			coupon_code varchar(20) NOT NULL,
 			email varchar(255) NOT NULL,
 			ip varchar(15) NOT NULL,
 			shipping_address varchar(255) NOT NULL,
-			UNIQUE KEY log_id (log_id)
+			UNIQUE KEY record_id (record_id)
 		) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -116,6 +118,7 @@ class WC_Coupon_Restrictions_Table {
 
 		// Gather the data for each column in the database table.
 		$data = array(
+			'status'           => 'active',
 			'order_id'         => $order->get_id(),
 			'coupon_code'      => $coupon_code,
 			'email'            => self::get_scrubbed_email( $order->get_billing_email() ),
@@ -128,11 +131,86 @@ class WC_Coupon_Restrictions_Table {
 			self::get_table_name(),
 			$data,
 			array(
+				'%s',
 				'%d',
 				'%s',
 				'%s',
 				'%s',
 				'%s',
+			)
+		);
+	}
+
+	/**
+	 * Sets record to cancelled if order with coupon is cancelled.
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public static function maybe_update_record_status( $order_id ) {
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			return;
+		}
+
+		// If order does not have any coupons, return early.
+		if ( count( $order->get_coupon_codes() ) === 0 ) {
+			return;
+		}
+
+		$records = self::get_records_for_order_id( $order_id );
+
+		if ( ! $records ) {
+			return;
+		}
+
+		foreach ( $records as $record ) {
+			self::update_record_status( $record->record_id, 'cancelled' );
+		}
+	}
+
+	/**
+	 * Returns all records for a specific order ID.
+	 *
+	 * @param int order_id
+	 *
+	 * @return array Array of records.
+	 */
+	public static function get_records_for_order_id( $order_id ) {
+		global $wpdb;
+		$table_name = self::get_table_name();
+		$results    = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT record_id FROM $table_name WHERE order_id = %d",
+				$order_id
+			)
+		);
+
+		return $results;
+	}
+
+	/**
+	 * Sets the record status.
+	 *
+	 * @param int $record_id
+	 * @param string $status
+	 */
+	public static function update_record_status( $record_id, $status = 'active' ) {
+		global $wpdb;
+		$table_name = self::get_table_name();
+		return $wpdb->update(
+			$table_name,
+			array(
+				'status' => $status,
+			),
+			array(
+				'record_id' => $record_id,
+			),
+			array(
+				'%s',
+			),
+			array(
+				'%d',
 			)
 		);
 	}
@@ -152,7 +230,7 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT log_id FROM $table_name WHERE coupon_code = %s AND email = %s",
+				"SELECT record_id FROM $table_name WHERE coupon_code = %s AND email = %s AND status = 'active'",
 				$coupon_code,
 				$email
 			)
@@ -185,7 +263,7 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT log_id FROM $table_name WHERE coupon_code = %s AND shipping_address = %s",
+				"SELECT record_id FROM $table_name WHERE coupon_code = %s AND shipping_address = %s AND status = 'active'",
 				$coupon_code,
 				$shipping_address
 			)
@@ -209,7 +287,7 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT log_id FROM $table_name WHERE coupon_code = %s AND ip = %s",
+				"SELECT record_id FROM $table_name WHERE coupon_code = %s AND ip = %s AND status = 'active'",
 				$coupon_code,
 				$ip
 			)
