@@ -10,7 +10,7 @@
 
 ## Description
 
-This extension provides additional coupon restriction options to better target coupons. There are usage limits to help reduce coupon abuse.
+Create targeted coupons for new customers, user roles, countries or zip codes. Prevent coupon abuse with enhanced usage limits.
 
 **New customer restriction**: Verifies that the customer does not have an account with completed purchases before applying the coupon. The extension can also verify that a customer doesn't have completed guest orders if when that setting is selected.
 
@@ -63,7 +63,7 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 
 ## Changelog
 
-**2.0.0 (01.05.23)**
+**2.0.0 (01.02.23)**
 
 -   Update: Major plugin rewrite.
 -   Enhancement: Enhanced usage limits to help reduce coupon fraud.

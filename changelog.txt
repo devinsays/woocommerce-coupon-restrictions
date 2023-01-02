@@ -1,6 +1,6 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
-2023-01-05 - version 2.0.0
+2023-01-02 - version 2.0.0
 
 * Update: Major plugin rewrite.
 * Enhancement: Enhanced usage limits to help reduce coupon fraud.
