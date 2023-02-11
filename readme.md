@@ -4,8 +4,8 @@
 -   WP requires at least: 4.9.0
 -   WP tested up to: 6.1.1
 -   WC requires at least: 4.8.1
--   WC tested up to: 7.2.2
--   Stable tag: 2.0.0
+-   WC tested up to: 7.3.0
+-   Stable tag: 2.1.0
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
@@ -66,6 +66,7 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 **2.1.0 (02.10.23)**
 
 -   Bugfix: Coupon verification records were not storing properly on checkouts with payment.
+-   Bugfix: Show compatibility notice if WooCommerce is not active.
 
 **2.0.0 (01.02.23)**
 
@@ -92,7 +93,7 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 
 -   Enhancement: Adds "Guest (No Account)" option to the roles restriction.
 
-**1.8.2**
+**1.8.2 (01.12.21)**
 
 -   Enhancement: Reduces use of coupon meta by only storing non-default values.
 -   Update: Tested to WooCommerce 4.8.0.

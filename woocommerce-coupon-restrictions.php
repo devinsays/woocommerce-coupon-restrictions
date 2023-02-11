@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://woocommerce.com/products/woocommerce-coupon-restrictions/
  * Description: Create targeted coupons for new customers, user roles, countries or zip codes. Prevent coupon abuse with enhanced usage limits.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Developer: Devin Price
@@ -13,7 +13,7 @@
  *
  * Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
  * WC requires at least: 4.8.1
- * WC tested up to: 7.2.2
+ * WC tested up to: 7.3.0
  *
  * Copyright: © 2015-2023 DevPress.
  * License: GNU General Public License v3.0
@@ -32,7 +32,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public static $instance;
 
 		/** @var string */
-		public $version = '2.0.0';
+		public $version = '2.1.0';
 
 		/** @var string */
 		public $required_woo = '4.8.1';
@@ -64,11 +64,8 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public function __construct() {
 			$this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
 
-			// Checks WooCommerce version.
-			add_action( 'plugins_loaded', array( $this, 'load_plugin' ) );
-
 			// Init hooks runs after plugins_loaded and woocommerce_loaded hooks.
-			add_action( 'init', array( $this, 'init_plugin' ) );
+			add_action( 'init', array( $this, 'init' ) );
 		}
 
 		/**
@@ -91,26 +88,13 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		}
 
 		/**
-		 * Check requirements on activation.
-		 *
-		 * @since  1.3.0
-		 */
-		public function load_plugin() {
-			// Check we're running the required version of WooCommerce.
-			if ( ! defined( 'WC_VERSION' ) || version_compare( WC_VERSION, $this->required_woo, '<' ) ) {
-				add_action( 'admin_notices', array( $this, 'woocommerce_compatibility_notice' ) );
-				return false;
-			}
-		}
-
-		/**
 		 * Display a warning message if minimum version of WooCommerce check fails.
 		 *
 		 * @since  1.3.0
 		 * @return void
 		 */
 		public function woocommerce_compatibility_notice() {
-			echo '<div class="error"><p>' . sprintf( __( '%1$s requires at least %2$s v%3$s in order to function. Please upgrade %2$s.', 'woocommerce-coupon-restrictions' ), 'WooCommerce Coupon Restrictions', 'WooCommerce', $this->required_woo ) . '</p></div>';
+			echo '<div class="error"><p>' . sprintf( __( '%1$s requires at least %2$s v%3$s in order to function.', 'woocommerce-coupon-restrictions' ), 'WooCommerce Coupon Restrictions', 'WooCommerce', $this->required_woo ) . '</p></div>';
 		}
 
 		/**
@@ -119,7 +103,13 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		 * @since  1.3.0
 		 * @return void
 		 */
-		public function init_plugin() {
+		public function init() {
+			// Check if we're running the required version of WooCommerce.
+			if ( ! defined( 'WC_VERSION' ) || version_compare( WC_VERSION, $this->required_woo, '<' ) ) {
+				add_action( 'admin_notices', array( $this, 'woocommerce_compatibility_notice' ) );
+				return false;
+			}
+
 			// Load translations.
 			load_plugin_textdomain(
 				'woocommerce-coupon-restrictions',

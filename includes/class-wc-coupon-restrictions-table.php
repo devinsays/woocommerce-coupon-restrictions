@@ -98,7 +98,6 @@ class WC_Coupon_Restrictions_Table {
 	 * @return array
 	 */
 	public static function maybe_add_record_on_payment( $result, $order_id ) {
-		error_log('maybe_add_record_on_payment');
 		self::maybe_add_record( $order_id );
 		return $result;
 	}
@@ -111,7 +110,6 @@ class WC_Coupon_Restrictions_Table {
 	 * @return array
 	 */
 	public static function maybe_add_record( $order_id ) {
-		error_log( 'maybe_add_record' );
 		$order = wc_get_order( $order_id );
 
 		// Check all the coupons.

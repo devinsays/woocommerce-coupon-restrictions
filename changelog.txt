@@ -3,6 +3,7 @@
 2023-02-10 - version 2.1.0
 
 * Bugfix: Coupon verification records were not storing properly on checkouts with payment.
+* Bugfix: Show compatibility notice if WooCommerce is not active.
 
 2023-01-02 - version 2.0.0
 
