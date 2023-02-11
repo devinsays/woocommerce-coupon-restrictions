@@ -63,6 +63,10 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 
 ## Changelog
 
+**2.1.0 (02.10.23)**
+
+-   Bugfix: Coupon verification records were not storing properly on checkouts with payment.
+
 **2.0.0 (01.02.23)**
 
 -   Update: Major plugin rewrite.

@@ -1,5 +1,9 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2023-02-10 - version 2.1.0
+
+* Bugfix: Coupon verification records were not storing properly on checkouts with payment.
+
 2023-01-02 - version 2.0.0
 
 * Update: Major plugin rewrite.
