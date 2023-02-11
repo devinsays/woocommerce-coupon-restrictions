@@ -17,8 +17,15 @@ class WC_Coupon_Restrictions_Table {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action( 'woocommerce_pre_payment_complete', array( $this, 'maybe_store_customer_details' ), 999, 1 );
-		add_action( 'woocommerce_order_status_cancelled', array( $this, 'maybe_update_record_status' ), 10, 1 );
+		// We'll store a record in the verification table if customer uses a coupon with enhanced usage limits.
+		// The woocommerce_pre_payment_complete is when if the order does not require a payment.
+		// This can happen if the coupon brings the order price to zero.
+		// The woocommerce_payment_successful_result filter is used when the order does require a payment.
+		add_action( 'woocommerce_pre_payment_complete', array( $this, 'maybe_add_record' ), 100 );
+		add_filter( 'woocommerce_payment_successful_result', array( $this, 'maybe_add_record_on_payment' ), 100, 2 );
+
+		// This removes the record in the verification table if the order is cancelled.
+		add_action( 'woocommerce_order_status_cancelled', array( $this, 'maybe_update_record_status' ), 10 );
 	}
 
 	public static function get_table_name() {
@@ -91,7 +98,19 @@ class WC_Coupon_Restrictions_Table {
 	 *
 	 * @return array
 	 */
-	public static function maybe_store_customer_details( $order_id ) {
+	public static function maybe_add_record_on_payment( $result, $order_id ) {
+		self::maybe_add_record( $order_id );
+		return $result;
+	}
+
+	/**
+	 * If a coupon with the enhanced usage limits is used we'll store the customer details.
+	 *
+	 * @param int   $order_id
+	 *
+	 * @return array
+	 */
+	public static function maybe_add_record( $order_id ) {
 		$order = wc_get_order( $order_id );
 
 		// Check all the coupons.

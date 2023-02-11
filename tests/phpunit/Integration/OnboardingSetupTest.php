@@ -31,7 +31,7 @@ class Onboarding_Setup_Test extends WP_UnitTestCase {
 
 		// This will kick off the upgrade routine.
 		$plugin = WC_Coupon_Restrictions();
-		$plugin->init_plugin();
+		$plugin->init();
 
 		$query_type = get_option( 'coupon_restrictions_customer_query', 'account' );
 		$this->assertEquals( $query_type, 'accounts-orders' );
