@@ -17,13 +17,14 @@ class WC_Coupon_Restrictions_Table {
 	 * Constructor.
 	 */
 	public function __construct() {
-		// This is if the order can be completed immediately.
+		// We'll store a record in the verification table if customer uses a coupon with enhanced usage limits.
+		// The woocommerce_pre_payment_complete is when if the order does not require a payment.
+		// This can happen if the coupon brings the order price to zero.
+		// The woocommerce_payment_successful_result filter is used when the order does require a payment.
 		add_action( 'woocommerce_pre_payment_complete', array( $this, 'maybe_add_record' ), 100 );
-
-		// This is if the order does require a payment.
 		add_filter( 'woocommerce_payment_successful_result', array( $this, 'maybe_add_record_on_payment' ), 100, 2 );
 
-		// This removes the record if the order is cancelled.
+		// This removes the record in the verification table if the order is cancelled.
 		add_action( 'woocommerce_order_status_cancelled', array( $this, 'maybe_update_record_status' ), 10 );
 	}
 
