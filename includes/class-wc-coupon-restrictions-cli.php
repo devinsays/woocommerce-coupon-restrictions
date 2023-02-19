@@ -10,6 +10,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+use WC_Coupon_Restrictions_Table;
+
 class WC_Coupon_Restrictions_CLI {
 	// Usage: wp wcr refresh_enhanced_usage_limits_table
 	public function refresh_enhanced_usage_limits_table() {
@@ -28,12 +30,18 @@ class WC_Coupon_Restrictions_CLI {
 			exit;
 		}
 
+		if ( ! WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
+			WP_CLI::error( 'Coupon does not have any enhanced usage restrictions set.' );
+			exit;
+		}
+
 		WP_CLI::success( "Coupon has been used $usage_count times." );
 
 		$orders = $this->get_orders_with_coupon_code( $code );
 		foreach ( $orders as $order ) {
 			$order_id = $order->get_id();
-			WP_CLI::log( "Order ID: $order_id" );
+			WC_Coupon_Restrictions_Table::maybe_add_record( $order_id );
+			WP_CLI::log( "Record added for order: $order_id" );
 		}
 	}
 
