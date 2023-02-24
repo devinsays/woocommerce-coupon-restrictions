@@ -78,10 +78,9 @@ class WC_Coupon_Restrictions_CLI {
 		$coupon = new WC_Coupon( $code );
 		$date   = $coupon->get_date_created()->date( 'Y-m-d' );
 
-		// Only queries for orders created after the coupon was created.
-		// There may be some edge cases where coupon was applied to earlier orders,
-		// but should be rare.
-		// This limitation makes the query much more performant.
+		// Query is restricted to orders created after the coupon was created.
+		// This limitation makes the query much more performant (less orders to query).
+		// But there can be rare edge cases where a coupon was applied to an earlier order.
 		$args = array(
 			'date_created' => '>=' . $date,
 			'meta_query'   => array(
