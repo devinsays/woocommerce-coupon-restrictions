@@ -4,16 +4,15 @@
  *
  * Command line interface for coupon restrictions.
  *
+ * Usage: wp wcr refresh_enhanced_usage_limits_table
+ *
  * @package  WooCommerce Coupon Restrictions
  * @since    2.0.0
  */
 
 defined( 'ABSPATH' ) || exit;
 
-use WC_Coupon_Restrictions_Table;
-
 class WC_Coupon_Restrictions_CLI {
-	// Usage: wp wcr refresh_enhanced_usage_limits_table
 	public function refresh_enhanced_usage_limits_table() {
 		$this->explainer_text();
 		$code = $this->ask( 'Coupon code to update data for:' );
@@ -30,7 +29,7 @@ class WC_Coupon_Restrictions_CLI {
 			exit;
 		}
 
-		if ( ! WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
+		if ( ! \WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
 			WP_CLI::error( 'Coupon does not have any enhanced usage restrictions set.' );
 			exit;
 		}
@@ -75,9 +74,17 @@ class WC_Coupon_Restrictions_CLI {
 	 *
 	 * @return array
 	 */
-	public function get_orders_with_coupon_code( $code ) {
+	public static function get_orders_with_coupon_code( $code ) {
+		$coupon = new WC_Coupon( $code );
+		$date   = $coupon->get_date_created()->date( 'Y-m-d' );
+
+		// Only queries for orders created after the coupon was created.
+		// There may be some edge cases where coupon was applied to earlier orders,
+		// but should be rare.
+		// This limitation makes the query much more performant.
 		$args = array(
-			'meta_query' => array(
+			'date_created' => '>=' . $date,
+			'meta_query'   => array(
 				array(
 					'key'     => '_coupon_code',
 					'value'   => $code,
