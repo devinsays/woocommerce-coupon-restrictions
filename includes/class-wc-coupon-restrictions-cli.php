@@ -6,6 +6,8 @@
  *
  * Usage: wp wcr refresh_enhanced_usage_limits_table
  *
+ * @TODO: All strings need to be translatable.
+ *
  * @package  WooCommerce Coupon Restrictions
  * @since    2.0.0
  */
