@@ -124,6 +124,12 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-table.php';
 			new WC_Coupon_Restrictions_Table();
 
+			// WP CLI command to populate restrictions table with already completed orders
+			// that have enhanced usage limits.
+			if ( defined( 'WP_CLI' ) && WP_CLI ) {
+				include_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-cli.php';
+			}
+
 			// These classes are only needed in the admin.
 			if ( is_admin() ) {
 				// Onboarding actions when plugin is first installed.
