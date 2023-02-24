@@ -38,12 +38,7 @@ class WC_Coupon_Restrictions_CLI {
 
 		WP_CLI::success( "Coupon has been used $usage_count times." );
 
-		$orders = $this->get_orders_with_coupon_code( $code );
-		foreach ( $orders as $order ) {
-			$order_id = $order->get_id();
-			WC_Coupon_Restrictions_Table::maybe_add_record( $order_id );
-			WP_CLI::log( "Record added for order: $order_id" );
-		}
+		$this->add_order_data_for_coupon( $code );
 	}
 
 	public function explainer_text() {
@@ -67,6 +62,34 @@ class WC_Coupon_Restrictions_CLI {
 		$answer = trim( fgets( STDIN ) );
 		$answer = $case_sensitive ? $answer : strtolower( $answer );
 		return $answer;
+	}
+
+	/**
+	 * Updates the verification table with all order data for a specific coupon.
+	 *
+	 * @param string $code
+	 *
+	 * @return array
+	 */
+	public static function add_order_data_for_coupon( $code ) {
+		$orders = self::get_orders_with_coupon_code( $code );
+
+		if ( ! $orders ) {
+			return;
+		}
+
+		// Deletes all existing records for the coupon code so table can be refreshed.
+		WC_Coupon_Restrictions_Table::delete_records_for_coupon( $code );
+
+		foreach ( $orders as $order ) {
+			$order_id = $order->get_id();
+			WC_Coupon_Restrictions_Table::maybe_add_record( $order_id );
+
+			// Checks just in case this is running outside of WP-CLI.
+			if ( defined( 'WP_CLI' ) && WP_CLI ) {
+				WP_CLI::log( "Record added for order: $order_id" );
+			}
+		}
 	}
 
 	/**

@@ -235,6 +235,24 @@ class WC_Coupon_Restrictions_Table {
 	}
 
 	/**
+	 * Deletes all records for a specific coupon in the verification table.
+	 *
+	 * @param string   $code
+	 *
+	 * @return void
+	 */
+	public static function delete_records_for_coupon( $code ) {
+		global $wpdb;
+		$table_name = self::get_table_name();
+		$wpdb->get_results(
+			$wpdb->prepare(
+				"DELETE FROM $table_name WHERE coupon_code = %s",
+				wc_sanitize_coupon_code( $code )
+			)
+		);
+	}
+
+	/**
 	 * Check if scrubbed email has been used with coupon previously.
 	 *
 	 * @param \WC_Coupon $coupon
