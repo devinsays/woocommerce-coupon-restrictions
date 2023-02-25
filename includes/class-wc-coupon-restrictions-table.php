@@ -383,4 +383,61 @@ class WC_Coupon_Restrictions_Table {
 
 		return strtolower( "$email_name@$email_domain" );
 	}
+
+	/**
+	 * Updates the verification table with all order data for a specific coupon.
+	 *
+	 * @param string $code
+	 *
+	 * @return array
+	 */
+	public static function add_order_data_for_coupon( $code ) {
+		$orders = self::get_orders_with_coupon_code( $code );
+
+		if ( ! $orders ) {
+			return;
+		}
+
+		// Deletes all existing records for the coupon code so table can be refreshed.
+		self::delete_records_for_coupon( $code );
+
+		foreach ( $orders as $order ) {
+			$order_id = $order->get_id();
+			self::maybe_add_record( $order_id );
+
+			// Output if this is running via WP-CLI.
+			if ( defined( 'WP_CLI' ) && WP_CLI ) {
+				WP_CLI::log( "Record added for order: $order_id" );
+			}
+		}
+	}
+
+	/**
+	 * Returns an array of orders that used a specific coupon code.
+	 *
+	 * @param string $code
+	 *
+	 * @return array
+	 */
+	public static function get_orders_with_coupon_code( $code ) {
+		$coupon = new WC_Coupon( $code );
+		$date   = $coupon->get_date_created()->date( 'Y-m-d' );
+
+		// Query is restricted to orders created after the coupon was created.
+		// This limitation makes the query much more performant (less orders to query).
+		// But there can be rare edge cases where a coupon was applied to an earlier order.
+		$args = array(
+			'date_created' => '>=' . $date,
+			'meta_query'   => array(
+				array(
+					'key'     => '_coupon_code',
+					'value'   => $code,
+					'compare' => '=',
+				),
+			),
+		);
+
+		$orders = new WC_Order_Query( $args );
+		return $orders->get_orders();
+	}
 }
