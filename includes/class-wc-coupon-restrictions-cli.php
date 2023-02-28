@@ -37,7 +37,26 @@ class WC_Coupon_Restrictions_CLI {
 		/* translators: %s: usage count of coupon */
 		WP_CLI::success( sprintf( __( 'Coupon has been used %d times.', 'woocommerce-coupon-restrictions' ), $usage_count ) );
 
-		\WC_Coupon_Restrictions_Table::add_order_data_for_coupon( $code );
+		$orders = \WC_Coupon_Restrictions_Table::get_orders_with_coupon_code( $code );
+
+		if ( ! $orders ) {
+			WP_CLI::error( __( 'Could not query any orders for coupon.', 'woocommerce-coupon-restrictions' ) );
+		}
+
+		// Deletes all existing records for the coupon code so table can be refreshed.
+		\WC_Coupon_Restrictions_Table::delete_records_for_coupon( $code );
+
+		$limit             = 100;
+		$last_processed_id = 0;
+		while ( true ) {
+			$orders = \WC_Coupon_Restrictions_Table::get_orders_with_coupon_code( $code, $last_processed_id, $limit );
+			\WC_Coupon_Restrictions_Table::bulk_add_records( $orders );
+
+			if ( count( $orders ) < $limit ) {
+				WP_CLI::log( __( 'Finished updating verification table.', 'woocommerce-coupon-restrictions' ) );
+				break;
+			}
+		}
 	}
 
 	public function explainer_text() {

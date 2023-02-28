@@ -385,24 +385,14 @@ class WC_Coupon_Restrictions_Table {
 	}
 
 	/**
-	 * Updates the verification table with all order data for a specific coupon.
+	 * Updates the verification table with data for specific order ids.
 	 *
-	 * @param string $code
+	 * @param array $ids
 	 *
 	 * @return array
 	 */
-	public static function add_order_data_for_coupon( $code ) {
-		$orders = self::get_orders_with_coupon_code( $code );
-
-		if ( ! $orders ) {
-			return;
-		}
-
-		// Deletes all existing records for the coupon code so table can be refreshed.
-		self::delete_records_for_coupon( $code );
-
-		foreach ( $orders as $order ) {
-			$order_id = $order->get_id();
+	public static function bulk_add_records( $ids ) {
+		foreach ( $ids as $order_id ) {
 			self::maybe_add_record( $order_id );
 
 			// Output if this is running via WP-CLI.
@@ -415,19 +405,28 @@ class WC_Coupon_Restrictions_Table {
 	/**
 	 * Returns an array of orders that used a specific coupon code.
 	 *
-	 * @param string $code
+	 * @param string $code Coupon code.
+	 * @param int $last_processed_id If running in a loop, this is the last order ID processed.
+	 * @param int $limit Limit query to this many orders.
+	 * @param string $date Date to start querying from.
 	 *
 	 * @return array
 	 */
-	public static function get_orders_with_coupon_code( $code ) {
+	public static function get_orders_with_coupon_code( $code, $last_processed_id = 0, $limit = 100, $date = '' ) {
 		$coupon = new WC_Coupon( $code );
-		$date   = $coupon->get_date_created()->date( 'Y-m-d' );
 
-		// Query is restricted to orders created after the coupon was created.
-		// This limitation makes the query much more performant (less orders to query).
-		// But there can be rare edge cases where a coupon was applied to an earlier order.
+		// We set a low limit due to memory limitations on many servers.
+		$limit = intval( $limit ) ? intval( $limit ) : 100;
+
+		// By default we won't query for orders created before the coupon was created.
+		// But this can be overridden by passing in a date if needed.
+		if ( ! $date ) {
+			$date = $coupon->get_date_created()->date( 'Y-m-d' );
+		}
+
 		$args = array(
 			'date_created' => '>=' . $date,
+			'ID'           => '>' . intval( $last_processed_id ),
 			'meta_query'   => array(
 				array(
 					'key'     => '_coupon_code',
@@ -435,6 +434,10 @@ class WC_Coupon_Restrictions_Table {
 					'compare' => '=',
 				),
 			),
+			'orderby'      => 'ID',
+			'order'        => 'DESC',
+			'limit'        => intval( $limit ),
+			'return'       => 'ids',
 		);
 
 		$orders = new WC_Order_Query( $args );
