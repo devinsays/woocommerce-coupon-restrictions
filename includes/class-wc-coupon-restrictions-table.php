@@ -108,7 +108,7 @@ class WC_Coupon_Restrictions_Table {
 	 *
 	 * @param int   $order_id
 	 *
-	 * @return array
+	 * @return bool
 	 */
 	public static function maybe_add_record( $order_id ) {
 		$order = wc_get_order( $order_id );
@@ -121,9 +121,11 @@ class WC_Coupon_Restrictions_Table {
 			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
 				// Store user details.
 				self::store_customer_details( $order, $coupon_item->get_code() );
-				break;
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 	/**
@@ -385,34 +387,16 @@ class WC_Coupon_Restrictions_Table {
 	}
 
 	/**
-	 * Updates the verification table with data for specific order ids.
-	 *
-	 * @param array $ids
-	 *
-	 * @return array
-	 */
-	public static function bulk_add_records( $ids ) {
-		foreach ( $ids as $order_id ) {
-			self::maybe_add_record( $order_id );
-
-			// Output if this is running via WP-CLI.
-			if ( defined( 'WP_CLI' ) && WP_CLI ) {
-				WP_CLI::log( "Record added for order: $order_id" );
-			}
-		}
-	}
-
-	/**
 	 * Returns an array of orders that used a specific coupon code.
 	 *
 	 * @param string $code Coupon code.
-	 * @param int $last_processed_id If running in a loop, this is the last order ID processed.
 	 * @param int $limit Limit query to this many orders.
+	 * @param int $offset Offset query by this many orders.
 	 * @param string $date Date to start querying from.
 	 *
 	 * @return array
 	 */
-	public static function get_orders_with_coupon_code( $code, $last_processed_id = 0, $limit = 100, $date = '' ) {
+	public static function get_orders_with_coupon_code( $code, $limit = 100, $offset = 0, $date = '' ) {
 		$coupon = new WC_Coupon( $code );
 
 		// We set a low limit due to memory limitations on many servers.
@@ -426,7 +410,6 @@ class WC_Coupon_Restrictions_Table {
 
 		$args = array(
 			'date_created' => '>=' . $date,
-			'ID'           => '>' . intval( $last_processed_id ),
 			'meta_query'   => array(
 				array(
 					'key'     => '_coupon_code',
@@ -435,8 +418,9 @@ class WC_Coupon_Restrictions_Table {
 				),
 			),
 			'orderby'      => 'ID',
-			'order'        => 'DESC',
+			'order'        => 'ASC',
 			'limit'        => intval( $limit ),
+			'offset'       => intval( $offset ),
 			'return'       => 'ids',
 		);
 

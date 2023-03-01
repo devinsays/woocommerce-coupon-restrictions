@@ -29,31 +29,67 @@ class WC_Coupon_Restrictions_CLI {
 			exit;
 		}
 
-		if ( ! \WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
+		if ( ! WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
 			WP_CLI::error( __( 'Coupon does not have any enhanced usage restrictions set.', 'woocommerce-coupon-restrictions' ) );
 			exit;
 		}
 
 		/* translators: %s: usage count of coupon */
-		WP_CLI::success( sprintf( __( 'Coupon has been used %d times.', 'woocommerce-coupon-restrictions' ), $usage_count ) );
+		WP_CLI::log( sprintf( __( 'Coupon has been used %d times.', 'woocommerce-coupon-restrictions' ), $usage_count ) );
+		WP_CLI::log( '' );
 
-		$orders = \WC_Coupon_Restrictions_Table::get_orders_with_coupon_code( $code );
-
-		if ( ! $orders ) {
-			WP_CLI::error( __( 'Could not query any orders for coupon.', 'woocommerce-coupon-restrictions' ) );
+		// This allows us to continue processing an update if it was interrupted.
+		$processed_key     = 'wcr_processing_' . $code;
+		$processed_value   = get_transient( $processed_key );
+		$offset_key        = 'wcr_offset_' . $code;
+		$offset_value      = get_transient( $offset_key );
+		$last_processed_id = 0;
+		$offset            = 0;
+		if ( $processed_value ) {
+			/* translators: %s: last order processed for WP CLI command. */
+			WP_CLI::warning( sprintf( __( 'An update has already been started. The last order id processed was: %d.', 'woocommerce-coupon-restrictions' ), $processed_value ) );
+			$answer = $this->ask( sprintf( __( 'Would you like to continue processing from order id %d? [yes/no]', 'woocommerce-coupon-restrictions' ), $processed_value ) );
+			if ( 'yes' === trim( $answer ) || 'y' === trim( $answer ) ) {
+				$last_processed_id = $processed_value;
+				$offset            = $offset_value;
+			} else {
+				WP_CLI::log( __( 'Data update will be restarted. All order data for coupon will be refreshed.', 'woocommerce-coupon-restrictions' ) );
+			}
+			WP_CLI::log( '' );
 		}
 
 		// Deletes all existing records for the coupon code so table can be refreshed.
-		\WC_Coupon_Restrictions_Table::delete_records_for_coupon( $code );
+		// Only delete the records if we are starting from the beginning.
+		if ( $last_processed_id === 0 ) {
+			WC_Coupon_Restrictions_Table::delete_records_for_coupon( $code );
+		}
 
-		$limit             = 100;
-		$last_processed_id = 0;
+		$limit = 100;
+		$count = 0;
 		while ( true ) {
-			$orders = \WC_Coupon_Restrictions_Table::get_orders_with_coupon_code( $code, $last_processed_id, $limit );
-			\WC_Coupon_Restrictions_Table::bulk_add_records( $orders );
+			$ids = WC_Coupon_Restrictions_Table::get_orders_with_coupon_code( $code, $limit, $offset );
+			if ( ! $ids && $count === 0 ) {
+				WP_CLI::warning( __( 'No orders available to process.', 'woocommerce-coupon-restrictions' ) );
+				break;
+			}
 
-			if ( count( $orders ) < $limit ) {
-				WP_CLI::log( __( 'Finished updating verification table.', 'woocommerce-coupon-restrictions' ) );
+			foreach ( $ids as $order_id ) {
+				$result = WC_Coupon_Restrictions_Table::maybe_add_record( $order_id );
+				if ( $result ) {
+					WP_CLI::log( "Record added for order: $order_id" );
+				}
+
+				// Update the counter for the loop.
+				$last_processed_id = $order_id;
+				$offset++;
+				$count++;
+				set_transient( $processed_key, $last_processed_id, HOUR_IN_SECONDS );
+				set_transient( $offset_key, $offset, HOUR_IN_SECONDS );
+			}
+
+			if ( count( $ids ) < $limit ) {
+				WP_CLI::log( '' );
+				WP_CLI::success( __( 'Finished updating verification table.', 'woocommerce-coupon-restrictions' ) );
 				break;
 			}
 		}
