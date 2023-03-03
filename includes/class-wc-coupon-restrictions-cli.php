@@ -59,13 +59,15 @@ class WC_Coupon_Restrictions_CLI {
 			WP_CLI::log( '' );
 		}
 
-		$order_id = 0;
-		$limit    = 100;
-		$count    = 0;
-		$date     = $coupon->get_date_created()->date( 'Y-m-d' );
+		WP_CLI::log( __( 'Orders will be checked in batches.', 'woocommerce-coupon-restrictions' ) );
+		$limit_answer = $this->ask( __( 'How many orders would you like to process per batch? [100]:', 'woocommerce-coupon-restrictions' ) );
+
+		$limit = intval( $limit_answer ) ? intval( $limit_answer ) : 100;
+		$count = 0;
+		$date  = $coupon->get_date_created()->date( 'Y-m-d' );
 
 		while ( true ) {
-			WP_CLI::log( sprintf( __( 'Querying order batch starting at order id: %d', 'woocommerce-coupon-restrictions' ), $order_id ) );
+			WP_CLI::log( sprintf( __( 'Querying order batch starting at order id: %d', 'woocommerce-coupon-restrictions' ), $last_processed_id ) );
 			$ids = self::get_order_batch( $limit, $offset, $date );
 			if ( ! $ids && $count === 0 ) {
 				WP_CLI::warning( __( 'No orders available to process.', 'woocommerce-coupon-restrictions' ) );
