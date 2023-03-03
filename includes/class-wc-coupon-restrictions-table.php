@@ -387,36 +387,22 @@ class WC_Coupon_Restrictions_Table {
 	}
 
 	/**
-	 * Returns an array of orders that used a specific coupon code.
+	 * Returns an array of orders that have a discount applied.
 	 *
-	 * @param string $code Coupon code.
 	 * @param int $limit Limit query to this many orders.
 	 * @param int $offset Offset query by this many orders.
 	 * @param string $date Date to start querying from.
 	 *
 	 * @return array
 	 */
-	public static function get_orders_with_coupon_code( $code, $limit = 100, $offset = 0, $date = '' ) {
-		$coupon = new WC_Coupon( $code );
-
-		// We set a low limit due to memory limitations on many servers.
+	public static function get_orders_with_discount_applied( $limit = 100, $offset = 0, $date = '' ) {
 		$limit = intval( $limit ) ? intval( $limit ) : 100;
-
-		// By default we won't query for orders created before the coupon was created.
-		// But this can be overridden by passing in a date if needed.
-		if ( ! $date ) {
-			$date = $coupon->get_date_created()->date( 'Y-m-d' );
-		}
 
 		$args = array(
 			'date_created' => '>=' . $date,
-			'meta_query'   => array(
-				array(
-					'key'     => '_coupon_code',
-					'value'   => $code,
-					'compare' => '=',
-				),
-			),
+			'meta_key'     => '_cart_discount',
+			'meta_value'   => '0',
+			'meta_compare' => '!=',
 			'orderby'      => 'ID',
 			'order'        => 'ASC',
 			'limit'        => intval( $limit ),
