@@ -59,11 +59,13 @@ class WC_Coupon_Restrictions_CLI {
 			WP_CLI::log( '' );
 		}
 
-		$limit = 100;
-		$count = 0;
-		$date  = $coupon->get_date_created()->date( 'Y-m-d' );
+		$order_id = 0;
+		$limit    = 100;
+		$count    = 0;
+		$date     = $coupon->get_date_created()->date( 'Y-m-d' );
 
 		while ( true ) {
+			WP_CLI::log( sprintf( __( 'Querying order batch starting at order id: %n', 'woocommerce-coupon-restrictions' ), $order_id ) );
 			$ids = WC_Coupon_Restrictions_Table::get_orders_with_discount_applied( $limit, $offset, $date );
 			if ( ! $ids && $count === 0 ) {
 				WP_CLI::warning( __( 'No orders available to process.', 'woocommerce-coupon-restrictions' ) );
@@ -88,8 +90,6 @@ class WC_Coupon_Restrictions_CLI {
 				WP_CLI::success( __( 'Finished updating verification table.', 'woocommerce-coupon-restrictions' ) );
 				break;
 			}
-
-			WP_CLI::success( sprintf( __( 'Verified through order ID: %d. Querying next batch.', 'woocommerce-coupon-restrictions' ), $order_id ) );
 		}
 	}
 
