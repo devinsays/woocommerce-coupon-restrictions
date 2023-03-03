@@ -29,17 +29,129 @@ class WC_Coupon_Restrictions_CLI {
 			exit;
 		}
 
-		if ( ! \WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
+		if ( ! WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
 			WP_CLI::error( __( 'Coupon does not have any enhanced usage restrictions set.', 'woocommerce-coupon-restrictions' ) );
 			exit;
 		}
 
 		/* translators: %s: usage count of coupon */
-		WP_CLI::success( sprintf( __( 'Coupon has been used %d times.', 'woocommerce-coupon-restrictions' ), $usage_count ) );
+		WP_CLI::log( sprintf( __( 'Coupon has been used %d times.', 'woocommerce-coupon-restrictions' ), $usage_count ) );
+		WP_CLI::log( '' );
 
-		\WC_Coupon_Restrictions_Table::add_order_data_for_coupon( $code );
+		// This allows us to continue processing an update if it was interrupted.
+		$processed_key     = 'wcr_processing_' . $code;
+		$processed_value   = get_transient( $processed_key );
+		$offset_key        = 'wcr_offset_' . $code;
+		$offset_value      = get_transient( $offset_key );
+		$last_processed_id = 0;
+		$offset            = 0;
+
+		if ( $processed_value ) {
+			/* translators: %s: last order processed for WP CLI command. */
+			WP_CLI::warning( sprintf( __( 'An update has already been started. The last order id processed was: %d.', 'woocommerce-coupon-restrictions' ), $processed_value ) );
+			$answer = $this->ask( sprintf( __( 'Would you like to continue processing from order id %d? [yes/no]', 'woocommerce-coupon-restrictions' ), $processed_value ) );
+			if ( 'yes' === trim( $answer ) || 'y' === trim( $answer ) ) {
+				$last_processed_id = $processed_value;
+				$offset            = $offset_value;
+			} else {
+				WP_CLI::log( __( 'Data update will be restarted. All order data for coupon will be refreshed.', 'woocommerce-coupon-restrictions' ) );
+			}
+			WP_CLI::log( '' );
+		}
+
+		WP_CLI::log( __( 'Orders will be checked in batches.', 'woocommerce-coupon-restrictions' ) );
+		$limit_answer = $this->ask( __( 'How many orders would you like to process per batch? [100]:', 'woocommerce-coupon-restrictions' ) );
+
+		$limit = intval( $limit_answer ) ? intval( $limit_answer ) : 100;
+		$count = 0;
+		$date  = $coupon->get_date_created()->date( 'Y-m-d' );
+
+		while ( true ) {
+			WP_CLI::log( sprintf( __( 'Querying order batch starting at order id: %d', 'woocommerce-coupon-restrictions' ), $last_processed_id ) );
+			$ids = self::get_order_batch( $limit, $offset, $date );
+			if ( ! $ids && $count === 0 ) {
+				WP_CLI::warning( __( 'No orders available to process.', 'woocommerce-coupon-restrictions' ) );
+				break;
+			}
+
+			foreach ( $ids as $order_id ) {
+				self::maybe_add_record( $order_id, $code );
+
+				// Updates the counters
+				$last_processed_id = $order_id;
+				$offset++;
+				$count++;
+			}
+
+			// We'll update the transient after each batch, so we can continue processing if interrupted.
+			set_transient( $processed_key, $last_processed_id, HOUR_IN_SECONDS );
+			set_transient( $offset_key, $offset, HOUR_IN_SECONDS );
+
+			if ( count( $ids ) < $limit ) {
+				WP_CLI::log( '' );
+				WP_CLI::success( __( 'Finished updating verification table.', 'woocommerce-coupon-restrictions' ) );
+				break;
+			}
+		}
 	}
 
+	/**
+	 * Checks if the order has the coupon code being checked.
+	 * If so, it checks if the order already exists in the table.
+	 * If not, it adds the record.
+	 *
+	 * @param int $order_id
+	 * @param string   $code
+	 *
+	 * @return string
+	 */
+	public function maybe_add_record( $order_id, $code ) {
+		$order   = wc_get_order( $order_id );
+		$coupons = $order->get_coupon_codes();
+
+		if ( in_array( $code, $coupons, true ) ) {
+			$records = WC_Coupon_Restrictions_Table::get_records_for_order_id( $order_id );
+			if ( $records ) {
+				WP_CLI::log( "Record already exists for order: $order_id" );
+			} else {
+				$result = WC_Coupon_Restrictions_Table::maybe_add_record( $order_id );
+				if ( $result ) {
+					WP_CLI::log( "Record added for order: $order_id" );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns an array of orders created after a specific date.
+	 *
+	 * @param int $limit Limit query to this many orders.
+	 * @param int $offset Offset query by this many orders.
+	 * @param string $date Date to start querying from.
+	 *
+	 * @return array
+	 */
+	public static function get_order_batch( $limit = 100, $offset = 0, $date = '' ) {
+		$limit = intval( $limit ) ? intval( $limit ) : 100;
+
+		$args = array(
+			'date_created' => '>=' . $date,
+			'orderby'      => 'ID',
+			'order'        => 'ASC',
+			'limit'        => intval( $limit ),
+			'offset'       => intval( $offset ),
+			'return'       => 'ids',
+		);
+
+		$orders = new WC_Order_Query( $args );
+		return $orders->get_orders();
+	}
+
+	/**
+	 * Explainer text to show when the command is run.
+	 *
+	 * @return void
+	 */
 	public function explainer_text() {
 		WP_CLI::log( '' );
 		WP_CLI::log( __( 'This command updates the coupon restrictions verification table.', 'woocommerce-coupon-restrictions' ) );
@@ -62,7 +174,6 @@ class WC_Coupon_Restrictions_CLI {
 		$answer = $case_sensitive ? $answer : strtolower( $answer );
 		return $answer;
 	}
-
 }
 
 WP_CLI::add_command( 'wcr', 'WC_Coupon_Restrictions_CLI' );
