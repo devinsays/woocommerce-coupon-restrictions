@@ -385,32 +385,4 @@ class WC_Coupon_Restrictions_Table {
 
 		return strtolower( "$email_name@$email_domain" );
 	}
-
-	/**
-	 * Returns an array of orders that have a discount applied.
-	 *
-	 * @param int $limit Limit query to this many orders.
-	 * @param int $offset Offset query by this many orders.
-	 * @param string $date Date to start querying from.
-	 *
-	 * @return array
-	 */
-	public static function get_orders_with_discount_applied( $limit = 100, $offset = 0, $date = '' ) {
-		$limit = intval( $limit ) ? intval( $limit ) : 100;
-
-		$args = array(
-			'date_created' => '>=' . $date,
-			'meta_key'     => '_cart_discount',
-			'meta_value'   => '0',
-			'meta_compare' => '!=',
-			'orderby'      => 'ID',
-			'order'        => 'ASC',
-			'limit'        => intval( $limit ),
-			'offset'       => intval( $offset ),
-			'return'       => 'ids',
-		);
-
-		$orders = new WC_Order_Query( $args );
-		return $orders->get_orders();
-	}
 }

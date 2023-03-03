@@ -65,8 +65,8 @@ class WC_Coupon_Restrictions_CLI {
 		$date     = $coupon->get_date_created()->date( 'Y-m-d' );
 
 		while ( true ) {
-			WP_CLI::log( sprintf( __( 'Querying order batch starting at order id: %n', 'woocommerce-coupon-restrictions' ), $order_id ) );
-			$ids = WC_Coupon_Restrictions_Table::get_orders_with_discount_applied( $limit, $offset, $date );
+			WP_CLI::log( sprintf( __( 'Querying order batch starting at order id: %d', 'woocommerce-coupon-restrictions' ), $order_id ) );
+			$ids = self::get_order_batch( $limit, $offset, $date );
 			if ( ! $ids && $count === 0 ) {
 				WP_CLI::warning( __( 'No orders available to process.', 'woocommerce-coupon-restrictions' ) );
 				break;
@@ -118,6 +118,31 @@ class WC_Coupon_Restrictions_CLI {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns an array of orders created after a specific date.
+	 *
+	 * @param int $limit Limit query to this many orders.
+	 * @param int $offset Offset query by this many orders.
+	 * @param string $date Date to start querying from.
+	 *
+	 * @return array
+	 */
+	public static function get_order_batch( $limit = 100, $offset = 0, $date = '' ) {
+		$limit = intval( $limit ) ? intval( $limit ) : 100;
+
+		$args = array(
+			'date_created' => '>=' . $date,
+			'orderby'      => 'ID',
+			'order'        => 'ASC',
+			'limit'        => intval( $limit ),
+			'offset'       => intval( $offset ),
+			'return'       => 'ids',
+		);
+
+		$orders = new WC_Order_Query( $args );
+		return $orders->get_orders();
 	}
 
 	/**
