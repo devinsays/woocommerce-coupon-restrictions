@@ -12,3 +12,6 @@ vendor
 
 # Caches
 .phpcs-cache
+
+# Tests
+tests/tmp

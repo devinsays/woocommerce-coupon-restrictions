@@ -64,8 +64,24 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public function __construct() {
 			$this->plugin_path = untrailingslashit( plugin_dir_path( __FILE__ ) );
 
+			// Declares compatibility with High Performance Order Storage.
+			add_action( 'before_woocommerce_init', array( $this, 'declare_custom_order_table_compatibility' ) );
+
 			// Init hooks runs after plugins_loaded and woocommerce_loaded hooks.
 			add_action( 'init', array( $this, 'init' ) );
+		}
+
+		/**
+		 * Declares compatibility with High Performance Order Storage.
+		 * https://github.com/woocommerce/woocommerce/wiki/High-Performance-Order-Storage-Upgrade-Recipe-Book
+		 *
+		 * @since  2.2.0
+		 */
+		public function declare_custom_order_table_compatibility() {
+			if ( ! class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+				return;
+			}
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 		}
 
 		/**
