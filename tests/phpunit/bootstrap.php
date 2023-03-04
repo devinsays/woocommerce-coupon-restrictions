@@ -3,7 +3,7 @@
  * Bootstrap the PHPUnit test suite(s).
  */
 
-$tests_dir   = getenv( 'WP_TESTS_DIR' ) ?: './tests/tmp/wordpress-tests-lib';
+ $tests_dir   = getenv( 'WP_TESTS_DIR' ) ?: rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
 $project_dir = dirname( dirname( __DIR__ ) ); // dirname() cannot accept a second argument until PHP 7.x.
 $bootstrap   = '';
 
