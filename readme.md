@@ -66,6 +66,7 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 **2.2.0 (Development)**
 
 -   Feature: WP CLI command to add historic order data to verification table.
+-   Update: Declare compatibility for High Performance Order Storage.
 
 **2.1.0 (02.10.23)**
 
