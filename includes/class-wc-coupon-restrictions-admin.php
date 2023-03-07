@@ -234,6 +234,17 @@ class WC_Coupon_Restrictions_Admin {
 	 * @return void
 	 */
 	public static function usage_limits( $coupon_id, $coupon ) {
+		// Description on how the enahnced usage limits work.
+		$label       = __( 'Enhanced Usage Limits', 'woocommerce-coupon-restrictions' );
+		$description = __( 'Enhanced usage limits should be set when the coupon is first created. It can only verify against previous orders made using a coupon with enhanced usage restrictions.', 'woocommerce-coupon-restrictions' );
+		/* translators: %s: link to WooCommerce Coupon Restrictions documentation. */
+		$link = sprintf( __( 'Please see <a href="%1$s">the documentation</a> for more information.', 'woocommerce-coupon-restrictions' ), 'https://woocommerce.com/document/woocommerce-coupon-restrictions/' );
+		echo '<p class="form-field">';
+		echo '<label>' . $label . '</label>';
+		echo $description;
+		echo ' ' . $link;
+		echo '</p>';
+
 		$value = esc_attr( $coupon->get_meta( 'prevent_similar_emails', true ) );
 		woocommerce_wp_checkbox(
 			array(
