@@ -236,9 +236,9 @@ class WC_Coupon_Restrictions_Admin {
 	public static function usage_limits( $coupon_id, $coupon ) {
 		// Description on how the enhanced usage limits work.
 		$label       = __( 'Enhanced Usage Limits', 'woocommerce-coupon-restrictions' );
-		$description = __( 'Enhanced usage limits should be set when the coupon is first created. It can only verify against previous orders made using a coupon with enhanced usage restrictions.', 'woocommerce-coupon-restrictions' );
+		$description = __( 'Enhanced usage limits should be set when the coupon is first created. WooCommerce will verify against previous orders made with a coupon that has enhanced usage restrictions.', 'woocommerce-coupon-restrictions' );
 		/* translators: %s: link to WooCommerce Coupon Restrictions documentation. */
-		$link = sprintf( __( 'Please read <a href="%1$s">the documentation</a> for more information.', 'woocommerce-coupon-restrictions' ), 'https://woocommerce.com/document/woocommerce-coupon-restrictions/' );
+		$link = sprintf( __( 'Please read <a href="%1$s">the documentation</a> for more information.', 'woocommerce-coupon-restrictions' ), 'https://woocommerce.com/document/woocommerce-coupon-restrictions/#section-5' );
 		echo '<p class="form-field">';
 		echo '<label>' . esc_html( $label ) . '</label>';
 		echo esc_html( $description );
