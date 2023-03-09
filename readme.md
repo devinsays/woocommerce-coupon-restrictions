@@ -4,8 +4,8 @@
 -   WP requires at least: 4.9.0
 -   WP tested up to: 6.1.1
 -   WC requires at least: 4.8.1
--   WC tested up to: 7.3.0
--   Stable tag: 2.1.0
+-   WC tested up to: 7.4.1
+-   Stable tag: 2.2.0
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
@@ -66,6 +66,7 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 **2.2.0 (Development)**
 
 -   Feature: WP CLI command to add historic order data to verification table.
+-   Update: Improve documentation around enhanced usage limits.
 -   Update: Declare compatibility for High Performance Order Storage.
 
 **2.1.0 (02.10.23)**

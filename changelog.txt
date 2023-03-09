@@ -1,5 +1,11 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2023-03-09 - version 2.2.0
+
+* Feature: WP CLI command to add historic order data to verification table.
+* Update: Improve documentation around enhanced usage limits.
+* Update: Declare compatibility for High Performance Order Storage.
+
 2023-02-10 - version 2.1.0
 
 * Bugfix: Coupon verification records were not storing properly on checkouts with payment.
