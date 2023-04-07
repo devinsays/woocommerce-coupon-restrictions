@@ -1,5 +1,9 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2023-04-07 - version 2.2.1
+
+* Bugfix: Fatal error on subscription renewal with coupon applied due to missing class.
+
 2023-03-09 - version 2.2.0
 
 * Feature: WP CLI command to add historic order data to verification table.
@@ -66,18 +70,18 @@
 2019-02-11 - version 1.7.0
 
 * Update: New setting for new/existing customer verification method. Defaults to account check.
-* Fix: Resolves bug applying coupon when there is no session (subscription renewals). Props @giantpeach.
+* Bugfix: Resolves bug applying coupon when there is no session (subscription renewals). Props @giantpeach.
 
 2018-07-17 - version 1.6.2
 
-* Fix: PHP5.6 compatibility fixes for onboarding script.
+* Bugfix: PHP5.6 compatibility fixes for onboarding script.
 
 2018-06-21 - version 1.6.1
 
 * Update: Use WooCommerce data store methods for saving and reading coupon meta.
 * Update: WC_Coupon_Restrictions() now returns shared instance of class rather than singleton.
-* Fix: Display onboarding notice on initial activation.
-* Fix: If the session data is blank for country or zipcode, a coupon with location restrictions will now apply until session or checkout has data to validate it.
+* Bugfix: Display onboarding notice on initial activation.
+* Bugfix: If the session data is blank for country or zipcode, a coupon with location restrictions will now apply until session or checkout has data to validate it.
 
 2018-06-15 - version 1.6.0
 
@@ -94,7 +98,7 @@
 * Update: Adds "Location Restrictions" checkbox. Additional options display when checked.
 * Update: Country restriction only permits selection of countries that shop currently sells to.
 * Update: New onboarding flow that shows where the new coupon options are located.
-* Fix: Bug with new customer coupon validation at checkout.
+* Bugfix: Bug with new customer coupon validation at checkout.
 
 2018-02-15 - version 1.4.1
 
@@ -121,8 +125,8 @@
 
 2015-12-28 - version 1.1.0
 
-* Fix: Coupons without the new customer restriction were improperly marked invalid for logged in users.
-* Fix: Filter woocommerce_coupon_is_valid in addition to woocommerce_coupon_error.
+* Bugfix: Coupons without the new customer restriction were improperly marked invalid for logged in users.
+* Bugfix: Filter woocommerce_coupon_is_valid in addition to woocommerce_coupon_error.
 
 2015-06-18 - version 1.0.0
 
