@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://woocommerce.com/products/woocommerce-coupon-restrictions/
  * Description: Create targeted coupons for new customers, user roles, countries or zip codes. Prevent coupon abuse with enhanced usage limits.
- * Version: 2.2.0
+ * Version: 2.2.1
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Developer: Devin Price
@@ -13,7 +13,7 @@
  *
  * Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
  * WC requires at least: 4.8.1
- * WC tested up to: 7.4.1
+ * WC tested up to: 7.5.1
  *
  * Copyright: © 2015-2023 DevPress.
  * License: GNU General Public License v3.0
@@ -32,7 +32,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public static $instance;
 
 		/** @var string */
-		public $version = '2.1.0';
+		public $version = '2.2.1';
 
 		/** @var string */
 		public $required_woo = '4.8.1';
@@ -159,8 +159,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				// Adds coupon meta fields.
 				require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-settings.php';
 				new WC_Coupon_Restrictions_Settings();
-
-				return;
 			}
 
 			// Validation methods used for both cart and checkout validation.
