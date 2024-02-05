@@ -1,11 +1,11 @@
 # WooCommerce Coupon Restrictions ![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=master)
 
 -   Requires PHP: 7.2
--   WP requires at least: 4.9.0
--   WP tested up to: 6.2
--   WC requires at least: 4.8.1
--   WC tested up to: 7.4.1
--   Stable tag: 2.2.1
+-   WP requires at least: 6.2
+-   WP tested up to: 6.4
+-   WC requires at least: 5.9.1
+-   WC tested up to: 8.5.2
+-   Stable tag: 2.2.2
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
@@ -62,6 +62,10 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 -   Run `composer make-pot` to update the translation file.
 
 ## Changelog
+
+**2.2.2 (2024-02-05)**
+
+-   Bugfix: Add explicit check for array type for meta values that require it.
 
 **2.2.1 (2023-04-07)**
 

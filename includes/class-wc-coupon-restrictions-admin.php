@@ -74,12 +74,13 @@ class WC_Coupon_Restrictions_Admin {
 	 * @return void
 	 */
 	public static function role_restrictions( $coupon_id, $coupon ) {
-		$id     = 'role_restriction';
-		$title  = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
-		$values = $coupon->get_meta( $id, true );
+		$id    = 'role_restriction';
+		$title = __( 'User role restriction', 'woocommerce-coupon-restrictions' );
 
+		// Gets the selected roles (if any) from the coupon.
+		$values     = $coupon->get_meta( $id, true );
 		$selections = array();
-		if ( ! empty( $values ) ) {
+		if ( ! empty( $values ) && is_array( $values ) ) {
 			$selections = $values;
 		}
 
@@ -148,12 +149,13 @@ class WC_Coupon_Restrictions_Admin {
 		);
 
 		// Country restriction.
-		$id     = 'country_restriction';
-		$title  = __( 'Restrict to specific countries', 'woocommerce-coupon-restrictions' );
-		$values = $coupon->get_meta( $id, true );
+		$id    = 'country_restriction';
+		$title = __( 'Restrict to specific countries', 'woocommerce-coupon-restrictions' );
 
+		// Gets the selected countries (if any) from the coupon.
+		$values     = $coupon->get_meta( $id, true );
 		$selections = array();
-		if ( ! empty( $values ) ) {
+		if ( ! empty( $values ) && is_array( $values ) ) {
 			$selections = $values;
 		}
 
