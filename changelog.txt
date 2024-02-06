@@ -1,5 +1,9 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2024-02-05 - version 2.2.2
+
+* Bugfix: Add explicit check for array type for meta values that require it.
+
 2023-04-07 - version 2.2.1
 
 * Bugfix: Fatal error on subscription renewal with coupon applied due to missing class.
