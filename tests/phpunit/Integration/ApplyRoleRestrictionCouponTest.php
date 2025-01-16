@@ -136,6 +136,8 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 		// Deletes objects.
 		$this->coupon->delete();
 		$this->customer->delete();
+
+		parent::tear_down();
 	}
 
 }

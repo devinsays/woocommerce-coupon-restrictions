@@ -97,5 +97,7 @@ class CheckoutLimitPerShippingAddressTest extends WP_UnitTestCase {
 
 		// Deletes the custom table if it has been created.
 		WC_Coupon_Restrictions_Table::delete_table();
+
+		parent::tear_down();
 	}
 }

@@ -1,24 +1,17 @@
 <?xml version="1.0"?>
-<phpunit
-	bootstrap="tests/phpunit/bootstrap.php"
-	backupGlobals="false"
-	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
-	>
-	<testsuites>
-		<testsuite name="unit">
-			<directory suffix="Test.php">./tests/phpunit/Unit</directory>
-		</testsuite>
-		<testsuite name="integration">
-			<directory suffix="Test.php">./tests/phpunit/Integration</directory>
-		</testsuite>
-	</testsuites>
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">includes</directory>
-			<file>woocommerce-coupon-restrictions.php</file>
-		</whitelist>
-	</filter>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/phpunit/bootstrap.php" backupGlobals="false" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">includes</directory>
+      <file>woocommerce-coupon-restrictions.php</file>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="unit">
+      <directory suffix="Test.php">./tests/phpunit/Unit</directory>
+    </testsuite>
+    <testsuite name="integration">
+      <directory suffix="Test.php">./tests/phpunit/Integration</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>

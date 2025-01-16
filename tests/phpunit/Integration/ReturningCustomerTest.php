@@ -46,5 +46,7 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 	public function tear_down() {
 		$this->order->delete();
 		$this->customer->delete();
+
+		parent::tear_down();
 	}
 }

@@ -85,5 +85,7 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Deletes the coupon.
 		$this->coupon->delete();
+
+		parent::tear_down();
 	}
 }

@@ -81,5 +81,7 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
 		$this->coupon->delete();
+
+		parent::tear_down();
 	}
 }

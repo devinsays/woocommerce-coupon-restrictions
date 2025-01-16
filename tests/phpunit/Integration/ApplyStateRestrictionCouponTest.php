@@ -106,5 +106,7 @@ class Apply_State_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		$this->customer->delete();
 		$this->coupon->delete();
+
+		parent::tear_down();
 	}
 }
