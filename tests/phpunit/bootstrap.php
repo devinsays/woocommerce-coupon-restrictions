@@ -1,19 +1,21 @@
 <?php
 /**
- * Bootstrap the PHPUnit test suite(s).
+ * PHPUnit bootstrap file
+ *
+ * @package WooCommerce\Stripe
  */
 
- $tests_dir   = getenv( 'WP_TESTS_DIR' ) ?: rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
-$project_dir = dirname( dirname( __DIR__ ) ); // dirname() cannot accept a second argument until PHP 7.x.
-$bootstrap   = '';
+require_once __DIR__ . '/../../vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
 
-// Determine which version of WooCommerce we're testing against.
 $wc_version    = getenv( 'WC_VERSION' ) ?: 'latest';
-$target_suffix = preg_match( '/\d+(\.\d+){1,2}/', $wc_version, $match ) ? $match[0] : 'latest';
-$target_dir    = $project_dir . '/vendor/woocommerce/woocommerce-src-' . $target_suffix;
+$_tests_dir = getenv( 'WP_TESTS_DIR' );
+
+if ( ! $_tests_dir ) {
+	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
+}
 
 // Attempt to install the given version of WooCommerce if it doesn't already exist.
-if ( ! is_dir( $target_dir ) ) {
+if ( ! is_dir( $_tests_dir ) ) {
 	try {
 		exec(
 			sprintf(
@@ -36,37 +38,43 @@ if ( ! is_dir( $target_dir ) ) {
 	}
 }
 
-// Locate the WooCommerce test bootstrap file for this release.
-$paths = [
-	$target_dir . '/tests/legacy/bootstrap.php',
-	$target_dir . '/tests/bootstrap.php',
-];
-
-foreach ( $paths as $path ) {
-	if ( file_exists( $path ) ) {
-		$bootstrap = $path;
-		break;
-	}
-}
-
-if ( empty( $bootstrap ) ) {
-	echo "\033[0;31mUnable to find the the test bootstrap file for WooCommerce@{$wc_version}, aborting.\033[0;m\n";
+if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
+	echo "Could not find $_tests_dir/includes/functions.php, have you run bin/install-wp-tests.sh ?" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	exit( 1 );
 }
 
-// Bootstrap the plugin on muplugins_loaded.
-require_once $tests_dir . '/includes/functions.php';
+if ( PHP_VERSION_ID >= 80000 && file_exists( $_tests_dir . '/includes/phpunit7/MockObject' ) ) {
+	// WP Core test library includes patches for PHPUnit 7 to make it compatible with PHP8.
+	require_once $_tests_dir . '/includes/phpunit7/MockObject/Builder/NamespaceMatch.php';
+	require_once $_tests_dir . '/includes/phpunit7/MockObject/Builder/ParametersMatch.php';
+	require_once $_tests_dir . '/includes/phpunit7/MockObject/InvocationMocker.php';
+	require_once $_tests_dir . '/includes/phpunit7/MockObject/MockMethod.php';
+}
 
-tests_add_filter( 'muplugins_loaded', function () use ( $project_dir ) {
-	require_once $project_dir . '/woocommerce-coupon-restrictions.php';
-} );
+// Give access to tests_add_filter() function.
+require_once $_tests_dir . '/includes/functions.php';
 
-// Finally, start up the WP testing environment.
-require_once $project_dir . '/vendor/autoload.php';
-require_once $bootstrap;
+/**
+ * Manually load the plugin being tested.
+ */
+function _manually_load_plugin() {
+	// Load the WooCommerce plugin.
+	// require_once ABSPATH . '/wp-content/plugins/woocommerce/woocommerce.php';
+}
 
-echo esc_html( sprintf(
-	/* Translators: %1$s is the WooCommerce release being loaded. */
-	__( 'Using WooCommerce %1$s.', 'woocommerce-coupon-restrictions' ),
-	WC_VERSION
-) ) . PHP_EOL;
+tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
+
+require $_tests_dir . '/includes/bootstrap.php';
+
+# Load WooCommerce Helpers (https://github.com/woocommerce/woocommerce/tree/master/tests/legacy/framework/helpers)
+# To keep the plugin self-contained, copy any needed helper to the `helpers/` sub-folder.
+// require_once __DIR__ . '/helpers/class-upe-test-helper.php';
+// require_once __DIR__ . '/helpers/class-wc-helper-product.php';
+// require_once __DIR__ . '/helpers/class-wc-helper-shipping.php';
+// require_once __DIR__ . '/helpers/class-wc-helper-order.php';
+// require_once __DIR__ . '/helpers/class-wc-helper-subscription.php';
+// require_once __DIR__ . '/helpers/class-wc-helper-subscriptions.php';
+// require_once __DIR__ . '/helpers/class-wc-helper-subscriptions-cart.php';
+// require_once __DIR__ . '/helpers/class-wc-helper-token.php';
+// require_once __DIR__ . '/helpers/class-wc-helper-stripe-api.php';
+// require_once __DIR__ . '/helpers/class-wc-subscriptions-helper.php';

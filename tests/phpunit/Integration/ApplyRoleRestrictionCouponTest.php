@@ -11,7 +11,9 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 	public $customer;
 	public $session;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		$coupon->update_meta_data( 'role_restriction', ['administrator'] );
@@ -123,7 +125,7 @@ class Apply_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 	}
 
 
-	public function tearDown() {
+	public function tear_down() {
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 

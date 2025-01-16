@@ -12,7 +12,9 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 	public $customer;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'role_restriction', ['administrator'] );
@@ -126,7 +128,7 @@ class Checkout_Role_Restriction_Coupon_Test extends WP_UnitTestCase {
 	}
 
 
-	public function tearDown() {
+	public function tear_down() {
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
 		$this->coupon->delete();

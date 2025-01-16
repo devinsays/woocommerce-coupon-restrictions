@@ -16,7 +16,9 @@ class CheckoutLimitPerIPTest extends WP_UnitTestCase {
 
 	public $validation;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Create coupon with usage limit and similar emails restriction.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		$coupon->update_meta_data( 'usage_limit_per_ip_address', 1 );
@@ -86,7 +88,7 @@ class CheckoutLimitPerIPTest extends WP_UnitTestCase {
 		unset( $_SERVER['HTTP_X_REAL_IP'] );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		$this->coupon->delete();
 		$this->order->delete();
 

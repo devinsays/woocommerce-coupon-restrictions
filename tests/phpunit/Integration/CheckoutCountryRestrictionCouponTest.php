@@ -9,7 +9,9 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 	/* var WC_Coupon */
 	public $coupon;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		$coupon->update_meta_data( 'location_restrictions', 'yes' );
@@ -75,7 +77,7 @@ class Checkout_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
 		$this->coupon->delete();
