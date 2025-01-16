@@ -140,6 +140,7 @@ class Apply_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Location restriction is checked.
 		$coupon->update_meta_data( 'location_restrictions', 'yes' );
+		$coupon->save();
 
 		// Adds a country restricted coupon.
 		// This should fail because customer doesn't meet requirements,
