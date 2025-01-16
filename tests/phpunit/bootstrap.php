@@ -68,13 +68,7 @@ require $_tests_dir . '/includes/bootstrap.php';
 
 # Load WooCommerce Helpers (https://github.com/woocommerce/woocommerce/tree/master/tests/legacy/framework/helpers)
 # To keep the plugin self-contained, copy any needed helper to the `helpers/` sub-folder.
-// require_once __DIR__ . '/helpers/class-upe-test-helper.php';
-// require_once __DIR__ . '/helpers/class-wc-helper-product.php';
-// require_once __DIR__ . '/helpers/class-wc-helper-shipping.php';
-// require_once __DIR__ . '/helpers/class-wc-helper-order.php';
-// require_once __DIR__ . '/helpers/class-wc-helper-subscription.php';
-// require_once __DIR__ . '/helpers/class-wc-helper-subscriptions.php';
-// require_once __DIR__ . '/helpers/class-wc-helper-subscriptions-cart.php';
-// require_once __DIR__ . '/helpers/class-wc-helper-token.php';
-// require_once __DIR__ . '/helpers/class-wc-helper-stripe-api.php';
-// require_once __DIR__ . '/helpers/class-wc-subscriptions-helper.php';
+require_once __DIR__ . '/helpers/class-wc-helper-coupon.php';
+require_once __DIR__ . '/helpers/class-wc-helper-customer.php';
+require_once __DIR__ . '/helpers/class-wc-helper-order.php';
+require_once __DIR__ . '/helpers/class-wc-helper-product.php';
