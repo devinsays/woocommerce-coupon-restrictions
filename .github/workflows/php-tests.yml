@@ -1,18 +1,17 @@
 name: PHPUnit Tests
 
-on: [ push ]
+on: [push]
 
 jobs:
   test:
     strategy:
       matrix:
         php_ver:
-          - "7.4"
+          - "8.3"
         wp_ver:
           - "latest"
         wc_ver:
           - "latest"
-          - "4.8.1"
 
     runs-on: ubuntu-latest
 
@@ -20,12 +19,11 @@ jobs:
       - name: Checkout the files
         uses: actions/checkout@v2
 
-      # PHPUnit errors with latest PHP 8.X build.
-      # This specifically sets PHP version to 7.4.
+      # Sets PHP version to 8.3
       - name: Setup PHP with tools
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "8.3"
           tools: phpunit
 
       - name: Cache Composer dependencies
@@ -44,10 +42,7 @@ jobs:
         run: sudo /etc/init.d/mysql start
 
       - name: Run install-wp-tests.sh
-        run: ./vendor/bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wp_ver }}
-
-      - name: Run install-woocommerce.sh
-        run: sudo ./tests/bin/install-woocommerce.sh ${{ matrix.wc_ver }}
+        run: sudo ./tests/bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wp_ver }}
 
       - name: Run phpunit
         run: ./vendor/bin/phpunit -c phpunit.xml
