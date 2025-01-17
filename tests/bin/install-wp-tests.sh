@@ -97,23 +97,6 @@ install_wp() {
 	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
 }
 
-install_woocommerce() {
-    # Install WooCommerce plugin
-    if [ -d "$WP_CORE_DIR/wp-content/plugins/woocommerce" ]; then
-        echo "WooCommerce is already installed."
-        return
-    fi
-
-    mkdir -p $WP_CORE_DIR/wp-content/plugins
-    download https://downloads.wordpress.org/plugin/woocommerce.zip $TMPDIR/woocommerce.zip
-    if [ ! -f $TMPDIR/woocommerce.zip ]; then
-        echo "Error: Failed to download WooCommerce."
-        exit 1
-    fi
-    unzip -q $TMPDIR/woocommerce.zip -d $WP_CORE_DIR/wp-content/plugins/
-    echo "WooCommerce installed successfully."
-}
-
 install_test_suite() {
 	# portable in-place argument for both GNU sed and Mac OSX sed
 	if [[ $(uname -s) == 'Darwin' ]]; then
@@ -199,4 +182,3 @@ install_db() {
 install_wp
 install_test_suite
 install_db
-// install_woocommerce

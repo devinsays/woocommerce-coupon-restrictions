@@ -3,12 +3,12 @@
  * PHPUnit bootstrap file.
  */
 
-// Constants
+// Constants.
 define('PROJECT_DIR', dirname(dirname(__DIR__)));
 define('TESTS_TMP_DIR', PROJECT_DIR . '/tests/tmp');
 define('TESTS_DIR', getenv('WP_TESTS_DIR') ?: TESTS_TMP_DIR . '/wordpress-tests-lib');
 
-// Utility Functions
+// Utility Functions.
 function parse_wc_version($version) {
     return preg_match('/\d+(\.\d+){1,2}/', $version, $match) ? $match[0] : 'latest';
 }
