@@ -1,10 +1,10 @@
 # WooCommerce Coupon Restrictions ![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=master)
 
--   Requires PHP: 7.2
+-   Requires PHP: 8.0
 -   WP requires at least: 6.2
--   WP tested up to: 6.4
--   WC requires at least: 5.9.1
--   WC tested up to: 8.5.2
+-   WP tested up to: 6.7
+-   WC requires at least: 8.6.1
+-   WC tested up to: 9.5.2
 -   Stable tag: 2.2.2
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 

@@ -12,8 +12,8 @@
  * Domain Path: /languages
  *
  * Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
- * WC requires at least: 4.8.1
- * WC tested up to: 8.5.2
+ * WC requires at least: 8.6.1
+ * WC tested up to: 9.5.2
  *
  * Copyright: © 2015-2024 DevPress.
  * License: GNU General Public License v3.0
@@ -35,7 +35,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public $version = '2.2.2';
 
 		/** @var string */
-		public $required_woo = '5.9.1';
+		public $required_woo = '8.6.1';
 
 		/** @var string */
 		public $plugin_path = null;
@@ -214,6 +214,6 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
  * @return class WC_Coupon_Restrictions
  */
 function WC_Coupon_Restrictions() {
-	 return WC_Coupon_Restrictions::instance();
+	return WC_Coupon_Restrictions::instance();
 }
 add_action( 'plugins_loaded', 'WC_Coupon_Restrictions' );

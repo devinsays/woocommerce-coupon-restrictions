@@ -15,8 +15,8 @@
 	<exclude-pattern>*/tests/*</exclude-pattern>
 	<exclude-pattern>*/bin/*</exclude-pattern>
 
-	<config name="testVersion" value="7.4"/>
-	<config name="php_version" value="70407"/>
+	<config name="testVersion" value="8.3"/>
+	<config name="php_version" value="80300"/>
 
 	<!-- Ignore warnings, show progress of the run and show sniff names -->
 	<arg value="nps"/>
