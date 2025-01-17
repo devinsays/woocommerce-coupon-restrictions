@@ -44,12 +44,12 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 
 ## Unit Tests
 
-![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=master)
+![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=main)
 
 PHPUnit, Composer and WP-CLI are required for running unit tests.
 
 Local testing set up instructions:
-https://github.com/devinsays/woocommerce-coupon-restrictions/wiki/Unit-Tests
+https://github.com/devinsays/woocommerce-coupon-restrictions//blob/main/tests/readme.md
 
 ## Code Standards
 
