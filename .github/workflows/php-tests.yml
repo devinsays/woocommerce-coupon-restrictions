@@ -50,5 +50,4 @@ jobs:
       - name: Run phpunit
         run: ./vendor/bin/phpunit -c phpunit.xml
         env:
-          WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
           WC_VERSION: ${{ matrix.wc_ver }}
