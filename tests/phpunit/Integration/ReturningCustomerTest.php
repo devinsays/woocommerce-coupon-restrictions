@@ -13,7 +13,9 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 	public $order;
 	public $validation;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Create a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$this->customer = $customer;
@@ -41,8 +43,10 @@ class New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$this->assertTrue( WC_Coupon_Restrictions_Validation::is_returning_customer( $customer->get_email() ) );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		$this->order->delete();
 		$this->customer->delete();
+
+		parent::tear_down();
 	}
 }

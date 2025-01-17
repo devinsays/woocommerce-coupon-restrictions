@@ -6,6 +6,7 @@ use WC_Helper_Customer;
 use WC_Helper_Coupon;
 
 class Apply_Generic_Coupon_Test extends WP_UnitTestCase {
+
 	/**
 	 * Tests that generic coupons can be applied.
 	 */

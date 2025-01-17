@@ -11,7 +11,9 @@ class Apply_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 	public $customer;
 	public $session;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$customer->set_billing_country( 'US' );
@@ -138,6 +140,7 @@ class Apply_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		// Location restriction is checked.
 		$coupon->update_meta_data( 'location_restrictions', 'yes' );
+		$coupon->save();
 
 		// Adds a country restricted coupon.
 		// This should fail because customer doesn't meet requirements,
@@ -148,7 +151,7 @@ class Apply_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0, count( WC()->cart->get_applied_coupons() ) );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -158,5 +161,7 @@ class Apply_Country_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		$this->customer->delete();
 		$this->coupon->delete();
+
+		parent::tear_down();
 	}
 }

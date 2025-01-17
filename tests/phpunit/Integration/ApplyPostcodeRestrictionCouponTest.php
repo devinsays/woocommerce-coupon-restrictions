@@ -12,7 +12,9 @@ class Apply_Postcode_Restriction_Coupon_Test extends WP_UnitTestCase {
 	public $customer;
 	public $session;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Creates a customer.
 		$customer = WC_Helper_Customer::create_customer();
 		$customer->set_billing_postcode( '78703' );
@@ -88,7 +90,7 @@ class Apply_Postcode_Restriction_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -98,5 +100,7 @@ class Apply_Postcode_Restriction_Coupon_Test extends WP_UnitTestCase {
 
 		$this->customer->delete();
 		$this->coupon->delete();
+
+		parent::tear_down();
 	}
 }

@@ -7,10 +7,12 @@ use WC_Helper_Coupon;
 use WC_Helper_Order;
 
 class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
-	/** @var WC_Coupon */
 	public $coupon;
+	public $customer;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		$coupon->update_meta_data( 'customer_restriction_type', 'existing' );
@@ -88,7 +90,7 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	}
 
 
-	public function tearDown() {
+	public function tear_down() {
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -98,5 +100,7 @@ class Apply_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 
 		// Deletes the coupon.
 		$this->coupon->delete();
+
+		parent::tear_down();
 	}
 }

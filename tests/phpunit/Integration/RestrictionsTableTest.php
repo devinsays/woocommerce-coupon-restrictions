@@ -68,8 +68,10 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 		$this->assertEquals( $email3, $email3scrubbed );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		// Deletes the custom table if it has been created.
 		WC_Coupon_Restrictions_Table::delete_table();
+
+		parent::tear_down();
 	}
 }

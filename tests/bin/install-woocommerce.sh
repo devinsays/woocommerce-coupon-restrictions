@@ -1,84 +1,61 @@
-#!/usr/bin/env bash
-#
-# Install a copy of WooCommerce from source in vendor/woocommerce/woocommerce-src-{version}.
-#
-# Usage:
-#
-#   install-wocommerce.sh <version>
-#
-# Examples:
-#
-#   # Install woocommerce/woocommerce@master (default behavior)
-#   $ install-woocommerce.sh [latest]
-#
-#   # Install woocommerce/woocommerce@7.2.1
-#   $ install-woocommerce.sh 7.2.1
-#
-#   # Show debugging messages
-#   $ DEBUG=1 install-woocommerce.sh <version>
-#
-# Author: Liquid Web
-# License: GPLv2 or Later
+TMPDIR="tests/tmp"
+TMPDIR=$(echo $TMPDIR | sed -e "s/\/$//")
+WP_CORE_DIR=${WP_CORE_DIR-$TMPDIR/wordpress/}
 
-if [ -n "$DEBUG" ]; then
-	set -e
-fi
-
-# Print an error message and exit with a non-zero exit code.
-error() {
-	MESSAGE=${1:-"Something went wrong, aborting."}
-	printf "\033[0;31m%s\033[0;0m\n" "$MESSAGE"
-	exit 1
+download() {
+    if [ `which curl` ]; then
+        curl -s "$1" > "$2";
+    elif [ `which wget` ]; then
+        wget -nv -O "$2" "$1"
+    fi
 }
 
-# Print a debugging message.
-debug() {
-	if [ -n "$DEBUG" ]; then
-		printf "\033[0;36m%s\033[0;0m\n" "$1"
-	fi
+install_woocommerce() {
+	# Check if WP_CORE_DIR exists
+    if [ ! -d "$WP_CORE_DIR" ]; then
+        echo "Error: WordPress has not been installed yet. Please run `bash tests/bin/install-wp-tests.sh`."
+        return
+    fi
+
+    # Check if a version is provided
+    WC_VERSION=${1:-"latest"}
+
+    # Install WooCommerce plugin
+    if [ -d "$WP_CORE_DIR/wp-content/plugins/woocommerce-$WC_VERSION" ]; then
+        echo "WooCommerce $WC_VERSION is already installed."
+        return
+    fi
+
+    # Set download URL based on version
+    if [ "$WC_VERSION" = "latest" ]; then
+        DOWNLOAD_URL="https://downloads.wordpress.org/plugin/woocommerce.zip"
+    else
+        DOWNLOAD_URL="https://downloads.wordpress.org/plugin/woocommerce.$WC_VERSION.zip"
+    fi
+
+    echo "Downloading WooCommerce version: $WC_VERSION..."
+    download $DOWNLOAD_URL $TMPDIR/woocommerce.zip
+    if [ ! -f $TMPDIR/woocommerce.zip ]; then
+        echo "Error: Failed to download WooCommerce version $WC_VERSION."
+        exit 1
+    fi
+
+    echo "Extracting WooCommerce zip file..."
+    unzip -q $TMPDIR/woocommerce.zip -d $TMPDIR/
+
+    # Check if the extracted directory exists
+    if [ -d "$TMPDIR/woocommerce" ]; then
+        # Rename the extracted directory
+        mv "$TMPDIR/woocommerce" "$TMPDIR/woocommerce-$WC_VERSION"
+        echo "Renamed WooCommerce directory to woocommerce-$WC_VERSION."
+    else
+        echo "Error: Extracted WooCommerce directory not found."
+        exit 1
+    fi
+
+    # Move the renamed directory to the plugin directory
+    mv "$TMPDIR/woocommerce-$WC_VERSION" "$WP_CORE_DIR/wp-content/plugins/"
+    echo "WooCommerce version $WC_VERSION installed successfully."
 }
 
-WC_VERSION=${1:-latest}
-VENDOR_DIR=$(composer config --absolute vendor-dir)
-GIT_URL="https://github.com/woocommerce/woocommerce.git"
-BRANCH=master
-
-debug "Installing WooCommerce ${WC_VERSION} from source"
-
-# Determine which branch to use, if not master.
-if [ "latest" != "$WC_VERSION" ]; then
-	BRANCH="release/${WC_VERSION}"
-fi
-
-# See if the version already exists.
-TARGET_DIR="${VENDOR_DIR}/woocommerce/woocommerce-src-${WC_VERSION}"
-
-if [[ -d "$TARGET_DIR" ]]; then
-	debug "Target ${TARGET_DIR} already exists, aborting."
-	exit
-fi
-
-debug "Cloning branch '${BRANCH}' from ${GIT_URL}"
-if git ls-remote --exit-code --heads "$GIT_URL" "$BRANCH" &>/dev/null; then
-	git clone --depth 1 --single-branch --branch "$BRANCH" "$GIT_URL" "$TARGET_DIR" \
-		|| error "Unable to clone branch ${BRANCH} from ${GIT_URL}"
-else
-	debug "Remote branch ${BRANCH} not found, attempting to clone from tag"
-	git clone --depth 1 --single-branch --branch "$WC_VERSION" "$GIT_URL" "$TARGET_DIR" \
-		|| error "Unable to clone tag ${WC_VERSION} from ${GIT_URL}"
-fi
-
-# Once we've cloned the branch, install any dependencies.
-#
-# We'll skip over bin/package-update.sh (via --no-scripts), since we don't need to fully-build
-# WooCommerce and install all of the necessary JS.
-#
-# https://github.com/woocommerce/woocommerce/wiki/How-to-set-up-WooCommerce-development-environment
-debug "Building WooCommerce ${WC_VERSION} in ${TARGET_DIR}"
-
-composer install -d "$TARGET_DIR" --no-dev --no-suggest --no-interaction --prefer-dist --no-scripts
-
-# The Jetpack autoloader requires a second dump of the autoloader.
-composer dump-autoload -d "$TARGET_DIR"
-
-debug "WooCommerce ${BRANCH} has been cached in ${TARGET_DIR}"
+install_woocommerce

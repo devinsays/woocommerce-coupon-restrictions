@@ -1,35 +1,37 @@
 name: PHPUnit Tests
 
-on: [ push ]
+on: [push]
 
 jobs:
   test:
     strategy:
       matrix:
         php_ver:
-          - "7.4"
+          - "8.3"
         wp_ver:
           - "latest"
         wc_ver:
           - "latest"
-          - "4.8.1"
+          # - "8.6.1"
 
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the files
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      # PHPUnit errors with latest PHP 8.X build.
-      # This specifically sets PHP version to 7.4.
+      - name: Install SVN
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
+      # Sets PHP version to 8.3
       - name: Setup PHP with tools
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: "8.3"
           tools: phpunit
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /tmp/composer-cache
           key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
@@ -44,7 +46,7 @@ jobs:
         run: sudo /etc/init.d/mysql start
 
       - name: Run install-wp-tests.sh
-        run: ./vendor/bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wp_ver }}
+        run: sudo ./tests/bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wp_ver }}
 
       - name: Run install-woocommerce.sh
         run: sudo ./tests/bin/install-woocommerce.sh ${{ matrix.wc_ver }}
@@ -52,5 +54,4 @@ jobs:
       - name: Run phpunit
         run: ./vendor/bin/phpunit -c phpunit.xml
         env:
-          WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
           WC_VERSION: ${{ matrix.wc_ver }}

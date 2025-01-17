@@ -11,7 +11,9 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 	public $customer;
 	public $order;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		update_post_meta( $coupon->get_id(), 'customer_restriction_type', 'new' );
@@ -126,7 +128,7 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		delete_option( 'coupon_restrictions_customer_query' );
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
 
@@ -138,5 +140,7 @@ class Apply_New_Customer_Coupon_Test extends WP_UnitTestCase {
 		$this->coupon->delete();
 		$this->customer->delete();
 		$this->order->delete();
+
+		parent::tear_down();
 	}
 }

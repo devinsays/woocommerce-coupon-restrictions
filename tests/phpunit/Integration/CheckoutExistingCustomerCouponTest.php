@@ -11,7 +11,9 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	/** @var WC_Coupon */
 	public $coupon;
 
-	public function setUp() {
+	public function set_up() {
+		parent::set_up();
+
 		// Creates a coupon.
 		$coupon = WC_Helper_Coupon::create_coupon();
 		$coupon->update_meta_data( 'customer_restriction_type', 'existing' );
@@ -76,12 +78,14 @@ class Checkout_Existing_Customer_Coupon_Test extends WP_UnitTestCase {
 	}
 
 
-	public function tearDown() {
+	public function tear_down() {
 		// Removes the coupons from the cart.
 		WC()->cart->empty_cart();
 		WC()->cart->remove_coupons();
 
 		// Deletes the coupon.
 		$this->coupon->delete();
+
+		parent::tear_down();
 	}
 }
