@@ -47,6 +47,9 @@ jobs:
       - name: Run install-wp-tests.sh
         run: sudo ./tests/bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wp_ver }}
 
+      - name: Run install-woocommerce.sh
+        run: sudo ./tests/bin/install-woocommerce.sh ${{ matrix.wc_ver }}
+
       - name: Run phpunit
         run: ./vendor/bin/phpunit -c phpunit.xml
         env:
