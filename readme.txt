@@ -5,7 +5,7 @@ Tags: woocommerce, coupon
 Requires at least: 6.2
 Tested up to: 6.7.2
 Requires PHP: 8.0
-Stable tag: 2.2.2
+Stable tag: 2.2.3
 License: GPLv3 or later License
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 WC requires at least: 8.6.1
