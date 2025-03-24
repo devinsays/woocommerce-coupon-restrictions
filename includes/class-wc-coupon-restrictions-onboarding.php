@@ -169,6 +169,7 @@ class WC_Coupon_Restrictions_Onboarding {
 	/**
 	 * Init pointers for screen.
 	 *
+	 * @return void
 	 * @since 1.5.0
 	 */
 	public function init_pointers_for_screen() {
@@ -293,7 +294,8 @@ class WC_Coupon_Restrictions_Onboarding {
 	 * Follow WooCommerce core pattern:
 	 * https://github.com/woocommerce/woocommerce/blob/master/includes/admin/class-wc-admin-pointers.php
 	 *
-	 * @param array $pointers
+	 * @param array $pointers Array of pointers with their settings
+	 * @return void
 	 *
 	 * @since 1.5.0
 	 */

@@ -96,7 +96,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * Validates existing customer restriction.
 	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $email
 	 * @return boolean
 	 */
@@ -117,7 +117,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * Validates role restrictions.
 	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $email
 	 * @return boolean
 	 */

@@ -4,7 +4,7 @@
 -   WP requires at least: 6.2
 -   WP tested up to: 6.7
 -   WC requires at least: 8.6.1
--   WC tested up to: 9.5.2
+-   WC tested up to: 9.7.1
 -   Stable tag: 2.2.2
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 

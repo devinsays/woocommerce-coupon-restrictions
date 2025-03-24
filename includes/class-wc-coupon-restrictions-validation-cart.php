@@ -21,7 +21,7 @@ class WC_Coupon_Restrictions_Validation_Cart {
 	 * Validates coupon if customer session data is available.
 	 *
 	 * @param boolean $valid
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @return boolean
 	 */
 	public function validate_coupons_before_checkout( $valid, $coupon ) {
@@ -107,7 +107,7 @@ class WC_Coupon_Restrictions_Validation_Cart {
 	 * Validates customer restrictions.
 	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $email
 	 * @return boolean
 	 */
