@@ -38,7 +38,8 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 		foreach ( WC()->cart->applied_coupons as $code ) {
 			$coupon = new WC_Coupon( $code );
 
-			if ( ! $coupon->is_valid() ) {
+			$discounts = new WC_Discounts( WC()->cart );
+			if ( ! wc_coupons_enabled() || ! $discounts->is_coupon_valid( $coupon ) ) {
 				continue;
 			}
 
@@ -58,8 +59,9 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	/**
 	 * Validates new customer coupon on checkout.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $code
+	 * @param array $posted
 	 * @return void
 	 */
 	public function validate_new_customer_restriction( $coupon, $code, $posted ) {
@@ -75,7 +77,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	/**
 	 * Validates existing customer coupon on checkout.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $code
 	 * @param array $posted
 	 * @return void
@@ -91,10 +93,11 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	}
 
 	/**
-	 * Validates new customer coupon on checkout.
+	 * Validates role restriction on checkout.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $code
+	 * @param array $posted
 	 * @return void
 	 */
 	public function validate_role_restriction( $coupon, $code, $posted ) {
@@ -111,7 +114,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	 * Validates location restrictions.
 	 * Returns true if customer meets $coupon criteria.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $code
 	 * @param array $posted
 	 * @return void
@@ -171,8 +174,9 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	/**
 	 * Validates similar emails restriction.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $code
+	 * @param array $posted
 	 * @return void
 	 */
 	public function validate_similar_emails_restriction( $coupon, $code, $posted ) {
@@ -197,8 +201,9 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	/**
 	 * Validates usage limit per shipping address.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $code
+	 * @param array $posted
 	 * @return void
 	 */
 	public function validate_usage_limit_per_shipping_address( $coupon, $code, $posted ) {
@@ -215,9 +220,9 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	}
 
 	/**
-	 * Validates enhanced usage restrictions.
+	 * Validates usage limit per IP address.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $code
 	 * @return void
 	 */
@@ -237,7 +242,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	/**
 	 * Removes coupon and displays a validation message.
 	 *
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @param string $code
 	 * @param string $msg
 	 * @return void

@@ -34,7 +34,7 @@ class WC_Coupon_Restrictions_Admin {
 	 * @since  1.3.0
 	 *
 	 * @param int $coupon_id
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @return void
 	 */
 	public static function customer_restrictions( $coupon_id, $coupon ) {
@@ -70,7 +70,7 @@ class WC_Coupon_Restrictions_Admin {
 	 * @since  1.8.0
 	 *
 	 * @param int $coupon_id
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @return void
 	 */
 	public static function role_restrictions( $coupon_id, $coupon ) {
@@ -117,8 +117,8 @@ class WC_Coupon_Restrictions_Admin {
 	 *
 	 * @since  1.3.0
 	 *
-	 * @param int $id
-	 * @param object $coupon
+	 * @param int $coupon_id
+	 * @param WC_Coupon $coupon
 	 * @return void
 	 */
 	public static function location_restrictions( $coupon_id, $coupon ) {
@@ -232,7 +232,7 @@ class WC_Coupon_Restrictions_Admin {
 	 * @since  1.7.0
 	 *
 	 * @param int $coupon_id
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 * @return void
 	 */
 	public static function usage_limits( $coupon_id, $coupon ) {
@@ -333,7 +333,7 @@ class WC_Coupon_Restrictions_Admin {
 	 *
 	 * @since  1.3.0
 	 * @param int $coupon_id
-	 * @param object $coupon
+	 * @param WC_Coupon $coupon
 	 *
 	 * @return void
 	 */

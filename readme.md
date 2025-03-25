@@ -4,8 +4,8 @@
 -   WP requires at least: 6.2
 -   WP tested up to: 6.7
 -   WC requires at least: 8.6.1
--   WC tested up to: 9.5.2
--   Stable tag: 2.2.2
+-   WC tested up to: 9.7.1
+-   Stable tag: 2.2.3
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description
@@ -62,6 +62,13 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 -   Run `composer make-pot` to update the translation file.
 
 ## Changelog
+
+**2.2.3 (2025-04-25)**
+
+-   Update: Declare compatibility with latest version of WooCommerce.
+-   Update: Fix deprecated call to is_coupon_valid.
+-   Update: Improve docblock documentation.
+-   Update: Improve automated testing suite.
 
 **2.2.2 (2024-02-05)**
 

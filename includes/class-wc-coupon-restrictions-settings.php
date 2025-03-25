@@ -18,8 +18,11 @@ class WC_Coupon_Restrictions_Settings {
 	}
 
 	/**
-	* Adds our coupon restriction settings.
-	*/
+	 * Adds our coupon restriction settings.
+	 *
+	 * @param array $settings WooCommerce settings array
+	 * @return array Modified settings array
+	 */
 	public function coupon_restrictions_settings( $settings ) {
 		$coupon_restrictions = array(
 			'title'    => __( 'Coupon Restrictions', 'woocommerce' ),
