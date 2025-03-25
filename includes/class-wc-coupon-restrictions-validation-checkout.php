@@ -38,7 +38,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 		foreach ( WC()->cart->applied_coupons as $code ) {
 			$coupon = new WC_Coupon( $code );
 
-			if ( ! $coupon->is_valid() ) {
+			if ( ! wc_coupons_enabled() || ! WC_Discounts::is_coupon_valid( $coupon ) ) {
 				continue;
 			}
 
