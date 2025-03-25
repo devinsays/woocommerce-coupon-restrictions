@@ -1,5 +1,12 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2024-02-25 - version 2.2.3
+
+* Update: Declare compatibility with latest version of WooCommerce.
+* Update: Fix deprecated call to is_coupon_valid.
+* Update: Improve docblock documentation.
+* Update: Improve automated testing suite.
+
 2024-02-05 - version 2.2.2
 
 * Bugfix: Add explicit check for array type for meta values that require it.

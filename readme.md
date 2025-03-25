@@ -66,6 +66,7 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 **2.2.3 (2025-04-25)**
 
 -   Update: Declare compatibility with latest version of WooCommerce.
+-   Update: Fix deprecated call to is_coupon_valid.
 -   Update: Improve docblock documentation.
 -   Update: Improve automated testing suite.
 
