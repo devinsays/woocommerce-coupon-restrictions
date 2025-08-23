@@ -325,15 +325,35 @@ class WC_Coupon_Restrictions_Validation {
 			return sprintf( __( 'Sorry, coupon code "%1$s" is not valid in your %2$s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
-		if ( $key === 'similar-email-usage' ||
-			$key === 'usage-limit-per-shipping-address' ||
-			$key === 'usage-limit-per-ip-address' ) {
-			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+		// By default we validate all the enhanced restrictions together and display a single generic validate message.
+		// However, unique validation messages per enhanced restriction can be displayed by using the filter.
+		$combine_enhanced_restriction_validation = apply_filters( 'woocommerce_coupon_restrictions_combine_enhanced_restrictions_validation', true );
+		if ( $combine_enhanced_restriction_validation && in_array(
+			$key,
+			array(
+				'similar-email-usage',
+				'usage-limit-per-shipping-address',
+				'usage-limit-per-ip-address',
+			),
+			true
+		) ) {
+				return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+		}
+
+		if ( $key === 'similar-email-usage' ) {
+			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded for this email.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+		}
+
+		if ( $key === 'usage-limit-per-shipping-address' ) {
+			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded for this shipping address.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+		}
+
+		if ( $key === 'usage-limit-per-ip-address' ) {
+			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded for this IP address.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		// The $key should always find a match.
 		// But we'll return a default message just in case.
 		return sprintf( __( 'Sorry, coupon code "%s" is not valid.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 	}
-
 }

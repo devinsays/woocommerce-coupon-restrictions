@@ -280,7 +280,21 @@ class WC_Coupon_Restrictions_Validation_Cart {
 		// Alter the validation message if coupon has been removed.
 		if ( 100 === $err_code ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( $key, $coupon );
+
+			// This filter is being deprecated in order to to use snake case convention.
+			// Please use the updated `woocommerce_coupon_restrictions_removed_message` filter.
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
+
+			if ( has_filter( 'woocommerce-coupon-restrictions-removed-message' ) ) {
+				_deprecated_hook(
+					'woocommerce-coupon-restrictions-removed-message',
+					'2.3.0',
+					'woocommerce_coupon_restrictions_removed_message',
+					'Use new_filter_name instead.'
+				);
+			}
+
+			$err = apply_filters( 'woocommerce_coupon_restrictions_removed_message', $msg );
 		}
 
 		// Return validation message.

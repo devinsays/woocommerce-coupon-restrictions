@@ -63,6 +63,10 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 
 ## Changelog
 
+**2.3.0 (2025-XX-XX)**
+
+-   Enhancement: Allow separate validation messsages for each of the enhanced coupon restriction reasons.
+
 **2.2.3 (2025-04-25)**
 
 -   Update: Declare compatibility with latest version of WooCommerce.
