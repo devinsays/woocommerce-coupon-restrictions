@@ -327,7 +327,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		// By default we validate all the enhanced restrictions together and display a single generic validate message.
 		// However, unique validation messages per enhanced restriction can be displayed by using the filter.
-		$combine_enhanced_restriction_validation = apply_filters( 'woocommerce_coupon_restrictions_combine_enhanced_restrictions_validation', true );
+		$combine_enhanced_restriction_validation = apply_filters( 'wcr_combine_enhanced_restrictions_validation', true );
 		if ( $combine_enhanced_restriction_validation && in_array(
 			$key,
 			array(

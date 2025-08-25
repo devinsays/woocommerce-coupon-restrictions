@@ -32,6 +32,17 @@ class WC_Coupon_Restrictions_Validation_Cart {
 
 		// Pre-checkout validation can be disabled using this filter.
 		$validate = apply_filters( 'woocommerce_coupon_restrictions_validate_before_checkout', true );
+		if ( has_filter( 'woocommerce_coupon_restrictions_validate_before_checkout' ) ) {
+			_deprecated_hook(
+				'woocommerce_coupon_restrictions_validate_before_checkout',
+				'2.3.0',
+				'woocommerce_coupon_restrictions_validate_before_checkout',
+				'wcr_validate_before_checkout'
+			);
+		} else {
+			$validate = apply_filters( 'wcr_validate_before_checkout', true );
+		}
+
 		if ( false === $validate ) {
 			return true;
 		}
@@ -281,20 +292,18 @@ class WC_Coupon_Restrictions_Validation_Cart {
 		if ( 100 === $err_code ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( $key, $coupon );
 
-			// This filter is being deprecated in order to to use snake case convention.
-			// Please use the updated `woocommerce_coupon_restrictions_removed_message` filter.
+			// This filter is being deprecated in order to better follow plugin conventions.
 			$err = apply_filters( 'woocommerce-coupon-restrictions-removed-message', $msg );
-
 			if ( has_filter( 'woocommerce-coupon-restrictions-removed-message' ) ) {
 				_deprecated_hook(
 					'woocommerce-coupon-restrictions-removed-message',
 					'2.3.0',
 					'woocommerce_coupon_restrictions_removed_message',
-					'Use new_filter_name instead.'
+					'Use wcr_coupon_validation_message instead.'
 				);
+			} else {
+				$err = apply_filters( 'wcr_coupon_validation_message', $msg );
 			}
-
-			$err = apply_filters( 'woocommerce_coupon_restrictions_removed_message', $msg );
 		}
 
 		// Return validation message.

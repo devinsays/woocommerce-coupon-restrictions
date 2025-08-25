@@ -52,7 +52,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 				// Default behavior is to return a generic "usage limit exceeded" message if any of the enhanced restrictions fail.
 				// Since the message is the same for each validation, we can return as soon as one of them fails.
 				// However, if this default is filtered, then we won't return early so that each unique validation message will display.
-				$combine_enhanced_restriction_validation = apply_filters( 'woocommerce_coupon_restrictions_combine_enhanced_restrictions_validation', true );
+				$combine_enhanced_restriction_validation = apply_filters( 'wcr_combine_enhanced_restrictions_validation', true );
 				$enhanced_restriction_validates          = true;
 
 				$enhanced_restriction_validates = $this->validate_similar_emails_restriction( $coupon, $code, $posted );
