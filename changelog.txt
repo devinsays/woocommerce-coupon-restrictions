@@ -1,5 +1,9 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2025-XX-XX - version 2.3.0
+
+* Enhancement: Allow separate validation messsages for each of the enhanced coupon restriction reasons.
+
 2024-02-25 - version 2.2.3
 
 * Update: Declare compatibility with latest version of WooCommerce.
