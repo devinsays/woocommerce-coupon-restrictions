@@ -49,8 +49,22 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			$this->validate_role_restriction( $coupon, $code, $posted );
 
 			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
-				$this->validate_similar_emails_restriction( $coupon, $code, $posted );
-				$this->validate_usage_limit_per_shipping_address( $coupon, $code, $posted );
+				// Default behavior is to return a generic "usage limit exceeded" message if any of the enhanced restrictions fail.
+				// Since the message is the same for each validation, we can return as soon as one of them fails.
+				// However, if this default is filtered, then we won't return early so that each unique validation message will display.
+				$combine_enhanced_restriction_validation = apply_filters( 'wcr_combine_enhanced_restrictions_validation', true );
+				$enhanced_restriction_validates          = true;
+
+				$enhanced_restriction_validates = $this->validate_similar_emails_restriction( $coupon, $code, $posted );
+				if ( false === $enhanced_restriction_validates && $combine_enhanced_restriction_validation ) {
+					continue;
+				}
+
+				$enhanced_restriction_validates = $this->validate_usage_limit_per_shipping_address( $coupon, $code, $posted );
+				if ( false === $enhanced_restriction_validates && $combine_enhanced_restriction_validation ) {
+					continue;
+				}
+
 				$this->validate_usage_limit_per_ip( $coupon, $code );
 			}
 		}
@@ -177,16 +191,16 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	 * @param WC_Coupon $coupon
 	 * @param string $code
 	 * @param array $posted
-	 * @return void
+	 * @return bool Returns true if validation passes, false otherwise.
 	 */
 	public function validate_similar_emails_restriction( $coupon, $code, $posted ) {
 		$coupon_usage_limit = $coupon->get_usage_limit_per_user();
 		if ( ! $coupon_usage_limit ) {
-			return;
+			return true;
 		}
 
 		if ( 'yes' !== $coupon->get_meta( 'prevent_similar_emails' ) ) {
-			return;
+			return true;
 		}
 
 		$email = $posted['billing_email'];
@@ -195,7 +209,10 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 		if ( $count >= $coupon_usage_limit ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'similar-email-usage', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -204,19 +221,22 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	 * @param WC_Coupon $coupon
 	 * @param string $code
 	 * @param array $posted
-	 * @return void
+	 * @return bool Returns true if validation passes, false otherwise.
 	 */
 	public function validate_usage_limit_per_shipping_address( $coupon, $code, $posted ) {
 		$limit = $coupon->get_meta( 'usage_limit_per_shipping_address' );
 		if ( ! $limit ) {
-			return;
+			return true;
 		}
 
 		$count = WC_Coupon_Restrictions_Table::get_shipping_address_usage( $coupon, $code, $posted );
 		if ( $count >= $limit ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-per-shipping-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -224,19 +244,22 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	 *
 	 * @param WC_Coupon $coupon
 	 * @param string $code
-	 * @return void
+	 * @return bool Returns true if validation passes, false otherwise.
 	 */
 	public function validate_usage_limit_per_ip( $coupon, $code ) {
 		$limit = $coupon->get_meta( 'usage_limit_per_ip_address' );
 		if ( ! $limit ) {
-			return;
+			return true;
 		}
 
 		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $coupon, $code );
 		if ( $count >= $limit ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-per-ip-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
+			return false;
 		}
+
+		return true;
 	}
 
 	/**

@@ -487,5 +487,4 @@ class WC_Coupon_Restrictions_Admin {
 			true
 		);
 	}
-
 }

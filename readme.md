@@ -1,12 +1,16 @@
 # WooCommerce Coupon Restrictions ![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=main)
 
 -   Requires PHP: 8.0
--   WP requires at least: 6.2
--   WP tested up to: 6.7
+-   WP requires at least: 6.3
+-   WP tested up to: 6.8.2
 -   WC requires at least: 8.6.1
--   WC tested up to: 9.7.1
--   Stable tag: 2.2.3
+-   WC tested up to: 10.1.2
+-   Stable tag: 2.3.0
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
+
+## Important notice
+
+This extension does not yet support WooCommerce Checkout Blocks. Support will be added soon.
 
 ## Description
 
@@ -42,6 +46,16 @@ E-mail addresses, zip code, and state restrictions are not case sensitive.
 
 A customer must meet all requirements if multiple restrictions are set. For instance, if a "New Customer" and "Country Restriction" are set, a customer must meet both restrictions in order to checkout with the coupon.
 
+## Filters
+
+The enhanced usage restrictions all validate with a generate validation message by default: `Sorry, coupon code "%s" usage limit exceeded.`
+
+If you would like to display different validation messages for each type of enhanced restriction (similar email, shipping address, IP), use the `wcr_combine_enhanced_restrictions_validation` filter.
+
+```
+add_filter('wcr_combine_enhanced_restrictions_validation', '__return_false');
+```
+
 ## Unit Tests
 
 ![Testing status](https://github.com/devinsays/woocommerce-coupon-restrictions/actions/workflows/php-tests.yml/badge.svg?branch=main)
@@ -62,6 +76,10 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 -   Run `composer make-pot` to update the translation file.
 
 ## Changelog
+
+**2.3.0 (2025-XX-XX)**
+
+-   Enhancement: Allow separate validation messsages for each of the enhanced coupon restriction reasons.
 
 **2.2.3 (2025-04-25)**
 
