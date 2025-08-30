@@ -2,7 +2,8 @@
 
 2025-XX-XX - version 2.3.0
 
-* Enhancement: Allow separate validation messsages for each of the enhanced coupon restriction reasons.
+* Enhancement: Filter to allow distinct validation messsages for each of the enhanced coupon restriction reasons.
+* Enhancement: Filters to allow shared set of enhanced coupon restrictions across multiple coupons
 
 2024-02-25 - version 2.2.3
 
