@@ -204,7 +204,11 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 		}
 
 		$email = $posted['billing_email'];
-		$count = WC_Coupon_Restrictions_Table::get_similar_email_usage( $code, $email );
+
+		// Filter allows lookup against a different stored coupon code if necessary.
+		$lookup_code = apply_filters( 'wcr_validate_similar_emails_restriction_lookup_code', $code );
+
+		$count = WC_Coupon_Restrictions_Table::get_similar_email_usage( $lookup_code, $email );
 
 		if ( $count >= $coupon_usage_limit ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'similar-email-usage', $coupon );
@@ -229,7 +233,10 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			return true;
 		}
 
-		$count = WC_Coupon_Restrictions_Table::get_shipping_address_usage( $code, $posted );
+		// Filter allows lookup against a different stored coupon code if necessary.
+		$lookup_code = apply_filters( 'wcr_validate_usage_limit_per_shipping_address_lookup_code', $code );
+
+		$count = WC_Coupon_Restrictions_Table::get_shipping_address_usage( $lookup_code, $posted );
 		if ( $count >= $limit ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-per-shipping-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
@@ -252,7 +259,10 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			return true;
 		}
 
-		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $code );
+		// Filter allows lookup against a different stored coupon code if necessary.
+		$lookup_code = apply_filters( 'wcr_validate_usage_limit_per_ip_address_lookup_code', $code );
+
+		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $lookup_code );
 		if ( $count >= $limit ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-per-ip-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );

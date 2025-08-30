@@ -120,8 +120,11 @@ class WC_Coupon_Restrictions_Table {
 			$coupon      = new \WC_Coupon( $coupon_code );
 
 			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
+				// This filter can be used to modify the coupon code stored for enhanced restrictions lookup.
+				$coupon_code_to_store = apply_filters( 'wcr_coupon_code_to_store_for_enhanced_usage_limits', $coupon_code );
+
 				// Store user details.
-				self::store_customer_details( $order, $coupon_code );
+				self::store_customer_details( $order, $coupon_code_to_store );
 				return true;
 			}
 		}
