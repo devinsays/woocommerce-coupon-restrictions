@@ -229,7 +229,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			return true;
 		}
 
-		$count = WC_Coupon_Restrictions_Table::get_shipping_address_usage( $coupon, $code, $posted );
+		$count = WC_Coupon_Restrictions_Table::get_shipping_address_usage( $code, $posted );
 		if ( $count >= $limit ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-per-shipping-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );
@@ -252,7 +252,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			return true;
 		}
 
-		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $coupon, $code );
+		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $code );
 		if ( $count >= $limit ) {
 			$msg = WC_Coupon_Restrictions_Validation::message( 'usage-limit-per-ip-address', $coupon );
 			$this->remove_coupon( $coupon, $code, $msg );

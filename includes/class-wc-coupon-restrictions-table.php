@@ -116,11 +116,12 @@ class WC_Coupon_Restrictions_Table {
 		// Check all the coupons.
 		foreach ( $order->get_items( 'coupon' ) as $coupon_item ) {
 			/** @var \WC_Order_Item_Coupon $coupon_item */
-			$coupon = new \WC_Coupon( $coupon_item->get_code() );
+			$coupon_code = $coupon_item->get_code();
+			$coupon      = new \WC_Coupon( $coupon_code );
 
 			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
 				// Store user details.
-				self::store_customer_details( $order, $coupon_item->get_code() );
+				self::store_customer_details( $order, $coupon_code );
 				return true;
 			}
 		}
@@ -257,7 +258,7 @@ class WC_Coupon_Restrictions_Table {
 	/**
 	 * Check if scrubbed email has been used with coupon previously.
 	 *
-	 * @param \WC_Coupon $coupon
+	 * @param string $coupon_code
 	 * @param string $email
 	 *
 	 * @return int
@@ -285,12 +286,12 @@ class WC_Coupon_Restrictions_Table {
 	/**
 	 * Returns amount of times a scrubbed shipping address has been used with a specific coupon.
 	 *
-	 * @param \WC_Coupon $coupon
+	 * @param string $coupon_code
 	 * @param string $email
 	 *
 	 * @return int $count
 	 */
-	public static function get_shipping_address_usage( $coupon, $coupon_code, $posted ) {
+	public static function get_shipping_address_usage( $coupon_code, $posted ) {
 		$shipping_address = self::format_address(
 			$posted['shipping_address_1'],
 			$posted['shipping_address_2'],
@@ -314,12 +315,12 @@ class WC_Coupon_Restrictions_Table {
 	/**
 	 * Returns amount of times an IP address has been used with a specific coupon.
 	 *
-	 * @param \WC_Coupon $coupon
+	 * @param string $coupon_code
 	 * @param string $email
 	 *
 	 * @return int $count
 	 */
-	public static function get_ip_address_usage( $coupon, $coupon_code ) {
+	public static function get_ip_address_usage( $coupon_code ) {
 		$ip = \WC_Geolocation::get_ip_address();
 
 		global $wpdb;
