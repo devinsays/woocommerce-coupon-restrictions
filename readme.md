@@ -2,9 +2,9 @@
 
 -   Requires PHP: 8.0
 -   WP requires at least: 6.3
--   WP tested up to: 6.8.2
+-   WP tested up to: 6.8.3
 -   WC requires at least: 8.6.1
--   WC tested up to: 10.1.2
+-   WC tested up to: 10.2.2
 -   Stable tag: 2.3.0
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
@@ -168,7 +168,7 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 
 ## Changelog
 
-**2.3.0 (2025-XX-XX)**
+**2.3.0 (2025-10-01)**
 
 -   Enhancement: Filter to allow distinct validation messsages for each of the enhanced coupon restriction reasons.
 -   Enhancement: Filters to allow shared set of enhanced coupon restrictions across multiple coupons
