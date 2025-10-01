@@ -2,9 +2,9 @@
 
 -   Requires PHP: 8.0
 -   WP requires at least: 6.3
--   WP tested up to: 6.8.2
+-   WP tested up to: 6.8.3
 -   WC requires at least: 8.6.1
--   WC tested up to: 10.1.2
+-   WC tested up to: 10.2.2
 -   Stable tag: 2.3.0
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
@@ -48,12 +48,103 @@ A customer must meet all requirements if multiple restrictions are set. For inst
 
 ## Filters
 
-The enhanced usage restrictions all validate with a generate validation message by default: `Sorry, coupon code "%s" usage limit exceeded.`
+**Enhanced Usage Restriction Validation Messages**
 
-If you would like to display different validation messages for each type of enhanced restriction (similar email, shipping address, IP), use the `wcr_combine_enhanced_restrictions_validation` filter.
+The enhanced usage restrictions all validate with a generic validation message by default: `Sorry, coupon code "%s" usage limit exceeded.`
 
-```
+If you would like to display distinct validation messages for each type of enhanced restriction (similar email, shipping address, IP), use the `wcr_combine_enhanced_restrictions_validation` filter.
+
+```php
 add_filter('wcr_combine_enhanced_restrictions_validation', '__return_false');
+```
+
+**Enhanced Usage Restrictions Coupon Code Filters**
+
+The plugin provides filters that allow you to transform coupon codes during storage and lookup operations. This is useful for creating numbered coupon variants that share usage limits.
+
+**Use Case: Unique Coupon Codes with Shared Usage Limits**
+
+You can create multiple unique coupons like "new-customer-1", "new-customer-2", "new-customer-3" that all share the same usage restrictions. This is useful for marketing campaigns where you want to track individual coupon performance while maintaining consistent usage limits.
+
+**Available Filters:**
+
+1. `wcr_coupon_code_to_store_for_enhanced_usage_limits` - Transforms the coupon code when storing usage records in the database
+2. `wcr_validate_similar_emails_restriction_lookup_code` - Transforms the coupon code when checking email usage limits
+3. `wcr_validate_usage_limit_per_shipping_address_lookup_code` - Transforms the coupon code when checking shipping address usage limits
+4. `wcr_validate_usage_limit_per_ip_address_lookup_code` - Transforms the coupon code when checking IP address usage limits
+
+**Example Implementation:**
+
+```php
+/**
+ * Transform numbered new customer coupons to share usage limits
+ *
+ * This example allows "new-customer-1", "new-customer-2", "new-customer-3" etc.
+ * to all be stored and validated against a shared "new-customer" base code.
+ */
+
+/**
+ * Transform coupon code for storage and lookup operations
+ */
+function transform_new_customer_coupon_code( $coupon_code ) {
+    if ( strpos( $coupon_code, 'new-customer-' ) === 0 ) {
+        return 'new-customer';
+    }
+    return $coupon_code;
+}
+
+// Storage filter - transform codes when storing usage records
+add_filter( 'wcr_coupon_code_to_store_for_enhanced_usage_limits', 'transform_new_customer_coupon_code' );
+
+// Lookup filters - transform codes when validating usage limits
+add_filter( 'wcr_validate_similar_emails_restriction_lookup_code', 'transform_new_customer_coupon_code' );
+add_filter( 'wcr_validate_usage_limit_per_shipping_address_lookup_code', 'transform_new_customer_coupon_code' );
+add_filter( 'wcr_validate_usage_limit_per_ip_address_lookup_code', 'transform_new_customer_coupon_code' );
+```
+
+**How It Works:**
+
+1. **Storage**: When a customer uses "new-customer-1", the usage record is stored in the database as "new-customer"
+2. **Validation**: When a customer tries to use "new-customer-2", the system looks up usage records for "new-customer"
+3. **Result**: All numbered variants ("new-customer-1", "new-customer-2", etc.) share the same usage limits
+
+This approach allows you to:
+
+-   Create unlimited unique coupon codes for tracking purposes
+-   Maintain consistent usage restrictions across all variants
+-   Prevent customers from bypassing limits by using different numbered codes
+-   Track individual coupon performance while enforcing shared limits
+
+**Advanced Example: Campaign-Based Grouping**
+
+```php
+/**
+ * Group coupons by campaign while maintaining individual tracking
+ */
+function transform_campaign_coupon_codes( $coupon_code ) {
+    // Group summer sale coupons: summer-sale-1, summer-sale-2, etc.
+    if ( strpos( $coupon_code, 'summer-sale-' ) === 0 ) {
+        return 'summer-sale';
+    }
+
+    // Group holiday coupons: holiday-2024-1, holiday-2024-2, etc.
+    if ( strpos( $coupon_code, 'holiday-2024-' ) === 0 ) {
+        return 'holiday-2024';
+    }
+
+    // Group new customer coupons: new-customer-social, new-customer-email, etc.
+    if ( strpos( $coupon_code, 'new-customer-' ) === 0 ) {
+        return 'new-customer';
+    }
+
+    return $coupon_code;
+}
+
+// Apply to all filters
+add_filter( 'wcr_coupon_code_to_store_for_enhanced_usage_limits', 'transform_campaign_coupon_codes' );
+add_filter( 'wcr_validate_similar_emails_restriction_lookup_code', 'transform_campaign_coupon_codes' );
+add_filter( 'wcr_validate_usage_limit_per_shipping_address_lookup_code', 'transform_campaign_coupon_codes' );
+add_filter( 'wcr_validate_usage_limit_per_ip_address_lookup_code', 'transform_campaign_coupon_codes' );
 ```
 
 ## Unit Tests
@@ -77,9 +168,10 @@ To run the code checks from the command line run: `vendor/bin/phpcs`
 
 ## Changelog
 
-**2.3.0 (2025-XX-XX)**
+**2.3.0 (2025-10-01)**
 
--   Enhancement: Allow separate validation messsages for each of the enhanced coupon restriction reasons.
+-   Enhancement: Filter to allow distinct validation messsages for each of the enhanced coupon restriction reasons.
+-   Enhancement: Filters to allow shared set of enhanced coupon restrictions across multiple coupons
 
 **2.2.3 (2025-04-25)**
 

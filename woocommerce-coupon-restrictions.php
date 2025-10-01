@@ -13,7 +13,7 @@
  *
  * Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
  * WC requires at least: 8.6.1
- * WC tested up to: 10.1.2
+ * WC tested up to: 10.2.2
  *
  * Copyright: © 2015-2025 DevPress.
  * License: GNU General Public License v3.0
