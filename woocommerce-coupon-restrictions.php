@@ -110,7 +110,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		 * @return void
 		 */
 		public function woocommerce_compatibility_notice() {
-			echo '<div class="error"><p>' . sprintf( __( '%1$s requires at least %2$s v%3$s in order to function.', 'woocommerce-coupon-restrictions' ), 'WooCommerce Coupon Restrictions', 'WooCommerce', $this->required_woo ) . '</p></div>';
+			echo '<div class="error"><p>' . esc_html( sprintf( __( '%1$s requires at least %2$s v%3$s in order to function.', 'woocommerce-coupon-restrictions' ), 'WooCommerce Coupon Restrictions', 'WooCommerce', $this->required_woo ) ) . '</p></div>';
 		}
 
 		/**

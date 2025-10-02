@@ -42,7 +42,7 @@ class WC_Coupon_Restrictions_Table {
 		global $wpdb;
 		$table_name = self::get_table_name();
 
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) === $table_name ) {
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) ) === $table_name ) {
 			return true;
 		}
 
@@ -87,7 +87,7 @@ class WC_Coupon_Restrictions_Table {
 	public static function delete_table() {
 		global $wpdb;
 		$table_name = self::get_table_name();
-		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
+		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name ) );
 	}
 
 	/**
@@ -206,7 +206,8 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT record_id FROM $table_name WHERE order_id = %d",
+				'SELECT record_id FROM %i WHERE order_id = %d',
+				$table_name,
 				$order_id
 			)
 		);
@@ -252,7 +253,8 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$wpdb->get_results(
 			$wpdb->prepare(
-				"DELETE FROM $table_name WHERE coupon_code = %s",
+				'DELETE FROM %i WHERE coupon_code = %s',
+				$table_name,
 				wc_sanitize_coupon_code( $code )
 			)
 		);
@@ -273,9 +275,11 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT record_id FROM $table_name WHERE coupon_code = %s AND email = %s AND status = 'active'",
+				'SELECT record_id FROM %i WHERE coupon_code = %s AND email = %s AND status = %s',
+				$table_name,
 				$coupon_code,
-				$email
+				$email,
+				'active'
 			)
 		);
 
@@ -306,9 +310,11 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT record_id FROM $table_name WHERE coupon_code = %s AND shipping_address = %s AND status = 'active'",
+				'SELECT record_id FROM %i WHERE coupon_code = %s AND shipping_address = %s AND status = %s',
+				$table_name,
 				$coupon_code,
-				$shipping_address
+				$shipping_address,
+				'active'
 			)
 		);
 
@@ -330,9 +336,11 @@ class WC_Coupon_Restrictions_Table {
 		$table_name = self::get_table_name();
 		$results    = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT record_id FROM $table_name WHERE coupon_code = %s AND ip = %s AND status = 'active'",
+				'SELECT record_id FROM %i WHERE coupon_code = %s AND ip = %s AND status = %s',
+				$table_name,
 				$coupon_code,
-				$ip
+				$ip,
+				'active'
 			)
 		);
 
