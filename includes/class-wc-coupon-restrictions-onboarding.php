@@ -325,5 +325,4 @@ class WC_Coupon_Restrictions_Onboarding {
 
 		wp_enqueue_script( 'wccr-onboarding-pointers' );
 	}
-
 }

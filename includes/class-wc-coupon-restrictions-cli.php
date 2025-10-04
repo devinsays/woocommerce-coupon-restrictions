@@ -49,6 +49,7 @@ class WC_Coupon_Restrictions_CLI {
 		if ( $processed_value ) {
 			/* translators: %s: last order processed for WP CLI command. */
 			WP_CLI::warning( sprintf( __( 'An update has already been started. The last order id processed was: %d.', 'woocommerce-coupon-restrictions' ), $processed_value ) );
+			/* translators: %d: Order ID */
 			$answer = $this->ask( sprintf( __( 'Would you like to continue processing from order id %d? [yes/no]', 'woocommerce-coupon-restrictions' ), $processed_value ) );
 			if ( 'yes' === trim( $answer ) || 'y' === trim( $answer ) ) {
 				$last_processed_id = $processed_value;
@@ -67,6 +68,7 @@ class WC_Coupon_Restrictions_CLI {
 		$date  = $coupon->get_date_created()->date( 'Y-m-d' );
 
 		while ( true ) {
+			/* translators: %d: Order ID */
 			WP_CLI::log( sprintf( __( 'Querying order batch starting at order id: %d', 'woocommerce-coupon-restrictions' ), $last_processed_id ) );
 			$ids = self::get_order_batch( $limit, $offset, $date );
 			if ( ! $ids && $count === 0 ) {
@@ -79,8 +81,8 @@ class WC_Coupon_Restrictions_CLI {
 
 				// Updates the counters
 				$last_processed_id = $order_id;
-				$offset++;
-				$count++;
+				++$offset;
+				++$count;
 			}
 
 			// We'll update the transient after each batch, so we can continue processing if interrupted.

@@ -1,9 +1,11 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
-2025-10-01 - version 2.3.0
+2025-10-04 - version 2.3.0
 
 * Enhancement: Filter to allow distinct validation messsages for each of the enhanced coupon restriction reasons.
-* Enhancement: Filters to allow shared set of enhanced coupon restrictions across multiple coupons
+* Enhancement: Filters to allow shared set of enhanced coupon restrictions across multiple coupons.
+* Update: Include translator comments for string placeholders.
+* Update: Improved field sanitization.
 
 2024-02-25 - version 2.2.3
 

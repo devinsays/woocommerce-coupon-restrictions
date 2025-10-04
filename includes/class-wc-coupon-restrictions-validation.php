@@ -296,32 +296,38 @@ class WC_Coupon_Restrictions_Validation {
 		);
 
 		if ( $key === 'new-customer' ) {
+			/* translators: %s: Coupon code */
 			return sprintf( __( 'Sorry, coupon code "%s" is only valid for new customers.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'existing-customer' ) {
+			/* translators: %s: Coupon code */
 			return sprintf( __( 'Sorry, coupon code "%s" is only valid for existing customers.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'role-restriction' ) {
+			/* translators: %s: Coupon code */
 			return sprintf( __( 'Sorry, coupon code "%s" is not valid with your customer role.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'country' ) {
 			$address_type     = self::get_address_type_for_restriction( $coupon );
 			$i8n_address_type = $i8n_address[ $address_type ];
+			/* translators: %1$s: Coupon code, %2$s: Address type (shipping or billing) */
 			return sprintf( __( 'Sorry, coupon code "%1$s" is not valid in your %2$s country.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
 		if ( $key === 'state' ) {
 			$address_type     = self::get_address_type_for_restriction( $coupon );
 			$i8n_address_type = $i8n_address[ $address_type ];
+			/* translators: %1$s: Coupon code, %2$s: Address type (shipping or billing) */
 			return sprintf( __( 'Sorry, coupon code "%1$s" is not valid in your %2$s state.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
 		if ( $key === 'zipcode' ) {
 			$address_type     = self::get_address_type_for_restriction( $coupon );
 			$i8n_address_type = $i8n_address[ $address_type ];
+			/* translators: %1$s: Coupon code, %2$s: Address type (shipping or billing) */
 			return sprintf( __( 'Sorry, coupon code "%1$s" is not valid in your %2$s zip code.', 'woocommerce-coupon-restrictions' ), $coupon->get_code(), $i8n_address_type );
 		}
 
@@ -337,23 +343,28 @@ class WC_Coupon_Restrictions_Validation {
 			),
 			true
 		) ) {
-				return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+			/* translators: %s: Coupon code */
+			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'similar-email-usage' ) {
+			/* translators: %s: Coupon code */
 			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded for this email.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'usage-limit-per-shipping-address' ) {
+			/* translators: %s: Coupon code */
 			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded for this shipping address.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'usage-limit-per-ip-address' ) {
+			/* translators: %s: Coupon code */
 			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded for this IP address.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		// The $key should always find a match.
 		// But we'll return a default message just in case.
+		/* translators: %s: Coupon code */
 		return sprintf( __( 'Sorry, coupon code "%s" is not valid.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 	}
 }
