@@ -11,7 +11,6 @@
  * Text Domain: woocommerce-coupon-restrictions
  * Domain Path: /languages
  *
- * Woo: 3200406:6d7b7aa4f9565b8f7cbd2fe10d4f119a
  * WC requires at least: 8.6.1
  * WC tested up to: 10.2.2
  *
