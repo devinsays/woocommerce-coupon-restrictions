@@ -33,4 +33,9 @@
         <exclude name="WordPress.PHP.YodaConditions"/>
     </rule>
 
+	<!-- Exclude specific rules -->
+	<rule ref="WordPress.Files.FileName">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+
 </ruleset>
