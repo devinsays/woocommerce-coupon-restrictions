@@ -1,5 +1,14 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2026-01-25 - version 2.4.0
+
+* Bugfix: Billing state validation was checking wrong session key.
+* Bugfix: Shipping location validation skipped state check when country was also set.
+* Update: Increase coupon_code column to varchar(255) for new installs.
+* Update: Use SELECT COUNT(*) for more efficient usage limit queries.
+* Update: Fix typo in method names (seperated -> separated).
+* Update: Remove dead code and redundant operations.
+
 2025-10-04 - version 2.3.0
 
 * Enhancement: Filter to allow distinct validation messsages for each of the enhanced coupon restriction reasons.

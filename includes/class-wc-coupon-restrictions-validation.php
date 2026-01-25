@@ -171,7 +171,7 @@ class WC_Coupon_Restrictions_Validation {
 			return true;
 		}
 
-		$state_array = self::comma_seperated_string_to_array( $state_restriction );
+		$state_array = self::comma_separated_string_to_array( $state_restriction );
 
 		if ( ! in_array( strtoupper( $state ), $state_array ) ) {
 			return false;
@@ -197,7 +197,7 @@ class WC_Coupon_Restrictions_Validation {
 			return true;
 		}
 
-		$postcode_array = self::comma_seperated_string_to_array( $postcode_restriction );
+		$postcode_array = self::comma_separated_string_to_array( $postcode_restriction );
 
 		// Wildcard check.
 		if ( strpos( $postcode_restriction, '*' ) !== false ) {
@@ -271,7 +271,7 @@ class WC_Coupon_Restrictions_Validation {
 	 * @param string $string
 	 * @return array $values
 	 */
-	public static function comma_seperated_string_to_array( $string ) {
+	public static function comma_separated_string_to_array( $string ) {
 		// Converts string to array.
 		$values = explode( ',', $string );
 		$values = array_map( 'trim', $values );

@@ -63,7 +63,7 @@ class Checkout_Postcode_Restriction_Coupon_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test checkout with multiple zipcodes (comma seperated).
+	 * Test checkout with multiple zipcodes (comma separated).
 	 */
 	public function test_checkout_multiple_zipcode_restriction_valid() {
 		$coupon = $this->coupon;
