@@ -389,7 +389,7 @@ class WC_Coupon_Restrictions_Admin {
 		// State restriction.
 		$id                = 'state_restriction';
 		$state_restriction = isset( $_POST[ $id ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $id ] ) ) : '';
-		$state_restriction = self::sanitize_comma_seperated_textarea( $state_restriction );
+		$state_restriction = self::sanitize_comma_separated_textarea( $state_restriction );
 		if ( $state_restriction ) {
 			$coupon->update_meta_data( $id, $state_restriction );
 		} else {
@@ -399,7 +399,7 @@ class WC_Coupon_Restrictions_Admin {
 		// Postcode restriction.
 		$id                   = 'postcode_restriction';
 		$postcode_restriction = isset( $_POST[ $id ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ $id ] ) ) : '';
-		$postcode_restriction = self::sanitize_comma_seperated_textarea( $postcode_restriction );
+		$postcode_restriction = self::sanitize_comma_separated_textarea( $postcode_restriction );
 		if ( $postcode_restriction ) {
 			$coupon->update_meta_data( $id, $postcode_restriction );
 		} else {
@@ -450,14 +450,14 @@ class WC_Coupon_Restrictions_Admin {
 	}
 
 	/**
-	 * Sanitizes comma seperated textarea.
+	 * Sanitizes comma separated textarea.
 	 *
 	 * @since  1.7.1
 	 * @param string $textarea
 	 *
 	 * @return string
 	 */
-	public static function sanitize_comma_seperated_textarea( $textarea = '' ) {
+	public static function sanitize_comma_separated_textarea( $textarea = '' ) {
 		// Trim whitespace.
 		$textarea = trim( $textarea );
 
@@ -465,7 +465,7 @@ class WC_Coupon_Restrictions_Admin {
 			// Convert comma separated list into array for sanitization.
 			$items    = explode( ',', $textarea );
 			$items    = array_unique( array_map( 'trim', $items ) ); // Trim whitespace
-			$items    = array_unique( array_map( 'esc_textarea', $items ) ); // Sanitize values
+			$items    = array_map( 'esc_textarea', $items ); // Sanitize values
 			$textarea = implode( ', ', $items ); // Convert back to comma separated string
 		}
 

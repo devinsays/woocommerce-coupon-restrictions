@@ -53,8 +53,6 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 				// Since the message is the same for each validation, we can return as soon as one of them fails.
 				// However, if this default is filtered, then we won't return early so that each unique validation message will display.
 				$combine_enhanced_restriction_validation = apply_filters( 'wcr_combine_enhanced_restrictions_validation', true );
-				$enhanced_restriction_validates          = true;
-
 				$enhanced_restriction_validates = $this->validate_similar_emails_restriction( $coupon, $code, $posted );
 				if ( false === $enhanced_restriction_validates && $combine_enhanced_restriction_validation ) {
 					continue;
@@ -149,7 +147,9 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 
 		if ( 'shipping' === $address && isset( $posted['shipping_country'] ) ) {
 			$country_validation = WC_Coupon_Restrictions_Validation::country_restriction( $coupon, $posted['shipping_country'] );
-		} elseif ( 'shipping' === $address && isset( $posted['shipping_state'] ) ) {
+		}
+
+		if ( 'shipping' === $address && isset( $posted['shipping_state'] ) ) {
 			$state_validation = WC_Coupon_Restrictions_Validation::state_restriction( $coupon, $posted['shipping_state'] );
 		}
 

@@ -188,7 +188,7 @@ class WC_Coupon_Restrictions_Validation_Cart {
 			}
 		}
 
-		if ( 'billing' === $address && isset( $session['postcode'] ) ) {
+		if ( 'billing' === $address && isset( $session['state'] ) ) {
 			$state = esc_textarea( $session['state'] );
 			if ( '' !== $state ) {
 				$state_validation = WC_Coupon_Restrictions_Validation::state_restriction( $coupon, $state );
