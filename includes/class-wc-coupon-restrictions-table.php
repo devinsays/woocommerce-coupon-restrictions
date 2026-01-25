@@ -273,9 +273,9 @@ class WC_Coupon_Restrictions_Table {
 
 		global $wpdb;
 		$table_name = self::get_table_name();
-		$results    = $wpdb->get_results(
+		$count      = $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT record_id FROM %i WHERE coupon_code = %s AND email = %s AND status = %s',
+				'SELECT COUNT(*) FROM %i WHERE coupon_code = %s AND email = %s AND status = %s',
 				$table_name,
 				$coupon_code,
 				$email,
@@ -283,11 +283,7 @@ class WC_Coupon_Restrictions_Table {
 			)
 		);
 
-		if ( ! $results ) {
-			return 0;
-		}
-
-		return count( $results );
+		return (int) $count;
 	}
 
 	/**
@@ -308,9 +304,9 @@ class WC_Coupon_Restrictions_Table {
 
 		global $wpdb;
 		$table_name = self::get_table_name();
-		$results    = $wpdb->get_results(
+		$count      = $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT record_id FROM %i WHERE coupon_code = %s AND shipping_address = %s AND status = %s',
+				'SELECT COUNT(*) FROM %i WHERE coupon_code = %s AND shipping_address = %s AND status = %s',
 				$table_name,
 				$coupon_code,
 				$shipping_address,
@@ -318,7 +314,7 @@ class WC_Coupon_Restrictions_Table {
 			)
 		);
 
-		return ( count( $results ) );
+		return (int) $count;
 	}
 
 	/**
@@ -334,9 +330,9 @@ class WC_Coupon_Restrictions_Table {
 
 		global $wpdb;
 		$table_name = self::get_table_name();
-		$results    = $wpdb->get_results(
+		$count      = $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT record_id FROM %i WHERE coupon_code = %s AND ip = %s AND status = %s',
+				'SELECT COUNT(*) FROM %i WHERE coupon_code = %s AND ip = %s AND status = %s',
 				$table_name,
 				$coupon_code,
 				$ip,
@@ -344,7 +340,7 @@ class WC_Coupon_Restrictions_Table {
 			)
 		);
 
-		return ( count( $results ) );
+		return (int) $count;
 	}
 
 	/**
