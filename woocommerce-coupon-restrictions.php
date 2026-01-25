@@ -71,7 +71,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		}
 
 		/**
-		 * Declares compatibility with High Performance Order Storage.
+		 * Declares compatibility with High Performance Order Storage and Cart/Checkout Blocks.
 		 * https://github.com/woocommerce/woocommerce/wiki/High-Performance-Order-Storage-Upgrade-Recipe-Book
 		 *
 		 * @since  2.2.0
@@ -81,6 +81,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				return;
 			}
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
 		}
 
 		/**
@@ -172,6 +173,20 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 			// Validates coupons on checkout.
 			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation-checkout.php';
 			new WC_Coupon_Restrictions_Validation_Checkout();
+
+			// Load block checkout validation when WooCommerce Blocks is loaded.
+			add_action( 'woocommerce_blocks_loaded', array( $this, 'load_block_checkout_validation' ) );
+		}
+
+		/**
+		 * Loads block checkout validation class.
+		 *
+		 * @since 2.3.0
+		 * @return void
+		 */
+		public function load_block_checkout_validation() {
+			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-validation-block-checkout.php';
+			new WC_Coupon_Restrictions_Validation_Block_Checkout();
 		}
 
 		/**
