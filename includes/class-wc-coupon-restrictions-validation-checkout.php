@@ -134,7 +134,7 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 	public function validate_location_restrictions( $coupon, $code, $posted ) {
 		// If location restrictions aren't set, coupon is valid.
 		if ( 'yes' !== $coupon->get_meta( 'location_restrictions' ) ) {
-			return true;
+			return;
 		}
 
 		// Get the address type used for location restrictions (billing or shipping).
