@@ -67,7 +67,7 @@ class WC_Coupon_Restrictions_Table {
 			record_id mediumint(9) NOT NULL AUTO_INCREMENT,
 			status varchar(20) NOT NULL,
 			order_id bigint(20) UNSIGNED NOT NULL,
-			coupon_code varchar(20) NOT NULL,
+			coupon_code varchar(255) NOT NULL,
 			email varchar(255) NOT NULL,
 			ip varchar(15) NOT NULL,
 			shipping_address varchar(255) NOT NULL,
