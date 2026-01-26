@@ -29,43 +29,39 @@ class WC_Coupon_Restrictions_Validation_Checkout {
 			return;
 		}
 
-		// If no billing email is set, we'll default to empty string.
-		// WooCommerce validation should catch this before we do.
-		if ( ! isset( $posted['billing_email'] ) ) {
-			$posted['billing_email'] = '';
-		}
+		$checkout_data = $this->normalize_posted_data( $posted );
+		$errors        = WC_Coupon_Restrictions_Validation::validate_checkout(
+			$checkout_data,
+			WC()->cart->applied_coupons
+		);
 
-		foreach ( WC()->cart->applied_coupons as $code ) {
+		foreach ( $errors as $code => $message ) {
 			$coupon = new WC_Coupon( $code );
-
-			$discounts = new WC_Discounts( WC()->cart );
-			if ( ! wc_coupons_enabled() || ! $discounts->is_coupon_valid( $coupon ) ) {
-				continue;
-			}
-
-			$this->validate_new_customer_restriction( $coupon, $code, $posted );
-			$this->validate_existing_customer_restriction( $coupon, $code, $posted );
-			$this->validate_location_restrictions( $coupon, $code, $posted );
-			$this->validate_role_restriction( $coupon, $code, $posted );
-
-			if ( WC_Coupon_Restrictions_Validation::has_enhanced_usage_restrictions( $coupon ) ) {
-				// Default behavior is to return a generic "usage limit exceeded" message if any of the enhanced restrictions fail.
-				// Since the message is the same for each validation, we can return as soon as one of them fails.
-				// However, if this default is filtered, then we won't return early so that each unique validation message will display.
-				$combine_enhanced_restriction_validation = apply_filters( 'wcr_combine_enhanced_restrictions_validation', true );
-				$enhanced_restriction_validates = $this->validate_similar_emails_restriction( $coupon, $code, $posted );
-				if ( false === $enhanced_restriction_validates && $combine_enhanced_restriction_validation ) {
-					continue;
-				}
-
-				$enhanced_restriction_validates = $this->validate_usage_limit_per_shipping_address( $coupon, $code, $posted );
-				if ( false === $enhanced_restriction_validates && $combine_enhanced_restriction_validation ) {
-					continue;
-				}
-
-				$this->validate_usage_limit_per_ip( $coupon, $code );
-			}
+			$this->remove_coupon( $coupon, $code, $message );
 		}
+	}
+
+	/**
+	 * Normalizes posted checkout data for validation.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $posted Posted checkout data
+	 * @return array Normalized checkout data
+	 */
+	private function normalize_posted_data( $posted ) {
+		return array(
+			'billing_email'      => $posted['billing_email'] ?? '',
+			'billing_country'    => $posted['billing_country'] ?? '',
+			'billing_state'      => $posted['billing_state'] ?? '',
+			'billing_postcode'   => $posted['billing_postcode'] ?? '',
+			'shipping_country'   => $posted['shipping_country'] ?? '',
+			'shipping_state'     => $posted['shipping_state'] ?? '',
+			'shipping_postcode'  => $posted['shipping_postcode'] ?? '',
+			'shipping_address_1' => $posted['shipping_address_1'] ?? '',
+			'shipping_address_2' => $posted['shipping_address_2'] ?? '',
+			'shipping_city'      => $posted['shipping_city'] ?? '',
+		);
 	}
 
 	/**

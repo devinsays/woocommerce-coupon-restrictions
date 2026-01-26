@@ -1,9 +1,11 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
-2026-01-25 - version 2.4.0
+2026-01-26 - version 2.4.0
 
+* Feature: Add coupon restriction validation for WooCommerce block-based checkout.
 * Bugfix: Billing state validation was checking wrong session key.
 * Bugfix: Shipping location validation skipped state check when country was also set.
+* Update: Declare cart_checkout_blocks compatibility.
 * Update: Increase coupon_code column to varchar(255) for new installs.
 * Update: Use SELECT COUNT(*) for more efficient usage limit queries.
 * Update: Fix typo in method names (seperated -> separated).

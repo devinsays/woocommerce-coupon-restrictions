@@ -367,4 +367,186 @@ class WC_Coupon_Restrictions_Validation {
 		/* translators: %s: Coupon code */
 		return sprintf( __( 'Sorry, coupon code "%s" is not valid.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 	}
+
+	/**
+	 * Validates all coupon restrictions for checkout.
+	 * Returns array of validation errors, or empty array if all valid.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $checkout_data Normalized checkout data with keys:
+	 *   - billing_email, billing_country, billing_state, billing_postcode
+	 *   - shipping_country, shipping_state, shipping_postcode
+	 *   - shipping_address_1, shipping_address_2, shipping_city
+	 * @param array $coupon_codes Array of coupon codes to validate
+	 * @return array Associative array of errors: [ 'coupon_code' => 'error_message' ]
+	 */
+	public static function validate_checkout( $checkout_data, $coupon_codes ) {
+		$errors = array();
+
+		foreach ( $coupon_codes as $code ) {
+			$coupon = new WC_Coupon( $code );
+
+			// Skip invalid coupons.
+			$discounts = new WC_Discounts( WC()->cart );
+			if ( ! wc_coupons_enabled() || ! $discounts->is_coupon_valid( $coupon ) ) {
+				continue;
+			}
+
+			$email = strtolower( $checkout_data['billing_email'] ?? '' );
+
+			// New customer restriction.
+			if ( ! self::new_customer_restriction( $coupon, $email ) ) {
+				$errors[ $code ] = self::message( 'new-customer', $coupon );
+				continue;
+			}
+
+			// Existing customer restriction.
+			if ( ! self::existing_customer_restriction( $coupon, $email ) ) {
+				$errors[ $code ] = self::message( 'existing-customer', $coupon );
+				continue;
+			}
+
+			// Role restriction.
+			if ( ! self::role_restriction( $coupon, $email ) ) {
+				$errors[ $code ] = self::message( 'role-restriction', $coupon );
+				continue;
+			}
+
+			// Location restrictions.
+			$location_error = self::validate_location_restrictions( $coupon, $checkout_data );
+			if ( $location_error ) {
+				$errors[ $code ] = $location_error;
+				continue;
+			}
+
+			// Enhanced usage restrictions.
+			if ( self::has_enhanced_usage_restrictions( $coupon ) ) {
+				$enhanced_error = self::validate_enhanced_usage_restrictions( $coupon, $code, $checkout_data );
+				if ( $enhanced_error ) {
+					$errors[ $code ] = $enhanced_error;
+					continue;
+				}
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * Validates location restrictions for a coupon.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param WC_Coupon $coupon
+	 * @param array $checkout_data Normalized checkout data
+	 * @return string|null Error message if validation fails, null if valid
+	 */
+	public static function validate_location_restrictions( $coupon, $checkout_data ) {
+		// If location restrictions aren't set, coupon is valid.
+		if ( 'yes' !== $coupon->get_meta( 'location_restrictions' ) ) {
+			return null;
+		}
+
+		// Get the address type used for location restrictions (billing or shipping).
+		$address = self::get_address_type_for_restriction( $coupon );
+
+		// Defaults in case no conditions are met.
+		$country_validation = true;
+		$state_validation   = true;
+		$zipcode_validation = true;
+
+		if ( 'shipping' === $address ) {
+			if ( isset( $checkout_data['shipping_country'] ) && '' !== $checkout_data['shipping_country'] ) {
+				$country_validation = self::country_restriction( $coupon, $checkout_data['shipping_country'] );
+			}
+
+			if ( isset( $checkout_data['shipping_state'] ) && '' !== $checkout_data['shipping_state'] ) {
+				$state_validation = self::state_restriction( $coupon, $checkout_data['shipping_state'] );
+			}
+
+			if ( isset( $checkout_data['shipping_postcode'] ) && '' !== $checkout_data['shipping_postcode'] ) {
+				$zipcode_validation = self::postcode_restriction( $coupon, $checkout_data['shipping_postcode'] );
+			}
+		}
+
+		if ( 'billing' === $address ) {
+			if ( isset( $checkout_data['billing_country'] ) && '' !== $checkout_data['billing_country'] ) {
+				$country_validation = self::country_restriction( $coupon, $checkout_data['billing_country'] );
+			}
+
+			if ( isset( $checkout_data['billing_state'] ) && '' !== $checkout_data['billing_state'] ) {
+				$state_validation = self::state_restriction( $coupon, $checkout_data['billing_state'] );
+			}
+
+			if ( isset( $checkout_data['billing_postcode'] ) && '' !== $checkout_data['billing_postcode'] ) {
+				$zipcode_validation = self::postcode_restriction( $coupon, $checkout_data['billing_postcode'] );
+			}
+		}
+
+		if ( false === $country_validation ) {
+			return self::message( 'country', $coupon );
+		}
+
+		if ( false === $state_validation ) {
+			return self::message( 'state', $coupon );
+		}
+
+		if ( false === $zipcode_validation ) {
+			return self::message( 'zipcode', $coupon );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Validates enhanced usage restrictions for a coupon.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param WC_Coupon $coupon
+	 * @param string $code Coupon code
+	 * @param array $checkout_data Normalized checkout data
+	 * @return string|null Error message if validation fails, null if valid
+	 */
+	public static function validate_enhanced_usage_restrictions( $coupon, $code, $checkout_data ) {
+		// Default behavior is to return a generic "usage limit exceeded" message if any of the enhanced restrictions fail.
+		$combine_enhanced_restriction_validation = apply_filters( 'wcr_combine_enhanced_restrictions_validation', true );
+
+		// Similar emails restriction.
+		$coupon_usage_limit = $coupon->get_usage_limit_per_user();
+		if ( $coupon_usage_limit && 'yes' === $coupon->get_meta( 'prevent_similar_emails' ) ) {
+			$email       = $checkout_data['billing_email'] ?? '';
+			$lookup_code = apply_filters( 'wcr_validate_similar_emails_restriction_lookup_code', $code );
+			$count       = WC_Coupon_Restrictions_Table::get_similar_email_usage( $lookup_code, $email );
+
+			if ( $count >= $coupon_usage_limit ) {
+				return self::message( 'similar-email-usage', $coupon );
+			}
+		}
+
+		// Usage limit per shipping address.
+		$shipping_limit = $coupon->get_meta( 'usage_limit_per_shipping_address' );
+		if ( $shipping_limit ) {
+			$lookup_code = apply_filters( 'wcr_validate_usage_limit_per_shipping_address_lookup_code', $code );
+			$count       = WC_Coupon_Restrictions_Table::get_shipping_address_usage( $lookup_code, $checkout_data );
+
+			if ( $count >= $shipping_limit ) {
+				return self::message( 'usage-limit-per-shipping-address', $coupon );
+			}
+		}
+
+		// Usage limit per IP address.
+		$ip_limit = $coupon->get_meta( 'usage_limit_per_ip_address' );
+		if ( $ip_limit ) {
+			$lookup_code = apply_filters( 'wcr_validate_usage_limit_per_ip_address_lookup_code', $code );
+			$count       = WC_Coupon_Restrictions_Table::get_ip_address_usage( $lookup_code );
+
+			if ( $count >= $ip_limit ) {
+				return self::message( 'usage-limit-per-ip-address', $coupon );
+			}
+		}
+
+		return null;
+	}
 }

@@ -2,15 +2,11 @@
 
 -   Requires PHP: 8.0
 -   WP requires at least: 6.3
--   WP tested up to: 6.8.3
+-   WP tested up to: 6.9
 -   WC requires at least: 8.6.1
--   WC tested up to: 10.2.2
--   Stable tag: 2.3.0
+-   WC tested up to: 10.4.3
+-   Stable tag: 2.4.0
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
-
-## Important notice
-
-This extension does not yet support WooCommerce Checkout Blocks. Support will be added soon.
 
 ## Description
 
