@@ -354,7 +354,7 @@ class WC_Coupon_Restrictions_Validation {
 
 		if ( $key === 'usage-limit-per-shipping-address' ) {
 			/* translators: %s: Coupon code */
-			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded for this shipping address.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
+			return sprintf( __( 'Sorry, coupon code "%s" usage limit exceeded for this address.', 'woocommerce-coupon-restrictions' ), $coupon->get_code() );
 		}
 
 		if ( $key === 'usage-limit-per-ip-address' ) {
