@@ -13,6 +13,7 @@
 * Update: Log an error if a verification record cannot be stored.
 * Update: Handle malformed email addresses without PHP warnings.
 * Update: Fix text domain for settings strings.
+* Update: Update development dependencies to patched versions.
 
 2026-01-26 - version 2.4.0
 
