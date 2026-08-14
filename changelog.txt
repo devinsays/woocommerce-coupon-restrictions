@@ -14,6 +14,7 @@
 * Update: Handle malformed email addresses without PHP warnings.
 * Update: Fix text domain for settings strings.
 * Update: Update development dependencies to patched versions.
+* Update: Automated tests now run against PHP 8.3 and 8.4.
 
 2026-01-26 - version 2.4.0
 
