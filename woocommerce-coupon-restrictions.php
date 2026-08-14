@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://woocommerce.com/products/woocommerce-coupon-restrictions/
  * Description: Create targeted coupons for new customers, user roles, countries or zip codes. Prevent coupon abuse with enhanced usage limits.
- * Version: 2.4.0
+ * Version: 2.4.1
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Developer: Devin Price
@@ -12,7 +12,7 @@
  * Domain Path: /languages
  *
  * WC requires at least: 8.6.1
- * WC tested up to: 10.4.3
+ * WC tested up to: 11.0.1
  *
  * Copyright: © 2015-2025 DevPress.
  * License: GNU General Public License v3.0
@@ -31,7 +31,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public static $instance;
 
 		/** @var string */
-		public $version = '2.3.0';
+		public $version = '2.4.1';
 
 		/** @var string */
 		public $required_woo = '8.6.1';
@@ -134,12 +134,12 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				dirname( plugin_basename( __FILE__ ) ) . '/languages/'
 			);
 
-			// Upgrade routine.
-			$this->upgrade_routine();
-
 			// Stores coupon use in a custom table if required by restrictions.
 			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-table.php';
 			new WC_Coupon_Restrictions_Table();
+
+			// Upgrade routine.
+			$this->upgrade_routine();
 
 			// WP CLI command to populate restrictions table with already completed orders
 			// that have enhanced usage limits.
@@ -214,8 +214,13 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				set_transient( 'woocommerce-coupon-restrictions-activated', 1, WEEK_IN_SECONDS );
 			}
 
-			// Sets the plugin version number in database.
+			// Runs on new installs and version changes.
 			if ( false === $option || $this->version !== $option['version'] ) {
+				// Creates or updates the verification table so enhanced usage limits
+				// work for coupons created outside the admin screen (REST API, CLI, import).
+				WC_Coupon_Restrictions_Table::create_or_update_table();
+
+				// Sets the plugin version number in database.
 				update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
 			}
 		}

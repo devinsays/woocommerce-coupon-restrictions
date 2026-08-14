@@ -50,6 +50,35 @@ class WC_Coupon_Restrictions_Table {
 	}
 
 	/**
+	 * Returns the table schema.
+	 *
+	 * The ip column is varchar(45) to fit IPv6 addresses.
+	 * The lookup indexes match the WHERE clauses used during checkout validation.
+	 *
+	 * @return string
+	 */
+	public static function get_schema() {
+		global $wpdb;
+		$table_name      = self::get_table_name();
+		$charset_collate = $wpdb->get_charset_collate();
+
+		return "CREATE TABLE $table_name (
+			record_id mediumint(9) NOT NULL AUTO_INCREMENT,
+			status varchar(20) NOT NULL,
+			order_id bigint(20) UNSIGNED NOT NULL,
+			coupon_code varchar(255) NOT NULL,
+			email varchar(255) NOT NULL,
+			ip varchar(45) NOT NULL,
+			shipping_address varchar(255) NOT NULL,
+			UNIQUE KEY record_id (record_id),
+			KEY coupon_email (coupon_code(100),email(100),status),
+			KEY coupon_ip (coupon_code(100),ip,status),
+			KEY coupon_address (coupon_code(100),shipping_address(100),status),
+			KEY order_id (order_id)
+		) $charset_collate;";
+	}
+
+	/**
 	 * Creates the table if it does not exist.
 	 *
 	 * @return array Strings containing the results of update queries.
@@ -59,23 +88,18 @@ class WC_Coupon_Restrictions_Table {
 			return array();
 		}
 
-		global $wpdb;
-		$table_name      = self::get_table_name();
-		$charset_collate = $wpdb->get_charset_collate();
+		return self::create_or_update_table();
+	}
 
-		$sql = "CREATE TABLE $table_name (
-			record_id mediumint(9) NOT NULL AUTO_INCREMENT,
-			status varchar(20) NOT NULL,
-			order_id bigint(20) UNSIGNED NOT NULL,
-			coupon_code varchar(255) NOT NULL,
-			email varchar(255) NOT NULL,
-			ip varchar(15) NOT NULL,
-			shipping_address varchar(255) NOT NULL,
-			UNIQUE KEY record_id (record_id)
-		) $charset_collate;";
-
+	/**
+	 * Creates the table or updates its schema to the current version.
+	 * Runs on install and upgrade via the plugin upgrade routine.
+	 *
+	 * @return array Strings containing the results of update queries.
+	 */
+	public static function create_or_update_table() {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		return dbDelta( $sql );
+		return dbDelta( self::get_schema() );
 	}
 
 	/**
@@ -113,7 +137,20 @@ class WC_Coupon_Restrictions_Table {
 	public static function maybe_add_record( $order_id ) {
 		$order = wc_get_order( $order_id );
 
-		// Check all the coupons.
+		if ( ! $order ) {
+			return false;
+		}
+
+		// Both payment hooks can fire for the same order in a single request
+		// (gateways that call payment_complete() during process_payment).
+		// Bail if records have already been stored for this order.
+		if ( self::get_records_for_order_id( $order_id ) ) {
+			return false;
+		}
+
+		$added = false;
+
+		// Stores a record for each coupon with enhanced usage restrictions.
 		foreach ( $order->get_items( 'coupon' ) as $coupon_item ) {
 			/** @var \WC_Order_Item_Coupon $coupon_item */
 			$coupon_code = $coupon_item->get_code();
@@ -124,12 +161,13 @@ class WC_Coupon_Restrictions_Table {
 				$coupon_code_to_store = apply_filters( 'wcr_coupon_code_to_store_for_enhanced_usage_limits', $coupon_code );
 
 				// Store user details.
-				self::store_customer_details( $order, $coupon_code_to_store );
-				return true;
+				if ( self::store_customer_details( $order, $coupon_code_to_store ) ) {
+					$added = true;
+				}
 			}
 		}
 
-		return false;
+		return $added;
 	}
 
 	/**
@@ -137,6 +175,8 @@ class WC_Coupon_Restrictions_Table {
 	 *
 	 * @param \WC_Order $order
 	 * @param string    $coupon_code
+	 *
+	 * @return bool True if the record was stored.
 	 */
 	protected static function store_customer_details( \WC_Order $order, string $coupon_code ) {
 		global $wpdb;
@@ -152,7 +192,7 @@ class WC_Coupon_Restrictions_Table {
 		);
 
 		// Insert data to the table.
-		$wpdb->insert(
+		$result = $wpdb->insert(
 			self::get_table_name(),
 			$data,
 			array(
@@ -164,6 +204,20 @@ class WC_Coupon_Restrictions_Table {
 				'%s',
 			)
 		);
+
+		// A failed insert means the enhanced usage limits will not be
+		// enforced for this order, so make sure it is logged.
+		if ( false === $result ) {
+			if ( function_exists( 'wc_get_logger' ) ) {
+				wc_get_logger()->error(
+					sprintf( 'Could not store coupon verification record for order #%d. Enhanced usage limits will not count this order.', $order->get_id() ),
+					array( 'source' => 'woocommerce-coupon-restrictions' )
+				);
+			}
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -381,7 +435,14 @@ class WC_Coupon_Restrictions_Table {
 	 * @return string
 	 */
 	public static function get_scrubbed_email( string $email ) {
-		list( $email_name, $email_domain ) = explode( '@', strtolower( trim( $email ) ) );
+		$email = strtolower( trim( $email ) );
+
+		// Malformed emails (no @) are stored as-is.
+		if ( false === strpos( $email, '@' ) ) {
+			return $email;
+		}
+
+		list( $email_name, $email_domain ) = explode( '@', $email, 2 );
 
 		// Let's ignore everything after "+".
 		$email_name = explode( '+', $email_name )[0];

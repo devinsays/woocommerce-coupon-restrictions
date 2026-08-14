@@ -303,29 +303,8 @@ class WC_Coupon_Restrictions_Admin {
 	 * @return array $shop_countries
 	 */
 	public static function shop_countries() {
-		// An array of all countries.
-		$countries = WC()->countries->get_countries();
-
-		// We just need the array keys.
-		$countries = array_keys( $countries );
-
-		// This option is set in the WooCommerce settings.
-		// Possible values are: all, all_except_countries, specific.
-		$allowed_countries = get_option( 'woocommerce_allowed_countries' );
-
-		if ( 'specific' === $allowed_countries ) {
-			$shop_countries = get_option( 'woocommerce_specific_allowed_countries' );
-			return $shop_countries;
-		}
-
-		if ( 'all_except_countries' === $allowed_countries ) {
-			$all_except_countries = get_option( 'woocommerce_all_except_countries' );
-			$shop_countries       = array_diff_key( $countries, $all_except_countries );
-			return $shop_countries;
-		}
-
-		// Returns all countries if above conditions are not met.
-		return $countries;
+		// WooCommerce resolves the allowed-countries setting (all, all_except, specific).
+		return array_keys( WC()->countries->get_allowed_countries() );
 	}
 
 	/**
@@ -338,6 +317,10 @@ class WC_Coupon_Restrictions_Admin {
 	 * @return void
 	 */
 	public static function coupon_options_save( $coupon_id, $coupon ) {
+		// Nonce verification is handled by WooCommerce before the
+		// woocommerce_coupon_options_save hook fires (see WC_Admin_Meta_Boxes).
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+
 		// Customer restriction type.
 		$id                        = 'customer_restriction_type';
 		$customer_restriction_type = isset( $_POST[ $id ] ) ? sanitize_text_field( wp_unslash( $_POST[ $id ] ) ) : '';
@@ -421,7 +404,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Usage limit per shipping address.
 		$id                       = 'usage_limit_per_shipping_address';
-		$usage_limit_per_shipping = absint( $_POST[ $id ] );
+		$usage_limit_per_shipping = isset( $_POST[ $id ] ) ? absint( wp_unslash( $_POST[ $id ] ) ) : 0;
 		if ( $usage_limit_per_shipping > 0 ) {
 			$coupon->update_meta_data( $id, $usage_limit_per_shipping );
 			$enhanced_usage_restriction = true;
@@ -431,7 +414,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Usage limit per IP address.
 		$id                         = 'usage_limit_per_ip_address';
-		$usage_limit_per_ip_address = absint( $_POST[ $id ] );
+		$usage_limit_per_ip_address = isset( $_POST[ $id ] ) ? absint( wp_unslash( $_POST[ $id ] ) ) : 0;
 		if ( $usage_limit_per_ip_address > 0 ) {
 			$coupon->update_meta_data( $id, $usage_limit_per_ip_address );
 			$enhanced_usage_restriction = true;
@@ -447,6 +430,8 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Save meta data.
 		$coupon->save_meta_data();
+
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	/**

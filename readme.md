@@ -2,10 +2,10 @@
 
 -   Requires PHP: 8.0
 -   WP requires at least: 6.3
--   WP tested up to: 6.9
+-   WP tested up to: 7.0
 -   WC requires at least: 8.6.1
--   WC tested up to: 10.4.3
--   Stable tag: 2.4.0
+-   WC tested up to: 11.0.1
+-   Stable tag: 2.4.1
 -   License: [GPLv3 or later License](http://www.gnu.org/licenses/gpl-3.0.html)
 
 ## Description

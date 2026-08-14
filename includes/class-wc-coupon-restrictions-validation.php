@@ -143,8 +143,7 @@ class WC_Coupon_Restrictions_Validation {
 			return false;
 		}
 
-		$user_meta  = get_userdata( $user->ID );
-		$user_roles = $user_meta->roles;
+		$user_roles = (array) $user->roles;
 
 		// If any the user roles do not match the restricted roles, coupon is invalid.
 		if ( ! array_intersect( $user_roles, $restricted_roles ) ) {

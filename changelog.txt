@@ -1,5 +1,19 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2026-08-14 - version 2.4.1
+
+* Update: Tested up to WordPress 7.0 and WooCommerce 11.0.1.
+* Bugfix: IP column now supports IPv6 addresses, so IP usage limits work for IPv6 customers.
+* Bugfix: Prevent duplicate verification records when both payment hooks fire for the same order.
+* Bugfix: Store a verification record for each coupon with enhanced usage limits on an order, not just the first.
+* Bugfix: Country restriction options now display correctly for stores using "Sell to all countries, except for" setting.
+* Bugfix: Fix plugin version number stored in the database.
+* Update: Verification table is created on install and upgrade, so enhanced usage limits work for coupons created via the REST API, CLI or import.
+* Update: Add database indexes to the verification table to speed up checkout validation queries.
+* Update: Log an error if a verification record cannot be stored.
+* Update: Handle malformed email addresses without PHP warnings.
+* Update: Fix text domain for settings strings.
+
 2026-01-26 - version 2.4.0
 
 * Feature: Add coupon restriction validation for WooCommerce block-based checkout.
