@@ -1,0 +1,18 @@
+# Files that are only used for development.
+#
+# bin/archive.sh builds the release zip with `git archive`, which omits
+# anything marked export-ignore here. Without these rules the zip ships the
+# test suite, CI config and Composer files to every store that installs the
+# extension.
+
+/.editorconfig		export-ignore
+/.gitattributes		export-ignore
+/.github		export-ignore
+/.gitignore		export-ignore
+/bin			export-ignore
+/composer.json		export-ignore
+/composer.lock		export-ignore
+/phpcs.xml		export-ignore
+/phpunit.xml		export-ignore
+/readme.md		export-ignore
+/tests			export-ignore
