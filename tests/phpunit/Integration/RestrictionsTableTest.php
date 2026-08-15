@@ -68,6 +68,16 @@ class RestrictionsTableTest extends WP_UnitTestCase {
 		$this->assertEquals( $email3, $email3scrubbed );
 	}
 
+	/**
+	 * Malformed email addresses should be handled without PHP warnings.
+	 */
+	public function test_get_scrubbed_email_handles_malformed_email() {
+		// With convertWarningsToExceptions enabled, an "Undefined array key"
+		// warning fails this test.
+		$this->assertEquals( 'not-an-email', WC_Coupon_Restrictions_Table::get_scrubbed_email( 'Not-An-Email' ) );
+		$this->assertEquals( '', WC_Coupon_Restrictions_Table::get_scrubbed_email( '' ) );
+	}
+
 	public function tear_down() {
 		// Deletes the custom table if it has been created.
 		WC_Coupon_Restrictions_Table::delete_table();

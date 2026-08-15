@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Coupon Restrictions
  * Plugin URI: http://woocommerce.com/products/woocommerce-coupon-restrictions/
  * Description: Create targeted coupons for new customers, user roles, countries or zip codes. Prevent coupon abuse with enhanced usage limits.
- * Version: 2.4.0
+ * Version: 2.4.1
  * Author: WooCommerce
  * Author URI: http://woocommerce.com/
  * Developer: Devin Price
@@ -12,7 +12,7 @@
  * Domain Path: /languages
  *
  * WC requires at least: 8.6.1
- * WC tested up to: 10.4.3
+ * WC tested up to: 11.0.1
  *
  * Copyright: © 2015-2025 DevPress.
  * License: GNU General Public License v3.0
@@ -31,7 +31,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public static $instance;
 
 		/** @var string */
-		public $version = '2.3.0';
+		public $version = '2.4.1';
 
 		/** @var string */
 		public $required_woo = '8.6.1';
@@ -134,12 +134,12 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				dirname( plugin_basename( __FILE__ ) ) . '/languages/'
 			);
 
-			// Upgrade routine.
-			$this->upgrade_routine();
-
 			// Stores coupon use in a custom table if required by restrictions.
 			require_once $this->plugin_path . '/includes/class-wc-coupon-restrictions-table.php';
 			new WC_Coupon_Restrictions_Table();
+
+			// Upgrade routine.
+			$this->upgrade_routine();
 
 			// WP CLI command to populate restrictions table with already completed orders
 			// that have enhanced usage limits.
@@ -214,9 +214,45 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 				set_transient( 'woocommerce-coupon-restrictions-activated', 1, WEEK_IN_SECONDS );
 			}
 
-			// Sets the plugin version number in database.
-			if ( false === $option || $this->version !== $option['version'] ) {
+			// Runs on new installs and version changes.
+			// The version key is checked with isset() because the option can be
+			// present but incomplete if a previous write did not finish.
+			if ( ! isset( $option['version'] ) || $this->version !== $option['version'] ) {
+				// This block makes schema changes, so it is kept off of front end
+				// requests. WordPress core takes the same approach for its own
+				// upgrades. A request that is killed part way through a table
+				// change would otherwise leave the version unrecorded and try
+				// again on the next customer pageview.
+				if ( ! is_admin() && ! ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+					return;
+				}
+
+				// The version option is not updated until the routine finishes, so
+				// concurrent requests can otherwise all reach this point after an
+				// update and run the schema changes at the same time.
+				// A short lived lock keeps that to a single request.
+				if ( 'yes' === get_transient( 'woocommerce-coupon-restrictions-updating' ) ) {
+					return;
+				}
+
+				set_transient( 'woocommerce-coupon-restrictions-updating', 'yes', 5 * MINUTE_IN_SECONDS );
+
+				// Creates or updates the verification table so enhanced usage limits
+				// work for coupons created outside the admin screen (REST API, CLI, import).
+				$table_updated = WC_Coupon_Restrictions_Table::create_or_update_table();
+
+				// The version is only recorded once the table matches the current
+				// schema. If the store could not run the schema changes the lock is
+				// left in place so the routine tries again after it expires, rather
+				// than recording an upgrade that did not happen.
+				if ( ! $table_updated ) {
+					return;
+				}
+
+				// Sets the plugin version number in database.
 				update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
+
+				delete_transient( 'woocommerce-coupon-restrictions-updating' );
 			}
 		}
 	}
