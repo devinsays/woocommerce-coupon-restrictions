@@ -2,12 +2,14 @@
 
 2026-08-14 - version 2.4.1
 
+* Important: Coupons with a usage limit per IP address or per shipping address set to 2 or higher should be reviewed. Earlier versions could store two verification records for a single order, so a limit of 2 allowed one use, a limit of 4 allowed two, and so on. Each order now stores one record per coupon and the limit is applied as entered. A limit of 1 is unaffected.
 * Update: Tested up to WordPress 7.0 and WooCommerce 11.0.1.
 * Bugfix: IP column now supports IPv6 addresses, so IP usage limits work for IPv6 customers.
 * Bugfix: Prevent duplicate verification records when both payment hooks fire for the same order.
 * Bugfix: Store a verification record for each coupon with enhanced usage limits on an order, not just the first.
 * Bugfix: Country restriction options now display correctly for stores using "Sell to all countries, except for" setting.
 * Bugfix: Fix plugin version number stored in the database.
+* Bugfix: Saving a coupon no longer fails with a fatal error if role or country restrictions are posted as a single value.
 * Update: Verification table is created on install and upgrade, so enhanced usage limits work for coupons created via the REST API, CLI or import.
 * Update: Add database indexes to the verification table to speed up checkout validation queries.
 * Update: Log an error if a verification record cannot be stored.

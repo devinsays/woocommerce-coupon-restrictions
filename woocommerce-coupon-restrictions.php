@@ -215,13 +215,44 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 			}
 
 			// Runs on new installs and version changes.
-			if ( false === $option || $this->version !== $option['version'] ) {
+			// The version key is checked with isset() because the option can be
+			// present but incomplete if a previous write did not finish.
+			if ( ! isset( $option['version'] ) || $this->version !== $option['version'] ) {
+				// This block makes schema changes, so it is kept off of front end
+				// requests. WordPress core takes the same approach for its own
+				// upgrades. A request that is killed part way through a table
+				// change would otherwise leave the version unrecorded and try
+				// again on the next customer pageview.
+				if ( ! is_admin() && ! ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+					return;
+				}
+
+				// The version option is not updated until the routine finishes, so
+				// concurrent requests can otherwise all reach this point after an
+				// update and run the schema changes at the same time.
+				// A short lived lock keeps that to a single request.
+				if ( 'yes' === get_transient( 'woocommerce-coupon-restrictions-updating' ) ) {
+					return;
+				}
+
+				set_transient( 'woocommerce-coupon-restrictions-updating', 'yes', 5 * MINUTE_IN_SECONDS );
+
 				// Creates or updates the verification table so enhanced usage limits
 				// work for coupons created outside the admin screen (REST API, CLI, import).
-				WC_Coupon_Restrictions_Table::create_or_update_table();
+				$table_updated = WC_Coupon_Restrictions_Table::create_or_update_table();
+
+				// The version is only recorded once the table matches the current
+				// schema. If the store could not run the schema changes the lock is
+				// left in place so the routine tries again after it expires, rather
+				// than recording an upgrade that did not happen.
+				if ( ! $table_updated ) {
+					return;
+				}
 
 				// Sets the plugin version number in database.
 				update_option( 'woocommerce-coupon-restrictions', array( 'version' => $this->version ) );
+
+				delete_transient( 'woocommerce-coupon-restrictions-updating' );
 			}
 		}
 	}

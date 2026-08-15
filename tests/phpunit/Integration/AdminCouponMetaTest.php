@@ -8,6 +8,21 @@ use WC_Coupon_Restrictions_Admin;
 class AdminCouponMetaTest extends WP_UnitTestCase {
 
 	/**
+	 * These options are global to the store, so they are reverted here rather
+	 * than at the end of a test method. A failed assertion aborts the method
+	 * before any inline cleanup runs, which would leave every following test
+	 * in the suite running against a misconfigured store.
+	 */
+	public function tear_down() {
+		delete_option( 'woocommerce_allowed_countries' );
+		delete_option( 'woocommerce_all_except_countries' );
+
+		$_POST = array();
+
+		parent::tear_down();
+	}
+
+	/**
 	 * Stores using "Sell to all countries, except for…" should not see
 	 * excluded countries as selectable restriction options.
 	 */
@@ -20,9 +35,6 @@ class AdminCouponMetaTest extends WP_UnitTestCase {
 		$this->assertNotContains( 'US', $shop_countries );
 		$this->assertNotContains( 'FR', $shop_countries );
 		$this->assertContains( 'DE', $shop_countries );
-
-		delete_option( 'woocommerce_allowed_countries' );
-		delete_option( 'woocommerce_all_except_countries' );
 	}
 
 	/**

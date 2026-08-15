@@ -332,7 +332,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Role restriction.
 		$id                      = 'role_restriction';
-		$role_restriction_select = isset( $_POST[ $id ] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST[ $id ] ) ) : array();
+		$role_restriction_select = isset( $_POST[ $id ] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_POST[ $id ] ) ) : array();
 		$role_restriction        = array_filter( array_map( 'wc_clean', $role_restriction_select ) );
 		if ( $role_restriction ) {
 			$coupon->update_meta_data( $id, $role_restriction );
@@ -361,7 +361,7 @@ class WC_Coupon_Restrictions_Admin {
 
 		// Country restriction.
 		$id                         = 'country_restriction';
-		$country_restriction_select = isset( $_POST[ $id ] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST[ $id ] ) ) : array();
+		$country_restriction_select = isset( $_POST[ $id ] ) ? array_map( 'sanitize_text_field', (array) wp_unslash( $_POST[ $id ] ) ) : array();
 		$country_restriction        = array_filter( array_map( 'wc_clean', $country_restriction_select ) );
 		if ( $country_restriction ) {
 			$coupon->update_meta_data( $id, $country_restriction );

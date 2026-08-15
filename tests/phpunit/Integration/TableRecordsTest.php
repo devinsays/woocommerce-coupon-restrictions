@@ -71,6 +71,79 @@ class TableRecordsTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Coupon codes can be grouped under a shared code with the
+	 * wcr_coupon_code_to_store_for_enhanced_usage_limits filter. An order using
+	 * more than one coupon from the same group should only count once.
+	 */
+	public function test_grouped_coupon_codes_store_a_single_record() {
+		WC_Coupon_Restrictions_Table::maybe_create_table();
+
+		$coupon2 = WC_Helper_Coupon::create_coupon( 'enhancedcoupon2' );
+		$coupon2->update_meta_data( 'usage_limit_per_ip_address', 1 );
+		$coupon2->save();
+
+		$order = $this->order;
+		$order->apply_coupon( $coupon2 );
+		$order->calculate_totals();
+		$order->set_customer_ip_address( '192.0.2.10' );
+		$order->save();
+
+		// Groups both coupon codes under a single stored code.
+		$filter_callback = function () {
+			return 'groupedcoupon';
+		};
+		add_filter( 'wcr_coupon_code_to_store_for_enhanced_usage_limits', $filter_callback );
+
+		WC_Coupon_Restrictions_Table::maybe_add_record( $order->get_id() );
+
+		remove_filter( 'wcr_coupon_code_to_store_for_enhanced_usage_limits', $filter_callback );
+
+		$records = WC_Coupon_Restrictions_Table::get_records_for_order_id( $order->get_id() );
+		$this->assertCount( 1, $records );
+
+		// A single order must not count twice towards the limit.
+		$_SERVER['HTTP_X_REAL_IP'] = '192.0.2.10';
+		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( 'groupedcoupon' );
+		unset( $_SERVER['HTTP_X_REAL_IP'] );
+
+		$this->assertSame( 1, $count );
+
+		$coupon2->delete();
+	}
+
+	/**
+	 * An order can be cancelled (e.g. by the hold stock timeout) and then paid for
+	 * later by a delayed gateway callback. The cancelled record must not stop a new
+	 * record from being stored, otherwise the order never counts towards the limits.
+	 */
+	public function test_record_stored_again_after_order_is_cancelled() {
+		WC_Coupon_Restrictions_Table::maybe_create_table();
+
+		$order = $this->order;
+		$order->set_customer_ip_address( '192.0.2.20' );
+		$order->save();
+		$order_id = $order->get_id();
+
+		WC_Coupon_Restrictions_Table::maybe_add_record( $order_id );
+
+		// Mimics woocommerce_order_status_cancelled.
+		WC_Coupon_Restrictions_Table::maybe_update_record_status( $order_id );
+
+		$_SERVER['HTTP_X_REAL_IP'] = '192.0.2.20';
+		$cancelled_count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $this->coupon->get_code() );
+
+		// A late payment for the same order.
+		$added = WC_Coupon_Restrictions_Table::maybe_add_record( $order_id );
+
+		$count = WC_Coupon_Restrictions_Table::get_ip_address_usage( $this->coupon->get_code() );
+		unset( $_SERVER['HTTP_X_REAL_IP'] );
+
+		$this->assertSame( 0, $cancelled_count );
+		$this->assertTrue( $added );
+		$this->assertSame( 1, $count );
+	}
+
+	/**
 	 * IPv6 addresses (up to 45 chars) must be stored intact so usage lookups match.
 	 */
 	public function test_ipv6_address_stored_and_counted() {
@@ -131,6 +204,27 @@ class TableRecordsTest extends WP_UnitTestCase {
 		$this->assertContains( 'coupon_ip', $key_names );
 		$this->assertContains( 'coupon_address', $key_names );
 		$this->assertContains( 'order_id', $key_names );
+
+		// InnoDB limits an index key to 767 bytes unless large prefixes are
+		// enabled. utf8mb4 uses 4 bytes per character, so each composite key
+		// needs to stay under 192 characters in total or it fails to create.
+		$columns = $wpdb->get_results( "SHOW COLUMNS FROM {$table_name}" );
+		$widths  = array();
+		foreach ( $columns as $column ) {
+			preg_match( '/varchar\((\d+)\)/i', $column->Type, $matches );
+			$widths[ $column->Field ] = isset( $matches[1] ) ? (int) $matches[1] : 0;
+		}
+
+		$key_lengths = array();
+		foreach ( $indexes as $index ) {
+			$length = $index->Sub_part ? (int) $index->Sub_part : $widths[ $index->Column_name ];
+
+			$key_lengths[ $index->Key_name ] = ( $key_lengths[ $index->Key_name ] ?? 0 ) + $length;
+		}
+
+		foreach ( array( 'coupon_email', 'coupon_ip', 'coupon_address' ) as $key_name ) {
+			$this->assertLessThanOrEqual( 191, $key_lengths[ $key_name ], "Index {$key_name} is too long for utf8mb4." );
+		}
 	}
 
 	public function tear_down() {
