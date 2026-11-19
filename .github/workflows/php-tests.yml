@@ -17,6 +17,16 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping -proot" --health-interval=5s --health-timeout=5s --health-retries=10
+
     steps:
       - name: Checkout the files
         uses: actions/checkout@v3
@@ -42,11 +52,10 @@ jobs:
           php_version: ${{ matrix.php_ver }}
           version: 2
 
-      - name: Start MySQL
-        run: sudo /etc/init.d/mysql start
-
+      # The runner image no longer ships MySQL. The service above provides it and
+      # creates the database, so database creation is skipped (last arg).
       - name: Run install-wp-tests.sh
-        run: sudo ./tests/bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wp_ver }}
+        run: sudo ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp_ver }} true
 
       - name: Run install-woocommerce.sh
         run: sudo ./tests/bin/install-woocommerce.sh ${{ matrix.wc_ver }}
