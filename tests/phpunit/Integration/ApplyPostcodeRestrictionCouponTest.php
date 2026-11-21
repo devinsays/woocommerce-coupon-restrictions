@@ -90,6 +90,21 @@ class Apply_Postcode_Restriction_Coupon_Test extends WP_UnitTestCase {
 		$this->assertEquals( 1, count( WC()->cart->get_applied_coupons() ) );
 	}
 
+	/**
+	 * Tests that numeric postcodes must match exactly.
+	 * Loose comparison treated "2134" and "02134" (or "1000" and "1e3") as equal.
+	 */
+	public function test_numeric_postcode_restriction_requires_exact_match() {
+		$coupon = $this->coupon;
+		$coupon->update_meta_data( 'postcode_restriction', '02134,1e3' );
+		$coupon->save();
+
+		$this->assertTrue( \WC_Coupon_Restrictions_Validation::postcode_restriction( $coupon, '02134' ) );
+		$this->assertTrue( \WC_Coupon_Restrictions_Validation::postcode_restriction( $coupon, ' 02134 ' ) );
+		$this->assertFalse( \WC_Coupon_Restrictions_Validation::postcode_restriction( $coupon, '2134' ) );
+		$this->assertFalse( \WC_Coupon_Restrictions_Validation::postcode_restriction( $coupon, '1000' ) );
+	}
+
 	public function tear_down() {
 		// Reset the customer session data.
 		WC()->session->set( 'customer', array() );
