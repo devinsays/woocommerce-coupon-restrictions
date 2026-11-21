@@ -1,5 +1,13 @@
 *** WooCommerce Coupon Restrictions Changelog ***
 
+2026-11-21 - version 2.4.2
+
+* Bugfix: Postcode restrictions now require an exact match. Numeric postcodes could match a different postcode, for example a restriction for "02134" also accepted "2134".
+* Update: Tested up to WordPress 7.1 and WooCommerce 11.3.1.
+* Update: Minimum WooCommerce version is now 9.4.0 and minimum WordPress version is now 6.5.
+* Update: Add Requires Plugins, Requires at least, Tested up to and Requires PHP headers to the main plugin file.
+* Update: Automated tests now run against PHP 8.0, 8.3, 8.4 and 8.5.
+
 2026-08-14 - version 2.4.1
 
 * Important: Coupons with a usage limit per IP address or per shipping address set to 2 or higher should be reviewed. Earlier versions could store two verification records for a single order, so a limit of 2 allowed one use, a limit of 4 allowed two, and so on. Each order now stores one record per coupon and the limit is applied as entered. A limit of 1 is unaffected.
