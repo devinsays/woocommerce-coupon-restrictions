@@ -10,11 +10,15 @@
  * Developer URI: https://devpress.com
  * Text Domain: woocommerce-coupon-restrictions
  * Domain Path: /languages
+ * Requires at least: 6.5
+ * Tested up to: 7.1
+ * Requires PHP: 8.0
+ * Requires Plugins: woocommerce
  *
- * WC requires at least: 8.6.1
- * WC tested up to: 11.0.1
+ * WC requires at least: 9.4.0
+ * WC tested up to: 11.3.1
  *
- * Copyright: © 2015-2025 DevPress.
+ * Copyright: © 2015-2026 DevPress.
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
@@ -34,7 +38,7 @@ if ( ! class_exists( 'WC_Coupon_Restrictions' ) ) {
 		public $version = '2.4.1';
 
 		/** @var string */
-		public $required_woo = '8.6.1';
+		public $required_woo = '9.4.0';
 
 		/** @var string */
 		public $plugin_path = null;
