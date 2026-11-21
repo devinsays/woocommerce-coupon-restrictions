@@ -210,7 +210,8 @@ class WC_Coupon_Restrictions_Validation {
 		}
 
 		// Standard check.
-		if ( ! in_array( strtoupper( $postcode ), $postcode_array ) ) {
+		// Strict comparison, so numeric postcodes like "02134" and "2134" don't match.
+		if ( ! in_array( strtoupper( trim( (string) $postcode ) ), $postcode_array, true ) ) {
 			return false;
 		}
 

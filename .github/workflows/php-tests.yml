@@ -5,10 +5,13 @@ on: [push]
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         php_ver:
+          - "8.0"
           - "8.3"
           - "8.4"
+          - "8.5"
         wp_ver:
           - "latest"
         wc_ver:
@@ -17,9 +20,23 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout the files
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Install SVN
         run: sudo apt-get update && sudo apt-get install -y subversion
@@ -37,16 +54,10 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
 
       - name: Install dependencies
-        uses: php-actions/composer@v6
-        with:
-          php_version: ${{ matrix.php_ver }}
-          version: 2
-
-      - name: Start MySQL
-        run: sudo /etc/init.d/mysql start
+        run: composer install --no-interaction --no-progress
 
       - name: Run install-wp-tests.sh
-        run: sudo ./tests/bin/install-wp-tests.sh wordpress_test root root localhost ${{ matrix.wp_ver }}
+        run: sudo ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 ${{ matrix.wp_ver }} true
 
       - name: Run install-woocommerce.sh
         run: sudo ./tests/bin/install-woocommerce.sh ${{ matrix.wc_ver }}
